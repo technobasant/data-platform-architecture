@@ -1,0 +1,47 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  # Weekly, so a source link that moves or a lab file that is renamed fails here
+  # before a reader finds it.
+  schedule:
+    - cron: "17 5 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  UV_VERSION: "0.12.23"
+
+jobs:
+  checks:
+    name: Decisions, evidence, cost model and links
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: ${{ env.UV_VERSION }}
+      - run: uv sync --locked
+      - run: uv run ruff format --check .
+      - run: uv run ruff check .
+      - name: Tests (cost arithmetic, generated sections, relative links)
+        run: uv run pytest -q
+      - name: Every decision's evidence and the decision tables match evidence.yml
+        run: uv run python scripts/build.py --check
+      - name: The cost tables match the model
+        run: uv run python cost/model.py --check
+      - name: Every source link resolves
+        run: uv run python scripts/check_links.py
+      - name: Audit the workflows (zizmor)
+        run: uvx zizmor@1.30.1 --offline --persona=regular .github/workflows

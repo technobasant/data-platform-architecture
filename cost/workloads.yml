@@ -1,0 +1,31 @@
+# The three workload tiers of docs/context.md, as the cost model reads them.
+# Every number is an assumption about a plausible SaaS business, not a measurement.
+days_per_month: 30.4
+
+# Stored bytes per event after columnar compression, and how long events are kept.
+stored_bytes_per_event: 150
+retention_days: 395
+# Marts, snapshots and dimensions on top of the event history, as a share of it.
+derived_storage_share: 0.3
+
+# THE assumption the comparison rests on: what one hour of "medium" analytical compute
+# is on each engine. Vendors do not publish a common unit, and nothing here measured
+# one against another. Change these to test how much the answer depends on them.
+medium_engine_hour:
+  snowflake_warehouse: Medium        # 4 credits/hour
+  databricks_sql_warehouse: Medium   # 24 DBU/hour, serverless
+  trino_workers_r7i_2xlarge: 4       # plus an always-on coordinator
+
+tiers:
+  small:
+    events_per_day: 2_000_000
+    compute_hours_per_day: 3     # transformation and analyst queries, medium-engine hours
+    scanned_tb_per_day: 0.07     # what per-scan engines bill: analysts plus transformation
+  medium:
+    events_per_day: 30_000_000
+    compute_hours_per_day: 9
+    scanned_tb_per_day: 0.8
+  large:
+    events_per_day: 300_000_000
+    compute_hours_per_day: 20
+    scanned_tb_per_day: 8

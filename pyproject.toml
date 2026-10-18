@@ -1,0 +1,27 @@
+[project]
+name = "data-platform-architecture"
+version = "0.1.0"
+description = "A reference architecture for a SaaS data platform, with every decision backed by a measured result."
+readme = "README.md"
+license = "Apache-2.0"
+authors = [{ name = "Basant Bhattarai" }]
+requires-python = ">=3.11"
+dependencies = ["pyyaml>=6", "httpx>=0.28"]
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.14"]
+
+[tool.uv]
+package = false
+exclude-newer = "3 days"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 110
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

@@ -1,0 +1,143 @@
+{
+  "prices_retrieved": "2026-10-18",
+  "break_even": {
+    "Snowflake Standard": {
+      "usd_per_hour": 8.0,
+      "tb_per_hour": {
+        "BigQuery on-demand": 1.41,
+        "Athena": 1.6
+      }
+    },
+    "Snowflake Enterprise": {
+      "usd_per_hour": 12.0,
+      "tb_per_hour": {
+        "BigQuery on-demand": 2.11,
+        "Athena": 2.4
+      }
+    },
+    "Databricks SQL Serverless": {
+      "usd_per_hour": 16.8,
+      "tb_per_hour": {
+        "BigQuery on-demand": 2.96,
+        "Athena": 3.36
+      }
+    },
+    "Trino on EC2 (workers only)": {
+      "usd_per_hour": 2.1168,
+      "tb_per_hour": {
+        "BigQuery on-demand": 0.37,
+        "Athena": 0.42
+      }
+    }
+  },
+  "tiers": {
+    "small": {
+      "storage_tb": 0.154,
+      "assumed_tb_scanned_per_engine_hour": 0.023,
+      "monthly_usd": {
+        "Snowflake Standard": {
+          "compute": 730,
+          "storage": 4,
+          "total": 733
+        },
+        "Snowflake Enterprise": {
+          "compute": 1094,
+          "storage": 4,
+          "total": 1098
+        },
+        "Databricks SQL Serverless": {
+          "compute": 1532,
+          "storage": 4,
+          "total": 1536
+        },
+        "Trino on EC2": {
+          "compute": 487,
+          "storage": 4,
+          "total": 491
+        },
+        "BigQuery on-demand": {
+          "compute": 6,
+          "storage": 6,
+          "total": 12
+        },
+        "Athena": {
+          "compute": 11,
+          "storage": 4,
+          "total": 14
+        }
+      }
+    },
+    "medium": {
+      "storage_tb": 2.311,
+      "assumed_tb_scanned_per_engine_hour": 0.089,
+      "monthly_usd": {
+        "Snowflake Standard": {
+          "compute": 2189,
+          "storage": 53,
+          "total": 2242
+        },
+        "Snowflake Enterprise": {
+          "compute": 3283,
+          "storage": 53,
+          "total": 3336
+        },
+        "Databricks SQL Serverless": {
+          "compute": 4596,
+          "storage": 53,
+          "total": 4650
+        },
+        "Trino on EC2": {
+          "compute": 873,
+          "storage": 53,
+          "total": 926
+        },
+        "BigQuery on-demand": {
+          "compute": 132,
+          "storage": 86,
+          "total": 218
+        },
+        "Athena": {
+          "compute": 122,
+          "storage": 53,
+          "total": 175
+        }
+      }
+    },
+    "large": {
+      "storage_tb": 23.108,
+      "assumed_tb_scanned_per_engine_hour": 0.4,
+      "monthly_usd": {
+        "Snowflake Standard": {
+          "compute": 4864,
+          "storage": 531,
+          "total": 5395
+        },
+        "Snowflake Enterprise": {
+          "compute": 7296,
+          "storage": 531,
+          "total": 7827
+        },
+        "Databricks SQL Serverless": {
+          "compute": 10214,
+          "storage": 531,
+          "total": 10746
+        },
+        "Trino on EC2": {
+          "compute": 1581,
+          "storage": 531,
+          "total": 2113
+        },
+        "BigQuery on-demand": {
+          "compute": 1376,
+          "storage": 861,
+          "total": 2237
+        },
+        "Athena": {
+          "compute": 1216,
+          "storage": 531,
+          "total": 1747
+        }
+      }
+    }
+  }
+}

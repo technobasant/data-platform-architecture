@@ -1,0 +1,228 @@
+# Every figure the architecture cites, with the file it was measured in.
+# Values and methods are the same as on basantbhattarai.com.np (_data/metrics.yml);
+# scripts/build.py writes them into the decision records and EVIDENCE.md.
+
+lakehouse_partition_prune:
+  value: "88 ms"
+  label: "one-month predicate over 1.5M Iceberg rows"
+  method: "median of 7 server-side runs from system.runtime.queries, after 2 warm-ups, on a month-partitioned Iceberg table"
+  repo: lakehouse-lab
+  file: MEASUREMENTS.md
+
+lakehouse_compaction:
+  value: "20 \u2192 1"
+  label: "files merged per partition by optimize"
+  method: "twenty 5,000-row inserts into one partition, then ALTER TABLE EXECUTE optimize, counted from the $files metadata table"
+  repo: lakehouse-lab
+  file: MEASUREMENTS.md
+
+lakehouse_rollback:
+  value: "909,968"
+  label: "rows recovered by snapshot rollback"
+  method: "an over-broad DELETE (a WHERE reaching years further back than intended), then ALTER TABLE EXECUTE rollback_to_snapshot, counted against the pre-incident total"
+  repo: lakehouse-lab
+  file: MEASUREMENTS.md
+
+stream_failure_exactness:
+  value: "9 of 9"
+  label: "failure runs with every event layer exact"
+  method: "three controller-broker kills, three TaskManager kills and three 150 s stalls under load; Kafka, ClickHouse, Iceberg and the dead-letter topic reconciled against the generator's ledger by sequence number"
+  repo: streaming-platform
+  file: MEASUREMENTS.md
+
+stream_window_undercount:
+  value: "59.8%"
+  label: "of on-time events left in the window counts after one broker kill"
+  method: "118,229 of 197,749 on-time events counted in their 10 s windows in the worst of three broker-kill runs; the rest went to the late side output because catch-up reordered partitions past the 5 s watermark bound"
+  repo: streaming-platform
+  file: MEASUREMENTS.md
+
+stream_freshness_p99:
+  value: "6.1 s"
+  label: "p99 from event time to queryable in ClickHouse at 1,000 events/s"
+  method: "ClickHouse ingest time minus event time for every on-time event, median of three 90 s runs; the floor is the 5 s checkpoint interval at which Flink's transactions commit"
+  repo: streaming-platform
+  file: MEASUREMENTS.md
+
+stream_stall_page:
+  value: "59\u201362 s"
+  label: "from a frozen pipeline to a firing burn-rate alert"
+  method: "both TaskManagers paused for 150 s at 500 events/s; freshness probes every 5 s; multi-window burn-rate rules compressed 12\u00D7 from the 1 h/5 m pair; alert state polled every second"
+  repo: streaming-platform
+  file: MEASUREMENTS.md
+
+registry_false_negatives:
+  value: "0"
+  label: "breaking schema changes passed as safe, in any mode"
+  method: "51 hand-labelled JSON Schema changes, each scored under BACKWARD, FORWARD and FULL; every label cross-checked by an oracle that ran 8,092 generated probe documents through a real JSON Schema validator"
+  repo: dataset-registry
+  file: MEASUREMENTS.md
+
+registry_false_alarms:
+  value: "2 of 51"
+  label: "changes flagged as breaking that are safe, per direction"
+  method: "the same 51 cases; a widened and a narrowed regular expression, an added anyOf branch and an added multipleOf are flagged in both directions by design, and each truly breaks only one"
+  repo: dataset-registry
+  file: MEASUREMENTS.md
+
+registry_breach_delay:
+  value: "7.5 s"
+  label: "median freshness-breach detection delay at the 15 s default"
+  method: "200 datasets with a 60 s SLO whose deadlines fall evenly over two evaluator intervals; delay = detected_at \u2212 deadline as the registry recorded it"
+  repo: dataset-registry
+  file: MEASUREMENTS.md
+
+registry_lineage_5hop:
+  value: "2.34 ms"
+  label: "p50 for five hops downstream in a 10,000-dataset graph"
+  method: "100 queries from random roots in a 10-layer DAG with fan-in 3, issued one at a time; median of three runs; one hop costs the same at 100 and 10,000 datasets"
+  repo: dataset-registry
+  file: MEASUREMENTS.md
+
+dsl_type1_misattributed:
+  value: "15.1%"
+  label: "of a year's revenue on the wrong plan with a Type 1 account dimension"
+  method: "5,048 synthetic invoices (seed 7, Oct 2025 \u2013 Sep 2026) attributed by each account's current plan and compared with the plan the generator billed; $152,227 of $1,010,202"
+  repo: data-stack-lab
+  file: MEASUREMENTS.md
+
+dsl_type2_correct:
+  value: "5,048 of 5,048"
+  label: "invoices on the plan they billed, Type 2 dimension from dbt snapshots"
+  method: "as-of join of each invoice to the dim_account version in effect at billing, scored against the generator's truth file; the dimension was built from 13 monthly snapshot loads"
+  repo: data-stack-lab
+  file: MEASUREMENTS.md
+
+dsl_snapshot_coverage:
+  value: "533 of 570"
+  label: "account changes in a year seen by monthly snapshots"
+  method: "a change counts as seen if a snapshot version starts at its exact updated_at; signups excluded"
+  repo: data-stack-lab
+  file: MEASUREMENTS.md
+
+dsl_mutants:
+  value: "4 of 4"
+  label: "deliberate model breaks that failed the build"
+  method: "each break applied to a copy of the dbt project and built twice, with unit tests and with data tests only; recorded per engine and checked in CI"
+  repo: data-stack-lab
+  file: MEASUREMENTS.md
+
+dsl_backwards_loss:
+  value: "96.56%"
+  label: "of a month's events lost by high-water-mark loads backfilled newest day first, every run green"
+  method: "September 2026 backfilled through an Airflow 3.3 DAG, one run a day from the 30th back to the 1st; event-time and arrival-time watermark models scored against the 89,508 events that arrived"
+  repo: data-stack-lab
+  file: MEASUREMENTS.md
+
+dsl_default_daily_loaded:
+  value: "0 of 89,508"
+  label: "events loaded by a data-interval incremental model on Airflow 3's default @daily, in 30 successful runs"
+  method: "the same DAG on schedule \"@daily\", which Airflow 3.3 turns into a CronTriggerTimetable (create_cron_data_intervals = False); each run's data interval starts and ends at the instant it fires"
+  repo: data-stack-lab
+  file: MEASUREMENTS.md
+
+ddb_rebalance_errors:
+  value: "0 errors"
+  label: "while a worker joined and 7 shard groups moved under load"
+  method: "8 client threads for 600 s, 80% one-tenant reads and 20% single-row inserts against the Citus coordinator; every acknowledged write counted back afterwards"
+  repo: distributed-db-lab
+  file: MEASUREMENTS.md
+
+ddb_colocation_join:
+  value: "4.2\u00D7"
+  label: "faster join co-located than repartitioned"
+  method: "the same join over tenants 1\u2013400, both returning 617,895 rows; p50 of 7 runs, 1,251.7 ms co-located on (tenant_id, user_id) vs 5,206.0 ms against a copy distributed by user_id"
+  repo: distributed-db-lab
+  file: MEASUREMENTS.md
+
+ddb_skew_spread:
+  value: "2.36\u00D7 \u2192 1.10\u00D7"
+  label: "spread between the largest and smallest worker"
+  method: "node bytes after the default by_disk_size rebalance, then after isolating the largest tenant to its own shard and rebalancing with citus.rebalancer_by_disk_size_base_cost set to 0"
+  repo: distributed-db-lab
+  file: MEASUREMENTS.md
+
+ddb_tsdb_compression:
+  value: "17.0\u00D7"
+  label: "smaller after TimescaleDB columnstore"
+  method: "11 of 12 one-day chunks of 20.7M ticks, segmented by entity and metric; 2,785.5 MB \u2192 163.4 MB from hypertable_compression_stats"
+  repo: distributed-db-lab
+  file: MEASUREMENTS.md
+
+ddb_ch_replica_outage:
+  value: "40 of 40"
+  label: "inserts succeeded with a ClickHouse replica down"
+  method: "one replica of a 2-shard \u00D7 2-replica ReplicatedMergeTree cluster killed for 60.3 s while inserts and reads ran through the Distributed table"
+  repo: distributed-db-lab
+  file: MEASUREMENTS.md
+
+lab_scenarios:
+  value: "8 of 8"
+  label: "failover scenarios passed"
+  method: "my own test plan, executed on Docker with 8 CPU / 12.5 GB"
+  repo: db-failover-lab
+  file: RESULTS.md
+
+lab_pg_replay_lag:
+  value: "383 \u00B5s"
+  label: "replay lag measured on one host"
+  method: "a single pg_stat_replication reading with primary and hot standby on the same machine \u2014 loopback, no network, so it is a floor for the configuration rather than a latency anyone should expect across hosts"
+  repo: db-failover-lab
+  file: RESULTS.md
+
+lab_redis_promotion:
+  value: "~5 s"
+  label: "Redis Sentinel primary promotion"
+  method: "wall-clock from `docker stop` of the primary to a writable replica"
+  repo: db-failover-lab
+  file: RESULTS.md
+
+lab_patroni_promotion:
+  value: "10\u201320 s"
+  label: "observed promotion window after SIGKILL"
+  method: "SIGKILL of the Patroni leader, then patronictl polled every 10 s until the survivor showed as Leader \u2014 so 10 s is the measurement resolution, not the precision of the result"
+  repo: postgres-ha-lab
+  file: README.md
+
+lab_replica_rebuild:
+  value: "~5 s"
+  label: "replica rebuilt from backup"
+  method: "patronictl reinit; the pgBackRest restore itself logged 5,020 ms, then Patroni reported the replica created"
+  repo: postgres-ha-lab
+  file: README.md
+
+lab_pitr_recovery:
+  value: "5 of 5"
+  label: "rows recovered by point-in-time restore"
+  method: "dropped a table, restored to a timestamp taken before the DROP, counted rows against the pre-incident total"
+  repo: postgres-ha-lab
+  file: README.md
+
+rtml_leakage:
+  value: "0.363 vs 0.941"
+  label: "future AUC-PR, naive join against point-in-time join"
+  method: "same rows, labels, model and hyperparameters; only the training join differs. Scored on the two weeks after training with point-in-time features and true labels, on seeded synthetic payments (874,446 transactions, 0.80% fraud)"
+  repo: realtime-ml
+  file: MEASUREMENTS.md
+
+rtml_parity:
+  value: "99.905%"
+  label: "of 9,500 live requests served exactly the training features"
+  method: "features logged by the API compared with Feast's point-in-time join for the same transactions, on a live stack replaying a day in about seven minutes"
+  repo: realtime-ml
+  file: MEASUREMENTS.md
+
+deploy_bad_release_aborted:
+  value: "6 of 6"
+  label: "bad releases aborted by canary analysis"
+  method: "a release whose Envoy sidecar returns 500 on 30% of requests, under 20 req/s from k6; three runs with keep-alive clients, three with a new connection per request; Prometheus analysis every 15 s after a 30 s initial delay"
+  repo: platform-deployments
+  file: MEASUREMENTS.md
+
+deploy_good_release_failures:
+  value: "0 of 18,003"
+  label: "requests failed across three good canary releases"
+  method: "k6 at 20 req/s for five minutes per run, GET /healthz and GET /review-queue with a 10 s timeout; canary 20% \u2192 50% with 60 s pauses, background analysis and an evidence step before 100%"
+  repo: platform-deployments
+  file: MEASUREMENTS.md
+

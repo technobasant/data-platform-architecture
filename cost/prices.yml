@@ -1,0 +1,79 @@
+# List prices used by the cost model. On-demand / pay-as-you-go, USD, AWS us-east-1
+# unless stated (BigQuery: US multi-region). Each was read on the vendor's own pricing
+# page on the date below; the quote is what the page said. Re-check before relying on
+# any of them: prices change, and contracts discount them.
+retrieved: "2026-10-18"
+
+snowflake:
+  credit_standard:
+    value: 2.00
+    unit: USD per credit
+    source: https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf
+    quote: "Table 2(a): On Demand Platform Credit Pricing … AWS US East (Northern Virginia) $2.00 $3.00 $4.00 $6.00"
+  credit_enterprise:
+    value: 3.00
+    unit: USD per credit
+    source: https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf
+    quote: "Table 2(a): On Demand Platform Credit Pricing … AWS US East (Northern Virginia) $2.00 $3.00 $4.00 $6.00"
+    note: the columns are Standard, Enterprise, Business Critical and VPS
+  medium_warehouse_credits_per_hour:
+    value: 4
+    unit: credits per hour (Gen1)
+    source: https://docs.snowflake.com/en/user-guide/warehouses-overview
+    quote: "Credits / hour (Gen1 warehouses) … Medium 4"
+  storage_per_tb_month:
+    value: 23.00
+    unit: USD per TB-month
+    source: https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf
+    quote: "Table 3(a) On Demand Storage Pricing (TB/mo) … US East (Northern Virginia) $23.00"
+
+databricks:
+  sql_serverless_per_dbu:
+    value: 0.70
+    unit: USD per DBU, cloud instances included
+    source: https://www.databricks.com/product/pricing/databricks-sql
+    quote: "SQL Serverless … $0.70 / DBU *Includes cloud instance cost"
+  medium_warehouse_dbu_per_hour:
+    value: 24
+    unit: DBU per hour
+    source: https://www.databricks.com/product/pricing/product-pricing/instance-types
+    quote: "Medium | 24.000DBU/hr | $16.8/hr (SQL Serverless, Premium, US East (N. Virginia))"
+
+bigquery:
+  on_demand_per_tib:
+    value: 6.25
+    unit: USD per TiB scanned
+    source: https://cloud.google.com/bigquery/pricing
+    quote: "1 tebibyte and above $6.25 / 1 tebibyte … The first 1 TiB per month is free."
+  on_demand_free_tib_per_month:
+    value: 1
+    unit: TiB per month
+    source: https://cloud.google.com/bigquery/pricing
+    quote: "0 tebibyte to 1 tebibyte Free per 1 month / account"
+  active_physical_storage_per_gib_month:
+    value: 0.04
+    unit: USD per GiB-month
+    source: https://cloud.google.com/bigquery/pricing
+    note: summarised from the page's storage table, physical storage, active; long-term physical is $0.02
+
+aws:
+  s3_standard_per_gb_month:
+    value: 0.023
+    unit: USD per GB-month, first 50 TB
+    source: https://aws.amazon.com/s3/pricing/
+    quote: "First 50 TB / Month $0.023 per GB"
+  athena_per_tb_scanned:
+    value: 5.00
+    unit: USD per TB scanned
+    source: https://aws.amazon.com/athena/pricing/
+    quote: "Athena Queries … 'price': '5.0000000000' (US East (N. Virginia))"
+  ec2_r7i_2xlarge_per_hour:
+    value: 0.5292
+    unit: USD per hour, Linux on-demand
+    source: https://aws.amazon.com/ec2/pricing/on-demand/
+    quote: "'price': '0.5292000000' … 'Instance Type': 'r7i.2xlarge', 'Memory': '64 GiB'"
+  ec2_m7i_2xlarge_per_hour:
+    value: 0.4032
+    unit: USD per hour, Linux on-demand
+    source: https://aws.amazon.com/ec2/pricing/on-demand/
+    quote: "'price': '0.4032000000' … 'Instance Type': 'm7i.2xlarge', 'Memory': '32 GiB'"
