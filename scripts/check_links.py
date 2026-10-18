@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import re
 import sys
+import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -38,12 +39,22 @@ def links() -> tuple[list[tuple[Path, str]], set[str]]:
     return relative, absolute
 
 
-def fetch(url: str) -> tuple[str, int | str]:
-    try:
-        r = httpx.get(url, follow_redirects=True, timeout=30, headers={"User-Agent": "link-check"})
-        return url, r.status_code
-    except httpx.HTTPError as exc:
-        return url, type(exc).__name__
+TRANSIENT = {429, 500, 502, 503, 504}
+
+
+def fetch(url: str, attempts: int = 4) -> tuple[str, int | str]:
+    """GET a URL; retry rate limits, server errors and timeouts with backoff. A 404 is final."""
+    result: int | str = "not tried"
+    for attempt in range(attempts):
+        try:
+            r = httpx.get(url, follow_redirects=True, timeout=30, headers={"User-Agent": "link-check"})
+            result = r.status_code
+            if result not in TRANSIENT:
+                return url, result
+        except httpx.HTTPError as exc:
+            result = type(exc).__name__
+        time.sleep(2**attempt)
+    return url, result
 
 
 def main() -> None:
