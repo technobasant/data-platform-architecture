@@ -11,41 +11,39 @@ The business is the same fictional B2B subscription product used in [data-stack-
 ```mermaid
 flowchart LR
   subgraph sources[Sources]
-    app[(App database<br/>Postgres + Citus,<br/>per-tenant product data)]
+    app[(App database<br/>Postgres + Citus)]
     events[Product events]
-    vendor[Vendor exports<br/>billing, CRM]
+    vendor[Vendor exports]
   end
   subgraph ingest[Ingest]
     kafka[[Kafka<br/>Avro contracts]]
     flink[Flink<br/>exactly-once]
-    landing[/Landing files<br/>by arrival day/]
     airflow[Airflow<br/>per data interval]
   end
-  subgraph store[System of record]
-    iceberg[(Iceberg tables<br/>object storage)]
-    catalog{{REST catalog<br/>scoped credentials}}
+  subgraph record[System of record]
+    iceberg[(Iceberg tables<br/>REST catalog,<br/>scoped credentials)]
   end
-  subgraph transform[Transform]
-    dbt[dbt<br/>staging, Type 2 dims, facts]
+  subgraph modelling[Transform]
+    dbt[dbt<br/>staging, Type 2<br/>dimensions, facts]
   end
   subgraph serve[Serve]
     ch[(ClickHouse<br/>customer-facing usage)]
-    sql[Trino or a managed warehouse<br/>analysts, finance]
-    fs[(Feature store<br/>models)]
+    sql[Trino or a managed<br/>warehouse]
+    fs[(Feature store)]
   end
   app -- CDC --> kafka
   events --> kafka
-  vendor --> landing --> airflow --> iceberg
-  kafka --> flink --> iceberg
+  vendor -- files --> airflow
+  kafka --> flink
+  flink --> iceberg
+  airflow --> iceberg
   flink --> ch
-  iceberg --- catalog
-  iceberg --> dbt --> iceberg
+  iceberg <--> dbt
   iceberg --> sql
   iceberg --> fs
-  registry[Registry: owners, contracts,<br/>consumers, freshness SLOs] -.-> kafka
-  registry -.-> dbt
-  probes[Freshness probes,<br/>burn-rate alerts] -.-> ch
 ```
+
+Across all of it: a registry of owners, contracts, consumers and freshness objectives; freshness probes with burn-rate alerts; and GitOps releases with canary analysis.
 
 ## Principles
 
@@ -95,7 +93,7 @@ The targets, the reasoning behind each, and what is not yet measured are in [doc
 
 ## Reading order
 
-| | |
+| Document | What it covers |
 |---|---|
 | [docs/context.md](docs/context.md) | the business, its consumers, and the workload tiers every number assumes |
 | [docs/architecture.md](docs/architecture.md) | the views: data flows, zones, deployment, and how each part fails |
