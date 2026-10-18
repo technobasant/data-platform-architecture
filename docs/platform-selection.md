@@ -54,7 +54,7 @@ List prices retrieved 2026-10-18 ([`cost/prices.yml`](../cost/prices.yml)).
 
 - **The break-even table is the robust result.** It depends only on list prices. If a typical hour of your medium-sized warehouse scans less than about 1.4–3 TB, per-scan pricing is cheaper; above that, paying for the hour is.
 - **The tier totals depend on one assumption** that nothing here measured: how much data an hour of compute scans. Under the defaults, an hour scans well under a terabyte, so per-scan engines come out far cheaper at every tier. A workload of heavy full scans would reverse that.
-- **Per-scan pricing punishes the worst query.** At the large tier, one query that ignores partitioning and reads 23 TB of history costs about $130 on BigQuery on-demand, every time it runs. Time-billed warehouses cap that cost and charge for idle time instead.
+- **Per-scan pricing punishes the worst query.** At the large tier, one query that ignores partitioning and reads the whole event history, about 18 TB, costs about $101 on BigQuery on-demand, every time it runs. Time-billed warehouses cap that cost and charge for idle time instead.
 - **Trino on EC2 is cheap only on the bill.** The line covers four workers for the active hours and one always-on coordinator. It leaves out the catalog service, table maintenance, upgrades and the engineers who do them.
 
 ### Not modelled
