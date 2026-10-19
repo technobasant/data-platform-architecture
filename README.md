@@ -130,14 +130,18 @@ renamed-column fixture.
 
 **The baseline** ([2. Current state](docs/02-current-state.md)): Docker, two Postgres
 containers, 2 vCPU and 4 GB each; load as [`baseline/README.md`](baseline/README.md) says,
-then `uv sync --group baseline && uv run python baseline/run.py --rate 100` (about 30
-minutes).
+then `uv sync --group baseline && uv run python baseline/run.py --rate 12 --out
+results/baseline-brief-rate.json` (about 30 minutes; `--rate 100` is the stress run in
+`results/baseline.json`).
 
 **The proof of concept** ([11. Proof of concept](docs/11-proof-of-concept.md)):
 `uv sync --group poc`; `DATABRICKS_HOST`, `DATABRICKS_TOKEN` and `DATABRICKS_HTTP_PATH` for
 a warehouse, with rights to create schemas in the `workspace` catalog and tag policies;
-commands in [`poc/databricks/run.py`](poc/databricks/run.py)'s and
-[`poc/databricks/workload.py`](poc/databricks/workload.py)'s docstrings.
+commands in the docstrings of [`poc/databricks/run.py`](poc/databricks/run.py) (governance
+and erasure), [`poc/databricks/workload.py`](poc/databricks/workload.py) (speed and cost:
+`load speed day`, then `bill` a few hours later, once the billing table has the hour) and
+[`poc/databricks/terraform.py`](poc/databricks/terraform.py) (operability; needs OpenTofu or
+Terraform).
 
 ## Licence
 
