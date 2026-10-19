@@ -39,6 +39,12 @@ semantics that the run matched exactly.
   duplicates and corrections resolve there.
 - Each file's row count is checked against the producer's manifest before the merge, so a
   truncated file stops the day instead of waiting for its correction.
+- Landed files are immutable and short-lived: an S3 lifecycle rule expires each file 30 days
+  after landing. The raw tables, not the files, keep the history; a replay more than 30 days
+  old is read from the raw tables, never from a file, because the file is gone by then.
+  Stripe's files carry a billing email, so the 30-day window also limits how long that
+  column sits in a file rather than a table it can be erased by key from
+  ([0012](0012-erasure.md)).
 
 ## Consequences
 
@@ -46,8 +52,11 @@ semantics that the run matched exactly.
   producer that cannot is loaded with the platform's re-read option (Auto Loader's
   `allowOverwrites`) and the same merge, at the cost of re-reading whole files.
 - Raw tables keep every delivery, including duplicates, for audit; they are expired after
-  the retention window ([0012](0012-erasure.md)).
+  the retention window ([0012](0012-erasure.md)). The files themselves are expired after 30
+  days regardless of that window, since the tables already hold what they held.
 - Two writes per row instead of one.
+- A backfill or a re-read of a file older than 30 days is not possible; it is rebuilt from
+  the raw tables instead ([0015](0015-restore-points.md)).
 
 ## Revisit when
 

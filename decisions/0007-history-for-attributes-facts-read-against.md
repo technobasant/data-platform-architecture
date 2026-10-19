@@ -1,4 +1,4 @@
-# 0007. A Kimball star, with Type 2 history for every attribute facts are read against
+# 0007. A Kimball star, with Type 2 history for every attribute a fact is reported by
 
 - Status: Accepted
 - Date: 2026-10-19
@@ -24,7 +24,7 @@ people who write SQL; the BI tool and, in stage 3, the assistant read the result
 | Report straight off the replicated tables | ✘ current state only | ◐ | ✔ |
 | One wide table per report | ◐ if built with history | ✔ | ✘ grows with every report |
 | Data Vault, then marts | ✔ | ✘ needs the marts anyway | ✘ |
-| **Kimball star: Type 2 dimensions for attributes facts are read against, facts at a declared grain** | ✔ | ✔ | ✔ |
+| **Kimball star: Type 2 dimensions for every attribute a fact is reported by, facts at a declared grain** | ✔ | ✔ | ✔ |
 
 ## Decision
 

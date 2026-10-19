@@ -114,6 +114,14 @@ dsl_spark_static_overwrite:
   repo: data-stack-lab
   file: MEASUREMENTS.md
 
+dsl_volume_band_published:
+  value: "1,040"
+  label: "events withheld when 27 September was promoted, the shortfall inside the accepted 30% volume band"
+  method: "the day-level check compared 27 September's event count with recent accepted days; the shortfall sat inside the accepted 30% band, so the block policy promoted the day instead of holding it"
+  repo: data-stack-lab
+  file: MEASUREMENTS.md
+  check: sibling
+
 dsl_databricks_corrected_missed:
   value: "1,638"
   label: "events never loaded by COPY INTO and Auto Loader after a truncated file was corrected under the same name"

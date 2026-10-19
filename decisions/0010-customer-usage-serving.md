@@ -13,18 +13,29 @@ current and is one of the loads [0001](0001-analytics-off-the-product-database.m
 away. A batch analytical platform is minutes to a day behind, and its warehouses are sized
 for analysts, not for thousands of small queries from the product.
 
+The real driver is growth, not today's traffic. At 36 months the product's `events` table
+holds about 450 million rows for its own 90 days (5 million a day); customers ask for usage
+beyond 90 days, which the primary does not keep at all. Reading the primary meets Q12 today
+([3. Requirements](../docs/03-requirements.md)), and stops being able to answer the question
+the moment a customer asks about day 91. Stage 3's assistant needs the same per-account
+query path the usage page does
+([AI architecture](https://github.com/technobasant/ai-platform-architecture)), so the store
+built here is not only for the usage page.
+
 ## Decision drivers
 
 - Q12: under 60 s, p99.
 - Q11: tenant isolation on every path.
 - Q1: the product's database is not the analytics store.
+- Growth: the primary keeps only 90 days, and usage beyond that is asked for already.
 - Cost per query at the product's request rate.
+- Stage 3: the assistant needs the same per-account query path.
 
 ## Options
 
 | | Q12 freshness | Q11 isolation | Cost at product request rates | Systems to run |
 |---|---|---|---|---|
-| Keep reading the primary | ✔ | ◐ application code | ✔ | ✔ |
+| Keep reading the primary | ✔ today; ✘ at 36 months, once a customer asks past the primary's own 90 days | ◐ application code | ✔ | ✔ |
 | Query the analytical platform from the product | ✘ minutes behind | ◐ row filters | ✘ a warehouse awake all day | ✔ |
 | Pre-computed per-account tables pushed back to Postgres | ✘ batch | ✔ | ✔ | ◐ |
 | **Events streamed into a real-time OLAP store keyed by account** (managed ClickHouse, or the platform's own low-latency option) | ✔ | ✔ account first in every key | ✔ | ✘ a stream and a store |

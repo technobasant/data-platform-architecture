@@ -48,10 +48,12 @@ of [0005](0005-databricks-or-snowflake.md)); the Databricks half is measured
 - Restores are limited to the history window: 7 days is the floor set by Q9, and the
   ceiling is what erasure leaves.
 - On Databricks, a `DELETE` alone erases nothing: with deletion vectors it rewrites no file,
-  and every earlier version returns the rows. The erasure job deletes, runs
-  `REORG … APPLY (PURGE)`, and runs `VACUUM` once the table's retention has passed; after
-  that, time travel to the earlier versions is refused. At the default 7-day retention and a
-  weekly job, a request is unrecoverable within 14 days.
+  and every earlier version returns the rows. The weekly erasure job deletes and runs
+  `REORG … APPLY (PURGE)`; `VACUUM` runs daily, on its own schedule, and once the table's
+  retention has passed it removes the files a purge left behind, after which time travel to
+  the earlier versions is refused. At the default 7-day retention, a request is
+  unrecoverable within 15 days at the most: 7 days to the weekly job, 7 days of retention,
+  and at most 1 day more for the daily `VACUUM` to run.
 - Transient or managed-retention table types may be needed for raw layers on Snowflake to
   avoid Fail-safe; the Snowflake half of the proof of concept decides.
 - Backups outside the platform (exports, the old S3 dumps of deleted events) are in scope,

@@ -35,8 +35,8 @@ priced as the control, and score them:
 
 | # | Criterion | Weight | How it is measured | Must pass |
 |---|---|---:|---|---|
-| 1 | Correct numbers | gate | the dbt project builds unchanged on both; revenue by plan reconciles to the Stripe export to the cent | yes |
-| 2 | Ingestion | 20 | the [ten-day delivery test](https://github.com/technobasant/data-stack-lab/tree/main/databricks) and CDC from a Postgres replica: events missing, duplicated, and the effort to make both zero | zero missing, zero duplicated |
+| 1 | Correct numbers | gate | the dbt project builds with no change to model logic on both; revenue by plan reconciles to the Stripe export to the cent | yes |
+| 2 | Ingestion | 20 | the [ten-day delivery test](https://github.com/technobasant/data-stack-lab/tree/main/databricks) and CDC from the Postgres primary: events missing, duplicated, and the effort to make both zero | zero missing, zero duplicated |
 | 3 | Governance | 20 | a row filter per account and a mask on personal columns, attacked by the isolation tests; the audit query for Q13 | no cross-account row |
 | 4 | Erasure | 15 | time from delete to unrecoverable, through time travel and any fail-safe; the proof query | inside 30 days |
 | 5 | Cost | 20 | credits or DBUs for a week of the daily build and the BI query set, from the platform's billing tables, projected to 12 and 36 months | under budget at 36 months |
