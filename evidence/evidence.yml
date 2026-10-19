@@ -1,6 +1,13 @@
 # Every figure the architecture cites, with the file it was measured in.
 # Values and methods are the same as on basantbhattarai.com.np (_data/metrics.yml);
 # scripts/build.py writes them into the decision records and EVIDENCE.md.
+#
+# Each entry also carries a `check`, saying how `scripts/build.py --check` verifies the
+# value today: {json, expr} re-derives it from a JSON file in this repo's results/ and
+# fails CI if it drifts; "sibling" means it is measured and verified in another repo's own
+# CI, not re-checked here; {pending, reason} means it is not yet machine-checked, with why
+# (figures still being re-measured); {job} means a named job in this repo's own CI verifies
+# it directly, not this script. See scripts/build.py's module docstring for the exact rules.
 
 lakehouse_partition_prune:
   value: "88 ms"
@@ -8,6 +15,9 @@ lakehouse_partition_prune:
   method: "median of 7 server-side runs from system.runtime.queries, after 2 warm-ups, on a month-partitioned Iceberg table"
   repo: lakehouse-lab
   file: MEASUREMENTS.md
+  relation: indirect
+  note: "partition pruning measured by Trino reading Iceberg tables in lakehouse-lab, a second engine reading the open format, not UniForm itself"
+  check: sibling
 
 lakehouse_compaction:
   value: "20 \u2192 1"
@@ -15,6 +25,9 @@ lakehouse_compaction:
   method: "twenty 5,000-row inserts into one partition, then ALTER TABLE EXECUTE optimize, counted from the $files metadata table"
   repo: lakehouse-lab
   file: MEASUREMENTS.md
+  relation: indirect
+  note: "compaction measured on the self-run lakehouse; shows what running the rejected option (a self-run lakehouse) takes, not a property of the managed platform chosen here"
+  check: sibling
 
 lakehouse_rollback:
   value: "909,968"
@@ -22,6 +35,9 @@ lakehouse_rollback:
   method: "an over-broad DELETE (a WHERE reaching years further back than intended), then ALTER TABLE EXECUTE rollback_to_snapshot, counted against the pre-incident total"
   repo: lakehouse-lab
   file: MEASUREMENTS.md
+  relation: indirect
+  note: "rollback measured on the self-run Iceberg lakehouse in lakehouse-lab, not on the managed platform's own restore feature"
+  check: sibling
 
 stream_failure_exactness:
   value: "9 of 9"
@@ -29,6 +45,7 @@ stream_failure_exactness:
   method: "three controller-broker kills, three TaskManager kills and three 150 s stalls under load; Kafka, ClickHouse, Iceberg and the dead-letter topic reconciled against the generator's ledger by sequence number"
   repo: streaming-platform
   file: MEASUREMENTS.md
+  check: sibling
 
 stream_window_undercount:
   value: "59.8%"
@@ -36,6 +53,7 @@ stream_window_undercount:
   method: "118,229 of 197,749 on-time events counted in their 10 s windows in the worst of three broker-kill runs; the rest went to the late side output because catch-up reordered partitions past the 5 s watermark bound"
   repo: streaming-platform
   file: MEASUREMENTS.md
+  check: sibling
 
 stream_freshness_p99:
   value: "6.1 s"
@@ -43,6 +61,7 @@ stream_freshness_p99:
   method: "ClickHouse ingest time minus event time for every on-time event, median of three 90 s runs; the floor is the 5 s checkpoint interval at which Flink's transactions commit"
   repo: streaming-platform
   file: MEASUREMENTS.md
+  check: sibling
 
 registry_false_negatives:
   value: "0"
@@ -50,6 +69,7 @@ registry_false_negatives:
   method: "51 hand-labelled JSON Schema changes, each scored under BACKWARD, FORWARD and FULL; every label cross-checked by an oracle that ran 8,092 generated probe documents through a real JSON Schema validator"
   repo: dataset-registry
   file: MEASUREMENTS.md
+  check: sibling
 
 registry_false_alarms:
   value: "2 of 51"
@@ -57,6 +77,7 @@ registry_false_alarms:
   method: "the same 51 cases; a widened and a narrowed regular expression, an added anyOf branch and an added multipleOf are flagged in both directions by design, and each truly breaks only one"
   repo: dataset-registry
   file: MEASUREMENTS.md
+  check: sibling
 
 dsl_type1_misattributed:
   value: "15.1%"
@@ -64,6 +85,7 @@ dsl_type1_misattributed:
   method: "5,048 synthetic invoices (seed 7, Oct 2025 \u2013 Sep 2026) attributed by each account's current plan and compared with the plan the generator billed; $152,227 of $1,010,202"
   repo: data-stack-lab
   file: MEASUREMENTS.md
+  check: sibling
 
 dsl_type2_correct:
   value: "5,048 of 5,048"
@@ -71,6 +93,7 @@ dsl_type2_correct:
   method: "as-of join of each invoice to the dim_account version in effect at billing, scored against the generator's truth file; the dimension was built from 13 monthly snapshot loads"
   repo: data-stack-lab
   file: MEASUREMENTS.md
+  check: sibling
 
 dsl_snapshot_coverage:
   value: "533 of 570"
@@ -78,6 +101,7 @@ dsl_snapshot_coverage:
   method: "a change counts as seen if a snapshot version starts at its exact updated_at; signups excluded"
   repo: data-stack-lab
   file: MEASUREMENTS.md
+  check: sibling
 
 dsl_mutants:
   value: "4 of 4"
@@ -85,6 +109,7 @@ dsl_mutants:
   method: "each break applied to a copy of the dbt project and built twice, with unit tests and with data tests only; recorded per engine and checked in CI"
   repo: data-stack-lab
   file: MEASUREMENTS.md
+  check: sibling
 
 dsl_backwards_loss:
   value: "96.56%"
@@ -92,6 +117,7 @@ dsl_backwards_loss:
   method: "September 2026 backfilled through an Airflow 3.3 DAG, one run a day from the 30th back to the 1st; event-time and arrival-time watermark models scored against the 89,508 events that arrived"
   repo: data-stack-lab
   file: MEASUREMENTS.md
+  check: sibling
 
 dsl_default_daily_loaded:
   value: "0 of 89,508"
@@ -99,6 +125,9 @@ dsl_default_daily_loaded:
   method: "the same DAG on schedule \"@daily\", which Airflow 3.3 turns into a CronTriggerTimetable (create_cron_data_intervals = False); each run's data interval starts and ends at the instant it fires"
   repo: data-stack-lab
   file: MEASUREMENTS.md
+  relation: indirect
+  note: "shows Airflow 3's own default scheduling behaviour on a separate orchestrator, the rejected alternative, not a property of the platform's own jobs this decision chooses"
+  check: sibling
 
 dsl_quality_block:
   value: "0 of 3,198"
@@ -106,6 +135,7 @@ dsl_quality_block:
   method: "September delivered daily with nine injected defects and checked in dbt (contract, row tests, batch tests against seven accepted days, manifest control totals); every delivered row labelled good or bad by its defect"
   repo: data-stack-lab
   file: MEASUREMENTS.md
+  check: sibling
 
 dsl_spark_static_overwrite:
   value: "1 of 365"
@@ -113,6 +143,7 @@ dsl_spark_static_overwrite:
   method: "PySpark 4.2.0, a 365-day rollup written with partitionBy(activity_date); one day recomputed and written back with mode(\"overwrite\"); dynamic partitionOverwriteMode kept all 365"
   repo: data-stack-lab
   file: MEASUREMENTS.md
+  check: sibling
 
 dsl_volume_band_published:
   value: "1,040"
@@ -128,6 +159,7 @@ dsl_databricks_corrected_missed:
   method: "Databricks Free Edition (Databricks SQL 2026.39): ten days of event files (29,095 events) delivered into a Unity Catalog volume and loaded six ways after each delivery; the counts matched a prediction made from the documented semantics"
   repo: data-stack-lab
   file: MEASUREMENTS.md
+  check: sibling
 
 dsl_delta_restore:
   value: "365 of 365"
@@ -135,6 +167,7 @@ dsl_delta_restore:
   method: "Databricks SQL 2026.39 on Free Edition: a 365-day rollup (333,082 rows) as a Delta table partitioned by day; 15 September rewritten with INSERT OVERWRITE, then RESTORE TABLE TO VERSION AS OF 0"
   repo: data-stack-lab
   file: MEASUREMENTS.md
+  check: sibling
 
 baseline_bi_on_primary:
   value: "93 → 794 ms"
@@ -142,6 +175,7 @@ baseline_bi_on_primary:
   method: "a lab copy of the client's database (Postgres 17, 2 vCPU and 4 GB, 31.5 million events); the product's request at 100 a second from pgbench; two analysts running the four BI queries in turn; five minutes per scenario after a checkpoint. Requests over 100 ms went from 4.8% to 23.0%"
   repo: data-platform-architecture
   file: results/baseline.json
+  check: {pending: true, reason: "the baseline is being re-measured"}
 
 baseline_replica_long_reports:
   value: "3 of 412"
@@ -149,6 +183,7 @@ baseline_replica_long_reports:
   method: "the same lab, reports on a streaming replica with the default max_standby_streaming_delay of 30 s and hot_standby_feedback off, while the product updated users at 100 requests a second; analysts retried at once"
   repo: data-platform-architecture
   file: results/baseline.json
+  check: {pending: true, reason: "the baseline is being re-measured"}
 
 baseline_replica_feedback:
   value: "20 of 20"
@@ -156,6 +191,7 @@ baseline_replica_feedback:
   method: "the same lab and load; the cost, cleanup on the primary held back for as long as the longest report, was not visible in a five-minute window with reports of one to two minutes"
   repo: data-platform-architecture
   file: results/baseline.json
+  check: {pending: true, reason: "the baseline is being re-measured"}
 
 dpa_tag_masking:
   value: "3 of 3"
@@ -163,6 +199,7 @@ dpa_tag_masking:
   method: "Databricks SQL 2026.39 on Free Edition: a governed tag `class`; the product contract's four tables created and all 26 columns tagged from the contract; one schema-level column-mask policy matching has_tag_value('class', 'personal'); every non-personal column stayed readable"
   repo: data-platform-architecture
   file: results/poc-databricks.json
+  check: {json: results/poc-databricks.json, expr: 'str(d["masking"]["masked"]) + " of " + str(len(d["masking"]["checked"]))'}
 
 dpa_row_filter_identity:
   value: "1 of 5"
@@ -170,6 +207,7 @@ dpa_row_filter_identity:
   method: "a row filter on account_id that admits the accounts mapped to current_user() in a mapping table; moving the mapping moved the scope to the other account"
   repo: data-platform-architecture
   file: results/poc-databricks.json
+  check: {json: results/poc-databricks.json, expr: 'str(d["row_filter"]["mapped_to_2"]["accounts_visible"]) + " of " + str(d["row_filter"]["accounts_in_table"])'}
 
 dpa_session_variable_filter:
   value: "UNRESOLVED_COLUMN"
@@ -177,6 +215,7 @@ dpa_session_variable_filter:
   method: "DECLARE VARIABLE request_account, then CREATE FUNCTION … RETURN account_id = request_account, on Databricks SQL 2026.39"
   repo: data-platform-architecture
   file: results/poc-databricks.json
+  check: {json: results/poc-databricks.json, expr: 'd["row_filter"]["filter_on_a_session_variable"].split(".")[0]'}
 
 dsl_dbt_databricks:
   value: "11, 46, 3"
@@ -184,6 +223,7 @@ dsl_dbt_databricks:
   method: "dbt-databricks 1.12.7 on Databricks SQL 2026.39: the 13 monthly extracts replayed through dbt snapshot, then dbt build; measure.py's revenue questions asked of the Databricks marts with the same SQL. The one change: contract types varchar became string, because Databricks refuses VARCHAR without a length"
   repo: data-stack-lab
   file: results/dbt-databricks.json
+  check: sibling
 
 dpa_erasure_time_travel:
   value: "100 of 100"
@@ -191,6 +231,15 @@ dpa_erasure_time_travel:
   method: "Databricks SQL 2026.39 on Free Edition: a Delta table with deletion vectors; DELETE wrote 8 deletion vectors and rewrote 0 files; REORG APPLY (PURGE) rewrote 8 files; VERSION AS OF the version before the delete still returned every row, also after VACUUM at the default 7-day retention"
   repo: data-platform-architecture
   file: results/poc-databricks.json
+  check: {json: results/poc-databricks.json, expr: 'str(d["erasure"]["after_delete"]["time_travel_rows"]) + " of " + str(d["erasure"]["rows_of_the_user"])'}
+
+dpa_contract_breaking:
+  value: "reported as breaking"
+  label: "what `datacontract breaking` says for the product contract with users.email renamed; an unchanged copy is not reported as breaking"
+  method: "the contracts CI job runs datacontract breaking original renamed, where renamed is the product contract with only users.email renamed to email_address (tests/fixtures/product-database-renamed-column.odcs.yaml); the job fails unless that command reports the change as breaking, and also fails unless datacontract breaking original original reports no breaking change"
+  repo: data-platform-architecture
+  file: .github/workflows/ci.yml
+  check: {job: contracts}
 
 dpa_erasure_after_retention:
   value: "refused"
@@ -198,3 +247,4 @@ dpa_erasure_after_retention:
   method: "the table's delta.deletedFileRetentionDuration set to 1 hour for the test, VACUUM run after it passed; Databricks answered DELTA_UNSUPPORTED_TIME_TRAVEL_BEYOND_DELETED_FILE_RETENTION_DURATION. VACUUM RETAIN 0 HOURS was refused (DELTA_VACUUM_RETENTION_PERIOD_TOO_SHORT)"
   repo: data-platform-architecture
   file: results/poc-databricks.json
+  check: {json: results/poc-databricks.json, expr: '"refused" if d["erasure"]["time_travel_after_retention"] == "DELTA_UNSUPPORTED_TIME_TRAVEL_BEYOND_DELETED_FILE_RETENTION_DURATION" else d["erasure"]["time_travel_after_retention"]'}

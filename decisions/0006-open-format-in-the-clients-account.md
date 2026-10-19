@@ -51,6 +51,6 @@ The proof of concept shows a requirement that cannot be met on the open format.
 ## Evidence
 
 <!-- evidence:start -->
-- **909,968** rows recovered by snapshot rollback. An over-broad DELETE (a WHERE reaching years further back than intended), then ALTER TABLE EXECUTE rollback_to_snapshot, counted against the pre-incident total. Source: [lakehouse-lab/MEASUREMENTS.md](https://github.com/technobasant/lakehouse-lab/blob/main/MEASUREMENTS.md)
-- **88 ms** one-month predicate over 1.5M Iceberg rows. Median of 7 server-side runs from system.runtime.queries, after 2 warm-ups, on a month-partitioned Iceberg table. Source: [lakehouse-lab/MEASUREMENTS.md](https://github.com/technobasant/lakehouse-lab/blob/main/MEASUREMENTS.md)
+- Indirect: rollback measured on the self-run Iceberg lakehouse in lakehouse-lab, not on the managed platform's own restore feature. **909,968** rows recovered by snapshot rollback. An over-broad DELETE (a WHERE reaching years further back than intended), then ALTER TABLE EXECUTE rollback_to_snapshot, counted against the pre-incident total. Source: [lakehouse-lab/MEASUREMENTS.md](https://github.com/technobasant/lakehouse-lab/blob/main/MEASUREMENTS.md)
+- Indirect: partition pruning measured by Trino reading Iceberg tables in lakehouse-lab, a second engine reading the open format, not UniForm itself. **88 ms** one-month predicate over 1.5M Iceberg rows. Median of 7 server-side runs from system.runtime.queries, after 2 warm-ups, on a month-partitioned Iceberg table. Source: [lakehouse-lab/MEASUREMENTS.md](https://github.com/technobasant/lakehouse-lab/blob/main/MEASUREMENTS.md)
 <!-- evidence:end -->

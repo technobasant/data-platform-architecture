@@ -55,6 +55,6 @@ past eight with someone who wants to own a query engine.
 ## Evidence
 
 <!-- evidence:start -->
-- **909,968** rows recovered by snapshot rollback. An over-broad DELETE (a WHERE reaching years further back than intended), then ALTER TABLE EXECUTE rollback_to_snapshot, counted against the pre-incident total. Source: [lakehouse-lab/MEASUREMENTS.md](https://github.com/technobasant/lakehouse-lab/blob/main/MEASUREMENTS.md)
-- **20 → 1** files merged per partition by optimize. Twenty 5,000-row inserts into one partition, then ALTER TABLE EXECUTE optimize, counted from the $files metadata table. Source: [lakehouse-lab/MEASUREMENTS.md](https://github.com/technobasant/lakehouse-lab/blob/main/MEASUREMENTS.md)
+- Indirect: rollback measured on the self-run Iceberg lakehouse in lakehouse-lab, not on the managed platform's own restore feature. **909,968** rows recovered by snapshot rollback. An over-broad DELETE (a WHERE reaching years further back than intended), then ALTER TABLE EXECUTE rollback_to_snapshot, counted against the pre-incident total. Source: [lakehouse-lab/MEASUREMENTS.md](https://github.com/technobasant/lakehouse-lab/blob/main/MEASUREMENTS.md)
+- Indirect: compaction measured on the self-run lakehouse; shows what running the rejected option (a self-run lakehouse) takes, not a property of the managed platform chosen here. **20 → 1** files merged per partition by optimize. Twenty 5,000-row inserts into one partition, then ALTER TABLE EXECUTE optimize, counted from the $files metadata table. Source: [lakehouse-lab/MEASUREMENTS.md](https://github.com/technobasant/lakehouse-lab/blob/main/MEASUREMENTS.md)
 <!-- evidence:end -->

@@ -3,7 +3,7 @@
 - Status: Accepted
 - Date: 2026-10-19
 - Deciders: CTO, data lead; proposed by the architect
-- Evidence: registry_false_negatives, registry_false_alarms
+- Evidence: dpa_contract_breaking, registry_false_negatives, registry_false_alarms
 
 ## Context
 
@@ -50,6 +50,7 @@ ingestion instead, and a breach quarantines the file.
 ## Evidence
 
 <!-- evidence:start -->
+- **reported as breaking** what `datacontract breaking` says for the product contract with users.email renamed; an unchanged copy is not reported as breaking. The contracts CI job runs datacontract breaking original renamed, where renamed is the product contract with only users.email renamed to email_address (tests/fixtures/product-database-renamed-column.odcs.yaml); the job fails unless that command reports the change as breaking, and also fails unless datacontract breaking original original reports no breaking change. Source: [data-platform-architecture/.github/workflows/ci.yml](https://github.com/technobasant/data-platform-architecture/blob/main/.github/workflows/ci.yml)
 - **0** breaking schema changes passed as safe, in any mode. 51 hand-labelled JSON Schema changes, each scored under BACKWARD, FORWARD and FULL; every label cross-checked by an oracle that ran 8,092 generated probe documents through a real JSON Schema validator. Source: [dataset-registry/MEASUREMENTS.md](https://github.com/technobasant/dataset-registry/blob/main/MEASUREMENTS.md)
 - **2 of 51** changes flagged as breaking that are safe, per direction. The same 51 cases; a widened and a narrowed regular expression, an added anyOf branch and an added multipleOf are flagged in both directions by design, and each truly breaks only one. Source: [dataset-registry/MEASUREMENTS.md](https://github.com/technobasant/dataset-registry/blob/main/MEASUREMENTS.md)
 <!-- evidence:end -->

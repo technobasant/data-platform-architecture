@@ -71,5 +71,5 @@ retention gap.
 
 <!-- evidence:start -->
 - **365 of 365** days back after RESTORE TABLE, following an INSERT OVERWRITE of one day that left 1. Databricks SQL 2026.39 on Free Edition: a 365-day rollup (333,082 rows) as a Delta table partitioned by day; 15 September rewritten with INSERT OVERWRITE, then RESTORE TABLE TO VERSION AS OF 0. Source: [data-stack-lab/MEASUREMENTS.md](https://github.com/technobasant/data-stack-lab/blob/main/MEASUREMENTS.md)
-- **909,968** rows recovered by snapshot rollback. An over-broad DELETE (a WHERE reaching years further back than intended), then ALTER TABLE EXECUTE rollback_to_snapshot, counted against the pre-incident total. Source: [lakehouse-lab/MEASUREMENTS.md](https://github.com/technobasant/lakehouse-lab/blob/main/MEASUREMENTS.md)
+- Indirect: rollback measured on the self-run Iceberg lakehouse in lakehouse-lab, not on the managed platform's own restore feature. **909,968** rows recovered by snapshot rollback. An over-broad DELETE (a WHERE reaching years further back than intended), then ALTER TABLE EXECUTE rollback_to_snapshot, counted against the pre-incident total. Source: [lakehouse-lab/MEASUREMENTS.md](https://github.com/technobasant/lakehouse-lab/blob/main/MEASUREMENTS.md)
 <!-- evidence:end -->

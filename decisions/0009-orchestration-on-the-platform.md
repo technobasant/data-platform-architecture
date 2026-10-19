@@ -49,5 +49,5 @@ streaming path whose operations need a single view with the batch jobs.
 ## Evidence
 
 <!-- evidence:start -->
-- **0 of 89,508** events loaded by a data-interval incremental model on Airflow 3's default @daily, in 30 successful runs. The same DAG on schedule "@daily", which Airflow 3.3 turns into a CronTriggerTimetable (create_cron_data_intervals = False); each run's data interval starts and ends at the instant it fires. Source: [data-stack-lab/MEASUREMENTS.md](https://github.com/technobasant/data-stack-lab/blob/main/MEASUREMENTS.md)
+- Indirect: shows Airflow 3's own default scheduling behaviour on a separate orchestrator, the rejected alternative, not a property of the platform's own jobs this decision chooses. **0 of 89,508** events loaded by a data-interval incremental model on Airflow 3's default @daily, in 30 successful runs. The same DAG on schedule "@daily", which Airflow 3.3 turns into a CronTriggerTimetable (create_cron_data_intervals = False); each run's data interval starts and ends at the instant it fires. Source: [data-stack-lab/MEASUREMENTS.md](https://github.com/technobasant/data-stack-lab/blob/main/MEASUREMENTS.md)
 <!-- evidence:end -->
