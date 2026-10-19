@@ -16,11 +16,12 @@ product's Postgres on RDS and its one read replica ([the brief](docs/01-brief.md
 
 **What is wrong, measured** on a lab copy of its database ([current state](docs/02-current-state.md)):
 
-- With the BI tool's reports on the primary, the product's 95th-percentile request went
-  from **93 ms to 794 ms**.
-- On the replica, **3 of 412** runs of the long reports finished in five minutes; the rest
+- At the brief's peak rate, with the BI tool's reports on the primary, the product's
+  95th-percentile request went from **40 ms to 525 ms**.
+- On the replica, **3 of 35** runs of the long reports finished in five minutes; the rest
   were cancelled by recovery conflicts. Turning on `hot_standby_feedback` lets them finish by
-  holding back the product database's cleanup for as long as the longest report runs.
+  holding back the product database's cleanup; a replica for reports alone with a 15-minute
+  replay delay let all of them finish, and fell up to 4.7 minutes behind instead.
 - Revenue by plan is read from each account's *current* plan; on this business's shape of
   data that puts **15.1%** of a year's revenue on the wrong plan.
 - Events are deleted after 90 days, nobody can say who read personal data, and there is no
@@ -28,8 +29,9 @@ product's Postgres on RDS and its one read replica ([the brief](docs/01-brief.md
 
 **The recommendation.**
 
-1. Now: every report on the replica, never the primary. A cancelled report is a better
-   failure than a slower product ([0001](decisions/0001-analytics-off-the-product-database.md)).
+1. Now: every report on the replica, never the primary, and the replica the reports' alone,
+   with a 15-minute replay delay: minutes of lag cost nothing a report needs
+   ([0001](decisions/0001-analytics-off-the-product-database.md)).
 2. Within six months: a managed analytical platform fed by change data capture, with a
    Type 2 star schema reconciled to Stripe, governance by classification tags, and erasure
    that can be proven ([stage 1](docs/05-target-architecture.md#the-stages)).
@@ -76,7 +78,7 @@ Detail, timing and exit criteria for each stage are in
 <!-- decisions:start -->
 | # | Decision | Status | Backed by |
 |---|---|---|---|
-| 0001 | [Analytics moves off the product's database onto a separate platform](decisions/0001-analytics-off-the-product-database.md) | Accepted | 93 → 794 ms product p95 request latency, without and with the BI tool's reports on the primary; 3 of 412 runs of the three long reports that finished on the read replica in five minutes; 409 were cancelled by recovery conflicts |
+| 0001 | [Analytics moves off the product's database onto a separate platform](decisions/0001-analytics-off-the-product-database.md) | Accepted | 40 → 525 ms product p95 request latency, without and with the BI tool's reports on the primary; 3 of 35 runs of the three long reports that finished on the read replica in five minutes; 32 were cancelled by recovery conflicts |
 | 0002 | [The product's tables reach the platform by change data capture, not extracts](decisions/0002-cdc-from-the-product-database.md) | Accepted | 533 of 570 account changes in a year seen by monthly snapshots; 15.1% of a year's revenue on the wrong plan with a Type 1 account dimension |
 | 0003 | [Files that land are immutable, and every load writes by key](decisions/0003-files-immutable-loads-by-key.md) | Accepted | 1,638 events never loaded by COPY INTO and Auto Loader after a truncated file was corrected under the same name; 0 of 3,198 bad rows promoted when any failing data-quality check held the day |
 | 0004 | [A managed platform, not a self-run lakehouse](decisions/0004-managed-platform.md) | Accepted | 909,968 rows recovered by snapshot rollback; 20 → 1 files merged per partition by optimize |

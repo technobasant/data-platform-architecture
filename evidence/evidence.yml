@@ -170,28 +170,36 @@ dsl_delta_restore:
   check: sibling
 
 baseline_bi_on_primary:
-  value: "93 → 794 ms"
+  value: "40 → 525 ms"
   label: "product p95 request latency, without and with the BI tool's reports on the primary"
-  method: "a lab copy of the client's database (Postgres 17, 2 vCPU and 4 GB, 31.5 million events); the product's request at 100 a second from pgbench; two analysts running the four BI queries in turn; five minutes per scenario after a checkpoint. Requests over 100 ms went from 4.8% to 23.0%"
+  method: "a lab copy of the client's database (Postgres 17, 2 vCPU and 4 GB, 31.5 million events); the product's request at 12 a second from pgbench, the brief's weekday peak (each request records one event; 350,000 a day average 4 a second); two analysts running the four BI queries in turn; five minutes per scenario after a checkpoint. Requests over 100 ms went from 2.2% to 24.0%; at a stress rate of 100 a second, p95 went from 93 to 794 ms"
   repo: data-platform-architecture
-  file: results/baseline.json
-  check: {pending: true, reason: "the baseline is being re-measured"}
+  file: results/baseline-brief-rate.json
+  check: {json: results/baseline-brief-rate.json, expr: 'str(round(d["app_alone"]["app"]["p95_ms"])) + " → " + str(round(d["bi_on_primary"]["app"]["p95_ms"])) + " ms"'}
 
 baseline_replica_long_reports:
-  value: "3 of 412"
-  label: "runs of the three long reports that finished on the read replica in five minutes; 409 were cancelled by recovery conflicts"
-  method: "the same lab, reports on a streaming replica with the default max_standby_streaming_delay of 30 s and hot_standby_feedback off, while the product updated users at 100 requests a second; analysts retried at once"
+  value: "3 of 35"
+  label: "runs of the three long reports that finished on the read replica in five minutes; 32 were cancelled by recovery conflicts"
+  method: "the same lab at the brief's peak rate, reports on a streaming replica with the default max_standby_streaming_delay of 30 s and hot_standby_feedback off, while the product updated users; analysts retried at once. At a stress rate of 100 requests a second it was 3 of 412"
   repo: data-platform-architecture
-  file: results/baseline.json
-  check: {pending: true, reason: "the baseline is being re-measured"}
+  file: results/baseline-brief-rate.json
+  check: {json: results/baseline-brief-rate.json, expr: 'str(d["bi_on_replica"]["bi_queries"]["long_queries_completed"]) + " of " + str(d["bi_on_replica"]["bi_queries"]["long_queries_run"])'}
 
 baseline_replica_feedback:
-  value: "20 of 20"
-  label: "runs of the long reports that finished on the replica with hot_standby_feedback on"
-  method: "the same lab and load; the cost, cleanup on the primary held back for as long as the longest report, was not visible in a five-minute window with reports of one to two minutes"
+  value: "11 of 11"
+  label: "report runs that finished on the replica with hot_standby_feedback on, while cleanup of the product's users table was held back"
+  method: "the same lab and load; in five minutes the users table's dead rows on the primary rose from 3,111 to 3,630, cleanup held back for as long as the longest report ran"
   repo: data-platform-architecture
-  file: results/baseline.json
-  check: {pending: true, reason: "the baseline is being re-measured"}
+  file: results/baseline-brief-rate.json
+  check: {json: results/baseline-brief-rate.json, expr: 'str(d["bi_on_replica_fb"]["bi_queries"]["completed"]) + " of " + str(d["bi_on_replica_fb"]["bi_queries"]["run"])'}
+
+baseline_replica_delay:
+  value: "7 of 7"
+  label: "report runs that finished on a replica for reports alone, with max_standby_streaming_delay at 15 minutes and feedback off; it fell up to 4.7 minutes behind"
+  method: "the same lab and load; replay waited for the reports instead of cancelling them, the primary's cleanup was not held back (users dead rows fell from 3,630 to 3,206 as autovacuum ran), and the replica's replay lag reached 281.7 s (142.1 s median)"
+  repo: data-platform-architecture
+  file: results/baseline-brief-rate.json
+  check: {json: results/baseline-brief-rate.json, expr: 'str(d["bi_on_replica_delay"]["bi_queries"]["completed"]) + " of " + str(d["bi_on_replica_delay"]["bi_queries"]["run"])'}
 
 dpa_tag_masking:
   value: "3 of 3"

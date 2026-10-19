@@ -21,7 +21,7 @@ not:
 <!-- decisions:start -->
 | # | Decision | Status | Backed by |
 |---|---|---|---|
-| 0001 | [Analytics moves off the product's database onto a separate platform](0001-analytics-off-the-product-database.md) | Accepted | 93 → 794 ms product p95 request latency, without and with the BI tool's reports on the primary; 3 of 412 runs of the three long reports that finished on the read replica in five minutes; 409 were cancelled by recovery conflicts |
+| 0001 | [Analytics moves off the product's database onto a separate platform](0001-analytics-off-the-product-database.md) | Accepted | 40 → 525 ms product p95 request latency, without and with the BI tool's reports on the primary; 3 of 35 runs of the three long reports that finished on the read replica in five minutes; 32 were cancelled by recovery conflicts |
 | 0002 | [The product's tables reach the platform by change data capture, not extracts](0002-cdc-from-the-product-database.md) | Accepted | 533 of 570 account changes in a year seen by monthly snapshots; 15.1% of a year's revenue on the wrong plan with a Type 1 account dimension |
 | 0003 | [Files that land are immutable, and every load writes by key](0003-files-immutable-loads-by-key.md) | Accepted | 1,638 events never loaded by COPY INTO and Auto Loader after a truncated file was corrected under the same name; 0 of 3,198 bad rows promoted when any failing data-quality check held the day |
 | 0004 | [A managed platform, not a self-run lakehouse](0004-managed-platform.md) | Accepted | 909,968 rows recovered by snapshot rollback; 20 → 1 files merged per partition by optimize |

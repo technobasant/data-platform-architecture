@@ -22,7 +22,8 @@ LINK = re.compile(r"\]\(([^)\s]+)\)")
 
 
 def markdown_files() -> list[Path]:
-    return sorted(p for p in ROOT.rglob("*.md") if ".venv" not in p.parts)
+    skip = {".venv", ".terraform"}  # installed packages and providers, not ours
+    return sorted(p for p in ROOT.rglob("*.md") if not skip & set(p.parts))
 
 
 def links() -> tuple[list[tuple[Path, str]], set[str]]:

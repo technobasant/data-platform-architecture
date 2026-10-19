@@ -24,7 +24,7 @@ number is given ([2. Current state](02-current-state.md)). "Stage" is the stage 
 | # | Quality | Scenario | Target | Today | Verified by | Stage |
 |---|---|---|---|---|---|---|
 | Q1 | Product isolation | analysts run every BI report while the product serves its normal load | product p99 latency no more than 20% above its p99 with no reports running | p99 483 ms → 1,847 ms with reports on the primary | the baseline harness, re-run against the target | 1 |
-| Q2 | Report reliability | an analyst runs any report while the product writes | completes on the first attempt, 99 runs in 100 | 3 of 412 long reports finished on the replica | BI query log | 1 |
+| Q2 | Report reliability | an analyst runs any report while the product writes | completes on the first attempt, 99 runs in 100 | 3 of 35 long reports finished on the replica at the brief's peak rate | BI query log | 1 |
 | Q3 | Correct attribution | finance reports revenue by plan for any past month | every invoice on the plan it billed; totals equal Stripe's to the cent | 15.1% of a year's revenue on the wrong plan | reconciliation test in the build | 1 |
 | Q4 | History | an analyst asks about activity 20 months ago | the events are there | deleted after 90 days | row counts per month | 1 |
 | Q5 | Batch freshness | finance opens the revenue dashboard | yesterday complete by 06:00 UTC, 29 days in 30 | nightly CSV, not checked | freshness check per table | 1 |

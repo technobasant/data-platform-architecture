@@ -4,3 +4,12 @@ __pycache__/
 .ruff_cache/
 
 baseline/out/
+
+# Terraform working files of the PoC (poc/databricks/terraform); the lock file is kept
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Credentials stay out of the repository
+.env
+.env.*
