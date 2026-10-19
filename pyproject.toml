@@ -1,6 +1,6 @@
 [project]
 name = "data-platform-architecture"
-version = "0.3.0"
+version = "0.4.0"
 description = "A data architecture engagement for a fictional SaaS company leaving Postgres: current state measured, options, target, decisions with evidence."
 readme = "README.md"
 license = "Apache-2.0"

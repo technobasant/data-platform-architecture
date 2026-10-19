@@ -34,7 +34,12 @@ product's Postgres on RDS and its one read replica ([the brief](docs/01-brief.md
    ([0001](decisions/0001-analytics-off-the-product-database.md)).
 2. Within six months: a managed analytical platform fed by change data capture, with a
    Type 2 star schema reconciled to Stripe, governance by classification tags, and erasure
-   that can be proven ([stage 1](docs/05-target-architecture.md#the-stages)).
+   that can be proven ([stage 1](docs/05-target-architecture.md#the-stages)). Personal data
+   lives in one identity table per source, because where the model keeps it decides what an
+   erasure costs: measured, 31,849,449 event rows rewritten to erase one person when the
+   e-mail was in every row, 59,999 when it was not
+   ([0017](decisions/0017-personal-data-in-one-place.md)). The platform sits inside the SOC 2
+   scope from the day it holds customer data ([12](docs/12-soc2-readiness.md)).
 3. **Databricks or Snowflake is decided by a two-week proof of concept** on criteria and
    weights fixed in advance ([0005](decisions/0005-databricks-or-snowflake.md)); the
    Databricks half is done ([11](docs/11-proof-of-concept.md)). At this
@@ -65,15 +70,15 @@ Detail, timing and exit criteria for each stage are in
 | 3 | [Requirements](docs/03-requirements.md) | each consumer's needs; 15 quality targets as testable scenarios |
 | 4 | [Options](docs/04-options.md) | five options against the requirements; cost with and without people |
 | 5 | [Target architecture](docs/05-target-architecture.md) | the stages, C4 context and containers, zones, deployment, failure modes |
-| 6 | [Data model](docs/06-data-model.md) | the star schema, bus matrix, keys and history; [contracts](models/contracts) |
-| 7 | [Security and governance](docs/07-security-and-governance.md) | classification, roles, row filters, erasure, SOC 2 and GDPR controls |
+| 6 | [Data model](docs/06-data-model.md) | domains, the logical model and glossary, layers, the star schema, physical design per engine, modelling standards; [contracts](models/contracts) |
+| 7 | [Security and governance](docs/07-security-and-governance.md) | the operating model, classification, access lifecycle, retention, data quality, the access audit, erasure |
 | 8 | [Migration](docs/08-migration.md) | inventory, waves, running both, cutover and rollback |
 | 9 | [Operations](docs/09-operations.md) | what is watched, runbooks, change and release |
 | 10 | [Roadmap](docs/10-roadmap.md) | week by week to the platform live, then the year, with costs and team |
 | 11 | [Proof of concept](docs/11-proof-of-concept.md) | the Databricks half: the dbt project, masking by tag, row filters, erasure through time travel |
 | 12 | [SOC 2 readiness](docs/12-soc2-readiness.md) | scope, the control matrix, and what an auditor asks |
 | 13 | [Quality attributes](docs/13-quality-attributes.md) | every quality attribute, where it is designed and what was measured; disaster recovery |
-| | [Decisions](decisions) | 15 decision records with options, drivers and evidence |
+| | [Decisions](decisions) | 18 decision records with options, drivers and evidence |
 | | [Risks](docs/risks.md), [principles](docs/principles.md) | the register; the rules across decisions |
 
 ## Decisions
