@@ -71,6 +71,8 @@ Detail, timing and exit criteria for each stage are in
 | 9 | [Operations](docs/09-operations.md) | what is watched, runbooks, change and release |
 | 10 | [Roadmap](docs/10-roadmap.md) | week by week to the platform live, then the year, with costs and team |
 | 11 | [Proof of concept](docs/11-proof-of-concept.md) | the Databricks half: the dbt project, masking by tag, row filters, erasure through time travel |
+| 12 | [SOC 2 readiness](docs/12-soc2-readiness.md) | scope, the control matrix, and what an auditor asks |
+| 13 | [Quality attributes](docs/13-quality-attributes.md) | every quality attribute, where it is designed and what was measured; disaster recovery |
 | | [Decisions](decisions) | 15 decision records with options, drivers and evidence |
 | | [Risks](docs/risks.md), [principles](docs/principles.md) | the register; the rules across decisions |
 

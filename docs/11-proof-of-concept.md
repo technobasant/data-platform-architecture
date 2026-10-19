@@ -212,3 +212,7 @@ policy step, and a change to the function is reviewed like a change to the polic
 resource declares attribute-based row filters, which were not exercised here. Nothing
 broke on the platform's side; the one failure in the run was in my own check, which inserted
 values in declared order while Terraform had created the columns in a map's key order.
+
+---
+
+[← 10. Roadmap](10-roadmap.md) · [README](../README.md) · [12. SOC 2 readiness →](12-soc2-readiness.md)
