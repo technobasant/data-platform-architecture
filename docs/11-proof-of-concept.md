@@ -1,13 +1,19 @@
 # 11. Proof of concept: the Databricks half
 
 [0005](../decisions/0005-databricks-or-snowflake.md) decides between Databricks and Snowflake by
-a two-week proof of concept on criteria fixed in advance. This is the part run so far: the
-governance and erasure criteria on Databricks. The Snowflake half waits for a trial account;
-until both halves are in, 0005 stays Proposed.
+a two-week proof of concept on criteria fixed in advance. This is the part run so far:
+every criterion on Databricks. The Snowflake half waits for a trial account; until both
+halves are in, 0005 stays Proposed.
 
-Everything here was run by [`poc/databricks/run.py`](../poc/databricks/run.py) on Databricks
-Free Edition (Databricks SQL 2026.39, Unity Catalog, the serverless SQL warehouse), and is in
-[`results/poc-databricks.json`](../results/poc-databricks.json).
+Everything here ran on Databricks Free Edition (Databricks SQL 2026.39, Unity Catalog, one
+serverless SQL warehouse of the smallest size, 2X-Small), by
+[`poc/databricks/run.py`](../poc/databricks/run.py) (governance and erasure,
+[`results/poc-databricks.json`](../results/poc-databricks.json)),
+[`poc/databricks/workload.py`](../poc/databricks/workload.py) (speed and cost,
+[`results/poc-databricks-workload.json`](../results/poc-databricks-workload.json)) and
+[`poc/databricks/terraform.py`](../poc/databricks/terraform.py) (operability,
+[`results/poc-databricks-terraform.json`](../results/poc-databricks-terraform.json)).
+Free Edition runs no bill; the cost below is what its billing table records, priced at list.
 
 | # | Criterion | Databricks | Snowflake |
 |---|---|---|---|
@@ -16,7 +22,7 @@ Free Edition (Databricks SQL 2026.39, Unity Catalog, the serverless SQL warehous
 | 3 | Governance: masking and row filters | **measured, below** | waiting for a trial |
 | 4 | Erasure through time travel | **measured, below** | waiting for a trial |
 | 5 | Cost from the billing tables | the billing tables are readable (`system.billing.usage`); not yet run on the workload | waiting for a trial |
-| 6 | Speed of the BI query set | not yet run | not yet run |
+| 6 | Speed of the BI query set | **measured, below**: every query under 3 s at concurrency 8, on the smallest warehouse | not yet run |
 | 7 | Operability and Terraform coverage | the tag policy, masks and row filters were all created by API and SQL, so Terraform can own them | waiting for a trial |
 
 ## Governance: masking by classification
@@ -81,7 +87,35 @@ than the table's setting unless a safety check is switched off, which the erasur
 not do.
 
 For [0012](../decisions/0012-erasure.md) on Databricks: delete by key, purge, and `VACUUM` once
-the retention has passed. With the default 7-day retention and a weekly erasure job, a
-request is unrecoverable within 14 days, inside the 30 the DPA allows, and the 7-day restore
-window of [0015](../decisions/0015-restore-points.md) is kept. The table's retention is the
-lever: shortening it shortens both.
+the retention has passed. With the default 7-day retention, a weekly erasure job and a daily
+`VACUUM`, a request is unrecoverable within 15 days, inside the 30 the DPA allows, and the
+7-day restore window of [0015](../decisions/0015-restore-points.md) is kept. The table's
+retention is the lever: shortening it shortens both.
+
+## Speed: the BI query set
+
+The four queries the BI tool runs against the product's database today
+([`baseline/analytics.sql`](../baseline/analytics.sql)), unchanged but for the timestamp
+literals, on the same data at today's scale: 6,000 accounts, 60,000 users, 70,470 invoices
+and 90 days of events, 31.5 million rows, generated in Databricks as `baseline/` generates
+them for Postgres. Each analyst had a session of their own with the result cache switched
+off, so every query was executed (the query history confirms none came from the cache);
+timings are the warehouse's own, from `system.query.history`, after one warm-up pass.
+
+| Query (median seconds) | Postgres primary, 2 analysts, product at its peak rate | Databricks 2X-Small, 2 analysts | Databricks 2X-Small, 8 analysts |
+|---|---:|---:|---:|
+| Daily active users by plan, 90 days | 62.0 | 1.52 | 2.82 |
+| Weekly event mix | 90.2 | 1.19 | 2.31 |
+| Top accounts, last 30 days | 24.4 | 0.50 | 0.78 |
+| Revenue by plan and month | 0.4 | 0.64 | 0.91 |
+
+The smallest warehouse ran the reports that take a minute or more on the product's database in
+one to three seconds. With eight analysts at once, no query waited for capacity: the one
+cluster ran them together, each about twice as slowly, and the 95th percentile was 2.9 s. The
+revenue report, which reads a few thousand rows, was faster on Postgres; nothing reads a small
+table faster than a warm database it already lives in.
+
+The comparison is not like for like, and is not meant to be: the Postgres figures are the
+client's lab database on 2 vCPU under the product's own load, and the warehouse is a managed
+service of undisclosed hardware. What it shows is the order of magnitude the client buys:
+interactive dashboards on the full history, with no load on the product.

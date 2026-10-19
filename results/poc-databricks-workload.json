@@ -1,0 +1,204 @@
+{
+  "databricks_sql": "2026.39",
+  "load": {
+    "rows": {
+      "plans": 4,
+      "accounts": 6000,
+      "users": 60000,
+      "invoices": 70470,
+      "events": 31500000,
+      "fct_daily_usage": 3777758
+    },
+    "seconds": {
+      "plans": 9.6,
+      "accounts": 4.0,
+      "users": 3.6,
+      "invoices": 4.3,
+      "events": 4.6,
+      "fct_daily_usage": 13.7
+    },
+    "events_from": "2026-07-02T00:00:00.000Z",
+    "events_to": "2026-09-29T23:59:59.753Z"
+  },
+  "speed": {
+    "warehouse": {
+      "cluster_size": "2X-Small",
+      "min_num_clusters": 1,
+      "max_num_clusters": 1,
+      "auto_stop_mins": 10,
+      "warehouse_type": "PRO",
+      "enable_serverless_compute": true,
+      "state": "RUNNING"
+    },
+    "warm_up_client_seconds": {
+      "revenue_by_plan_month": 1.05,
+      "active_users_by_plan_day": 1.37,
+      "weekly_event_mix": 1.14,
+      "top_accounts_30d": 1.3
+    },
+    "analysts_2": {
+      "queries": 40,
+      "in_history": 40,
+      "from_result_cache": 0,
+      "by_query": {
+        "revenue_by_plan_month": {
+          "runs": 10,
+          "seconds_median": 0.64,
+          "seconds_max": 0.73,
+          "executing_seconds_median": 0.38,
+          "queued_seconds_max": 0.0,
+          "rows_read_median": 76474
+        },
+        "active_users_by_plan_day": {
+          "runs": 10,
+          "seconds_median": 1.52,
+          "seconds_max": 1.63,
+          "executing_seconds_median": 1.27,
+          "queued_seconds_max": 0.0,
+          "rows_read_median": 31506000
+        },
+        "weekly_event_mix": {
+          "runs": 10,
+          "seconds_median": 1.19,
+          "seconds_max": 1.63,
+          "executing_seconds_median": 0.99,
+          "queued_seconds_max": 0.0,
+          "rows_read_median": 31500000
+        },
+        "top_accounts_30d": {
+          "runs": 10,
+          "seconds_median": 0.5,
+          "seconds_max": 0.54,
+          "executing_seconds_median": 0.29,
+          "queued_seconds_max": 0.0,
+          "rows_read_median": 10500000
+        }
+      },
+      "seconds_median": 0.71,
+      "seconds_p95": 1.63,
+      "queued_seconds_total": 0.0
+    },
+    "analysts_8": {
+      "queries": 64,
+      "in_history": 64,
+      "from_result_cache": 0,
+      "by_query": {
+        "revenue_by_plan_month": {
+          "runs": 16,
+          "seconds_median": 0.91,
+          "seconds_max": 1.17,
+          "executing_seconds_median": 0.55,
+          "queued_seconds_max": 0.0,
+          "rows_read_median": 76474
+        },
+        "active_users_by_plan_day": {
+          "runs": 16,
+          "seconds_median": 2.82,
+          "seconds_max": 3.14,
+          "executing_seconds_median": 2.43,
+          "queued_seconds_max": 0.0,
+          "rows_read_median": 31506000
+        },
+        "weekly_event_mix": {
+          "runs": 16,
+          "seconds_median": 2.31,
+          "seconds_max": 3.11,
+          "executing_seconds_median": 2.1,
+          "queued_seconds_max": 0.0,
+          "rows_read_median": 31500000
+        },
+        "top_accounts_30d": {
+          "runs": 16,
+          "seconds_median": 0.78,
+          "seconds_max": 0.96,
+          "executing_seconds_median": 0.5,
+          "queued_seconds_max": 0.0,
+          "rows_read_median": 10500000
+        }
+      },
+      "seconds_median": 1.36,
+      "seconds_p95": 2.93,
+      "queued_seconds_total": 0.0
+    },
+    "postgres_on_the_primary_seconds_median": {
+      "revenue_by_plan_month": 0.4,
+      "active_users_by_plan_day": 62.0,
+      "weekly_event_mix": 90.19999999999999,
+      "top_accounts_30d": 24.4
+    }
+  },
+  "day": {
+    "warehouse": {
+      "cluster_size": "2X-Small",
+      "min_num_clusters": 1,
+      "max_num_clusters": 1,
+      "auto_stop_mins": 10,
+      "warehouse_type": "PRO",
+      "enable_serverless_compute": true,
+      "state": "STOPPED"
+    },
+    "started": "2026-10-19T11:00:32+00:00",
+    "build": [
+      {
+        "step": "load_the_day",
+        "statement_id": "01f1cbac-4de1-1962-bc44-85f55bf4ae3c",
+        "client_seconds": 16.21
+      },
+      {
+        "step": "replace_the_mart_window",
+        "statement_id": "01f1cbac-5775-159a-b89c-85945b961feb",
+        "client_seconds": 7.8
+      },
+      {
+        "step": "contract_quality_check",
+        "statement_id": "01f1cbac-5c24-189e-8d80-de6a590cb351",
+        "client_seconds": 2.54,
+        "duplicates": 0
+      }
+    ],
+    "analysts": [
+      {
+        "query": "revenue_by_plan_month",
+        "statement_id": "01f1cbac-5fe7-1e7d-8002-3802ab8f21b8",
+        "client_seconds": 2.62
+      },
+      {
+        "query": "active_users_by_plan_day",
+        "statement_id": "01f1cbac-617d-1946-a615-f2f748effdd3",
+        "client_seconds": 2.29
+      },
+      {
+        "query": "weekly_event_mix",
+        "statement_id": "01f1cbac-62d4-1592-bc19-028a4c8183ac",
+        "client_seconds": 1.76
+      },
+      {
+        "query": "top_accounts_30d",
+        "statement_id": "01f1cbac-63e4-1362-8807-e1c1e25012f8",
+        "client_seconds": 1.06
+      },
+      {
+        "query": "active_users_by_plan_day",
+        "statement_id": "01f1cbac-5fe9-15ba-aebc-21509cf18c76",
+        "client_seconds": 3.63
+      },
+      {
+        "query": "weekly_event_mix",
+        "statement_id": "01f1cbac-6212-1601-8362-872668ee8b5c",
+        "client_seconds": 1.84
+      },
+      {
+        "query": "top_accounts_30d",
+        "statement_id": "01f1cbac-632c-1b7f-9012-6cf956a43c17",
+        "client_seconds": 1.2
+      },
+      {
+        "query": "revenue_by_plan_month",
+        "statement_id": "01f1cbac-63e3-17d6-9d73-8a1e42bb7f5d",
+        "client_seconds": 1.16
+      }
+    ],
+    "last_statement": "2026-10-19T11:01:10+00:00",
+    "stopped": "2026-10-19T11:12:12+00:00"
+  }
+}

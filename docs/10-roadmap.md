@@ -30,7 +30,7 @@ waves 1 and 2, by month 5.
 | 4 | finance on the platform (wave 2) | 1 | about $710–1,000 a month |
 | 6 | stage 1 done (wave 4); stage 2 starts: the event stream agreed with product; [0010](../decisions/0010-customer-usage-serving.md) decided | 1 done → 2 | |
 | 9 | the usage page reads the usage store; isolation tests on its path | 2 | stream and store added: priced at the decision |
-| 10 | stage 2 done: Q11 and Q12 met | 2 done | about $730–1,540 a month for the platform |
+| 10 | stage 2 done: Q11 and Q12 met | 2 done | about $1,430–2,000 a month for the platform |
 | 10–13 | the assistant on governed marts ([AI architecture](https://github.com/technobasant/ai-platform-architecture)) | 3 | model costs in the AI architecture |
 
 Stage 3 finishes around month 13, a month past the twelve months

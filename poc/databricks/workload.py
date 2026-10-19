@@ -13,6 +13,7 @@ Criteria 6 and 5, on the brief's data at today's scale, in the schema workspace.
          350,000 events loaded by REPLACE WHERE, the mart's last three days replaced, as
          decision 0008 has it, and the contract's quality check), then the BI query set once
          by each of two analysts; then the warehouse is left to stop itself.
+  compare  the Postgres side of the speed comparison, refreshed from the baseline's results.
   bill   what system.billing.usage charged for that hour, against the warehouse's uptime from
          system.compute.warehouse_events and its busy time from system.query.history. Run it
          a few hours after `day`: the billing table lags.
@@ -238,12 +239,13 @@ def summarize(log: list[dict], seen: dict[str, dict]) -> dict:
 
 
 def postgres_medians() -> dict:
-    """The same queries on the Postgres replica with hot_standby_feedback (baseline.json)."""
-    log = json.loads((ROOT / "results" / "baseline.json").read_text())["bi_on_replica_fb"]["bi_queries"][
-        "log"
-    ]
-    names = dict.fromkeys(e["query"] for e in log)
-    return {n: statistics.median(e["seconds"] for e in log if e["query"] == n) for n in names}
+    """The same queries on Postgres at the brief's rate, on the primary: in the lab the
+    replica shares the primary's disk, so the primary's timings are the clean ones
+    (docs/02-current-state.md)."""
+    log = json.loads((ROOT / "results" / "baseline-brief-rate.json").read_text())["bi_on_primary"]
+    done = [e for e in log["bi_queries"]["log"] if e["outcome"] == "ok"]
+    names = dict.fromkeys(e["query"] for e in done)
+    return {n: statistics.median(e["seconds"] for e in done if e["query"] == n) for n in names}
 
 
 def warehouse(db: Databricks) -> dict:
@@ -278,7 +280,7 @@ def step_speed(db: Databricks) -> dict:
     seen = history(db, [e["statement_id"] for log in runs.values() for e in log])
     for count, log in runs.items():
         out[f"analysts_{count}"] = summarize(log, seen)
-    out["postgres_replica_seconds_median"] = postgres_medians()
+    out["postgres_on_the_primary_seconds_median"] = postgres_medians()
     return out
 
 
@@ -386,19 +388,24 @@ def step_bill(db: Databricks, day: dict) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("steps", nargs="+", choices=("load", "speed", "day", "bill"))
+    ap.add_argument("steps", nargs="+", choices=("load", "speed", "compare", "day", "bill"))
     args = ap.parse_args()
-    db = Databricks()
     result = json.loads(RESULT.read_text()) if RESULT.exists() else {}
-    result["databricks_sql"] = db.sql("SELECT current_version().dbsql_version")[0][0]
+    db = None
+    if set(args.steps) - {"compare"}:  # compare reads local results only
+        db = Databricks()
+        result["databricks_sql"] = db.sql("SELECT current_version().dbsql_version")[0][0]
     for step in args.steps:
         print(step, flush=True)
         if step == "bill":
             result["bill"] = step_bill(db, result["day"])
+        elif step == "compare":
+            result["speed"].pop("postgres_replica_seconds_median", None)
+            result["speed"]["postgres_on_the_primary_seconds_median"] = postgres_medians()
         else:
             result[step] = {"load": step_load, "speed": step_speed, "day": step_day}[step](db)
         RESULT.write_text(json.dumps(result, indent=2, default=str) + "\n")
-        print(json.dumps(result[step], default=str)[:1500], flush=True)
+        print(json.dumps(result.get(step, result.get("speed")), default=str)[:1500], flush=True)
     print(f"wrote {RESULT.relative_to(ROOT)}")
 
 
