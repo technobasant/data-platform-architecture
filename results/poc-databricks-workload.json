@@ -200,5 +200,48 @@
     ],
     "last_statement": "2026-10-19T11:01:10+00:00",
     "stopped": "2026-10-19T11:12:12+00:00"
+  },
+  "bill": {
+    "billed_rows": [
+      [
+        "2026-10-19T11:00:00.000Z",
+        "2026-10-19T12:00:00.000Z",
+        "PREMIUM_SERVERLESS_SQL_COMPUTE_US_EAST_OHIO",
+        0.7431
+      ]
+    ],
+    "dbu": 0.743,
+    "usd_at_list_price": 0.52,
+    "warehouse_events": [
+      [
+        "STARTING",
+        "2026-10-19T11:00:32.605Z"
+      ],
+      [
+        "SCALED_UP",
+        "2026-10-19T11:00:34.781Z"
+      ],
+      [
+        "RUNNING",
+        "2026-10-19T11:00:34.830Z"
+      ],
+      [
+        "STOPPING",
+        "2026-10-19T11:11:13.284Z"
+      ],
+      [
+        "SCALED_DOWN",
+        "2026-10-19T11:11:43.394Z"
+      ],
+      [
+        "STOPPED",
+        "2026-10-19T11:11:43.432Z"
+      ]
+    ],
+    "uptime_minutes": 11.2,
+    "busy_minutes": 0.51,
+    "dbu_for_the_uptime_at_4_an_hour": 0.745,
+    "build_executing_seconds": 16.1,
+    "share_of_uptime_idle": 0.954
   }
 }

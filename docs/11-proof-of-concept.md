@@ -21,7 +21,7 @@ Free Edition runs no bill; the cost below is what its billing table records, pri
 | 2 | Ingestion: corrected, late and duplicate files; CDC | measured in [data-stack-lab](https://github.com/technobasant/data-stack-lab/tree/main/databricks): only Auto Loader with `allowOverwrites` and a `MERGE` was exact | waiting for a trial |
 | 3 | Governance: masking and row filters | **measured, below** | waiting for a trial |
 | 4 | Erasure through time travel | **measured, below** | waiting for a trial |
-| 5 | Cost from the billing tables | **measured, below**: a day's build and reports took 38 s and were billed 0.743 DBU, 94% of it the auto-stop wait; $21 to $961 a month at EU list price by how often the warehouse wakes, far inside the budget | waiting for a trial |
+| 5 | Cost from the billing tables | **measured, below**: a day's build and reports took 38 s and were billed 0.743 DBU, 95% of it the auto-stop wait; $21 to $961 a month at EU list price by how often the warehouse wakes, far inside the budget | waiting for a trial |
 | 6 | Speed of the BI query set | **measured, below**: every query under 3 s at concurrency 8, on the smallest warehouse | not yet run |
 | 7 | Operability and Terraform coverage | **measured, below**: Terraform owned the governed tag, schema, table, column tags, mask policy and grants, and planned clean after applying; the mask function needs SQL | waiting for a trial |
 
@@ -150,11 +150,11 @@ left to stop itself, after the default 10 minutes idle.
 | Work, first statement to last | 38 s (the build 23.7 s, the reports 7.5 s) |
 | Running, from `system.compute.warehouse_events` | 11 min 9 s |
 | Billed, from `system.billing.usage` | **0.743 DBU**, at 4 DBU an hour of uptime |
-| Of the bill, the wait for auto-stop | 94% |
+| Of the bill, the wait after the last statement | 95% (10 min 33 s) |
 
-The billing table charges uptime at the size's rate, whatever runs: in two other hours the
-same warehouse was up 54.2 and 33.45 minutes and was charged 3.614 and 2.230 DBU, again 4
-an hour. The work does not set the bill; how often the warehouse wakes does. At list price
+The billing table charges uptime at the size's rate, whatever runs: in three other hours
+the same warehouse was up 54.2, 33.45 and 27.37 minutes and was charged 3.614, 2.230 and
+1.825 DBU, again 4 an hour. The work does not set the bill; how often the warehouse wakes does. At list price
 in the client's region (serverless SQL $0.91 a DBU in AWS EU Ireland, so $3.64 an hour for
 a 2X-Small):
 

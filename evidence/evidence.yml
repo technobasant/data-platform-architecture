@@ -280,3 +280,11 @@ dpa_erasure_uniform:
   repo: data-platform-architecture
   file: results/poc-databricks.json
   check: {json: results/poc-databricks.json, expr: 'str(d["erasure_uniform"]["after_delete"]["files_removed"]) + " files"'}
+
+dpa_day_bill:
+  value: "0.743 DBU"
+  label: "billed for one day's build and reports on the smallest Databricks SQL warehouse: 38 s of work, 11 min 9 s awake, 95% of it the wait for auto-stop"
+  method: "Databricks SQL 2026.39 on Free Edition, a 2X-Small serverless warehouse with the default 10-minute auto-stop, started from stopped at the top of an hour with nothing else on it; the daily build (350,000 events by REPLACE WHERE, three days of the usage mart, the contract check) and the four reports by two analysts; system.billing.usage for that hour against uptime from system.compute.warehouse_events, 4 DBU an hour; $0.52 at list price in the workspace's region, $0.68 in the client's"
+  repo: data-platform-architecture
+  file: results/poc-databricks-workload.json
+  check: {json: results/poc-databricks-workload.json, expr: 'str(d["bill"]["dbu"]) + " DBU"'}
