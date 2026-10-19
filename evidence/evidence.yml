@@ -148,3 +148,45 @@ baseline_replica_feedback:
   method: "the same lab and load; the cost, cleanup on the primary held back for as long as the longest report, was not visible in a five-minute window with reports of one to two minutes"
   repo: data-platform-architecture
   file: results/baseline.json
+
+dpa_tag_masking:
+  value: "3 of 3"
+  label: "personal columns masked by one policy on the classification tag, including a column on a table created after the policy"
+  method: "Databricks SQL 2026.39 on Free Edition: a governed tag `class`; the product contract's four tables created and all 26 columns tagged from the contract; one schema-level column-mask policy matching has_tag_value('class', 'personal'); every non-personal column stayed readable"
+  repo: data-platform-architecture
+  file: results/poc-databricks.json
+
+dpa_row_filter_identity:
+  value: "1 of 5"
+  label: "accounts visible through a row filter keyed to the caller's identity"
+  method: "a row filter on account_id that admits the accounts mapped to current_user() in a mapping table; moving the mapping moved the scope to the other account"
+  repo: data-platform-architecture
+  file: results/poc-databricks.json
+
+dpa_session_variable_filter:
+  value: "UNRESOLVED_COLUMN"
+  label: "what Databricks returns for a row filter function that reads a session variable: a per-request value cannot scope rows"
+  method: "DECLARE VARIABLE request_account, then CREATE FUNCTION … RETURN account_id = request_account, on Databricks SQL 2026.39"
+  repo: data-platform-architecture
+  file: results/poc-databricks.json
+
+dsl_dbt_databricks:
+  value: "11, 46, 3"
+  label: "models, data tests and unit tests that passed when the dbt project was built on Databricks after one change, with revenue figures identical to DuckDB's"
+  method: "dbt-databricks 1.12.7 on Databricks SQL 2026.39: the 13 monthly extracts replayed through dbt snapshot, then dbt build; measure.py's revenue questions asked of the Databricks marts with the same SQL. The one change: contract types varchar became string, because Databricks refuses VARCHAR without a length"
+  repo: data-stack-lab
+  file: results/dbt-databricks.json
+
+dpa_erasure_time_travel:
+  value: "100 of 100"
+  label: "rows of an erased user still returned by time travel after DELETE and after REORG … APPLY (PURGE)"
+  method: "Databricks SQL 2026.39 on Free Edition: a Delta table with deletion vectors; DELETE wrote 8 deletion vectors and rewrote 0 files; REORG APPLY (PURGE) rewrote 8 files; VERSION AS OF the version before the delete still returned every row, also after VACUUM at the default 7-day retention"
+  repo: data-platform-architecture
+  file: results/poc-databricks.json
+
+dpa_erasure_after_retention:
+  value: "refused"
+  label: "time travel to the version before the delete, once the table's deleted-file retention had passed and VACUUM had run"
+  method: "the table's delta.deletedFileRetentionDuration set to 1 hour for the test, VACUUM run after it passed; Databricks answered DELTA_UNSUPPORTED_TIME_TRAVEL_BEYOND_DELETED_FILE_RETENTION_DURATION. VACUUM RETAIN 0 HOURS was refused (DELTA_VACUUM_RETENTION_PERIOD_TOO_SHORT)"
+  repo: data-platform-architecture
+  file: results/poc-databricks.json

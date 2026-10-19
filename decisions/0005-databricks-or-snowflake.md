@@ -3,7 +3,7 @@
 - Status: Proposed
 - Date: 2026-10-19
 - Deciders: CTO, CFO, data lead; proposed by the architect
-- Evidence:
+- Evidence: dsl_dbt_databricks, dpa_tag_masking, dsl_databricks_corrected_missed
 
 ## Context
 
@@ -61,5 +61,7 @@ After that, at contract renewal, or if the measured bill passes the budget.
 ## Evidence
 
 <!-- evidence:start -->
-Not measured yet; see the status above.
+- **11, 46, 3** models, data tests and unit tests that passed when the dbt project was built on Databricks after one change, with revenue figures identical to DuckDB's. Dbt-databricks 1.12.7 on Databricks SQL 2026.39: the 13 monthly extracts replayed through dbt snapshot, then dbt build; measure.py's revenue questions asked of the Databricks marts with the same SQL. The one change: contract types varchar became string, because Databricks refuses VARCHAR without a length. Source: [data-stack-lab/results/dbt-databricks.json](https://github.com/technobasant/data-stack-lab/blob/main/results/dbt-databricks.json)
+- **3 of 3** personal columns masked by one policy on the classification tag, including a column on a table created after the policy. Databricks SQL 2026.39 on Free Edition: a governed tag `class`; the product contract's four tables created and all 26 columns tagged from the contract; one schema-level column-mask policy matching has_tag_value('class', 'personal'); every non-personal column stayed readable. Source: [data-platform-architecture/results/poc-databricks.json](https://github.com/technobasant/data-platform-architecture/blob/main/results/poc-databricks.json)
+- **1,638** events never loaded by COPY INTO and Auto Loader after a truncated file was corrected under the same name. Databricks Free Edition (Databricks SQL 2026.39): ten days of event files (29,095 events) delivered into a Unity Catalog volume and loaded six ways after each delivery; the counts matched a prediction made from the documented semantics. Source: [data-stack-lab/MEASUREMENTS.md](https://github.com/technobasant/data-stack-lab/blob/main/MEASUREMENTS.md)
 <!-- evidence:end -->

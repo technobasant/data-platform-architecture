@@ -1,0 +1,61 @@
+{
+  "databricks_sql": "2026.39",
+  "started": "2026-10-19T07:59:36+00:00",
+  "masking": {
+    "columns_in_contract": 26,
+    "personal_columns": 2,
+    "checked": [
+      {
+        "column": "users.email",
+        "masked": true
+      },
+      {
+        "column": "users.full_name",
+        "masked": true
+      },
+      {
+        "column": "support_contacts.phone",
+        "masked": true
+      }
+    ],
+    "masked": 3,
+    "added_after_policy_masked": true,
+    "non_personal_readable": true
+  },
+  "row_filter": {
+    "accounts_in_table": 5,
+    "mapped_to_2": {
+      "accounts_visible": 1,
+      "rows": 200,
+      "account": "2"
+    },
+    "mapped_to_4": {
+      "accounts_visible": 1,
+      "rows": 200,
+      "account": "4"
+    },
+    "filter_on_a_session_variable": "UNRESOLVED_COLUMN.WITH_SUGGESTION"
+  },
+  "erasure": {
+    "rows_of_the_user": 100,
+    "after_delete": {
+      "current_rows": 0,
+      "time_travel_rows": 100,
+      "deletion_vectors_added": 8,
+      "files_rewritten": 0
+    },
+    "after_purge": {
+      "operation": "REORG",
+      "files_removed": 8,
+      "files_added": 8,
+      "time_travel_rows": 100
+    },
+    "vacuum_retain_0_hours": "DELTA_VACUUM_RETENTION_PERIOD_TOO_SHORT",
+    "vacuum_default_now": "ran",
+    "time_travel_after_default_vacuum": 100,
+    "vacuum_after_retention": "ran",
+    "time_travel_after_retention": "DELTA_UNSUPPORTED_TIME_TRAVEL_BEYOND_DELETED_FILE_RETENTION_DURATION",
+    "current_rows_after": 0,
+    "retention_hours": 1
+  }
+}

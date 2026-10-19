@@ -3,7 +3,7 @@
 - Status: Proposed
 - Date: 2026-10-19
 - Deciders: security and compliance lead, CTO; proposed by the architect
-- Evidence:
+- Evidence: dpa_erasure_time_travel, dpa_erasure_after_retention
 
 ## Context
 
@@ -30,8 +30,9 @@ tables add 7 days of Fail-safe after Time Travel, which no customer can shorten.
 
 ## Decision
 
-Proposed until the proof of concept measures the timeline on both platforms (criterion 4 of
-[0005](0005-databricks-or-snowflake.md)):
+Proposed until the proof of concept has measured the timeline on both platforms (criterion 4
+of [0005](0005-databricks-or-snowflake.md)); the Databricks half is measured
+([11. Proof of concept](../docs/11-proof-of-concept.md#erasure-through-time-travel)):
 
 - Personal data is kept to staging and named marts, with identifiers in a small set of
   tables keyed by `user_id`.
@@ -46,8 +47,13 @@ Proposed until the proof of concept measures the timeline on both platforms (cri
 
 - Restores are limited to the history window: 7 days is the floor set by Q9, and the
   ceiling is what erasure leaves.
+- On Databricks, a `DELETE` alone erases nothing: with deletion vectors it rewrites no file,
+  and every earlier version returns the rows. The erasure job deletes, runs
+  `REORG … APPLY (PURGE)`, and runs `VACUUM` once the table's retention has passed; after
+  that, time travel to the earlier versions is refused. At the default 7-day retention and a
+  weekly job, a request is unrecoverable within 14 days.
 - Transient or managed-retention table types may be needed for raw layers on Snowflake to
-  avoid Fail-safe; the proof of concept decides.
+  avoid Fail-safe; the Snowflake half of the proof of concept decides.
 - Backups outside the platform (exports, the old S3 dumps of deleted events) are in scope,
   and the old dumps are deleted when the platform holds the history.
 
@@ -58,5 +64,6 @@ The proof of concept completes; then Accepted with the measured timeline as evid
 ## Evidence
 
 <!-- evidence:start -->
-Not measured yet; see the status above.
+- **100 of 100** rows of an erased user still returned by time travel after DELETE and after REORG … APPLY (PURGE). Databricks SQL 2026.39 on Free Edition: a Delta table with deletion vectors; DELETE wrote 8 deletion vectors and rewrote 0 files; REORG APPLY (PURGE) rewrote 8 files; VERSION AS OF the version before the delete still returned every row, also after VACUUM at the default 7-day retention. Source: [data-platform-architecture/results/poc-databricks.json](https://github.com/technobasant/data-platform-architecture/blob/main/results/poc-databricks.json)
+- **refused** time travel to the version before the delete, once the table's deleted-file retention had passed and VACUUM had run. The table's delta.deletedFileRetentionDuration set to 1 hour for the test, VACUUM run after it passed; Databricks answered DELTA_UNSUPPORTED_TIME_TRAVEL_BEYOND_DELETED_FILE_RETENTION_DURATION. VACUUM RETAIN 0 HOURS was refused (DELTA_VACUUM_RETENTION_PERIOD_TOO_SHORT). Source: [data-platform-architecture/results/poc-databricks.json](https://github.com/technobasant/data-platform-architecture/blob/main/results/poc-databricks.json)
 <!-- evidence:end -->

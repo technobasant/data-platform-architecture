@@ -33,7 +33,8 @@ product's Postgres on RDS and its one read replica ([the brief](docs/01-brief.md
    Type 2 star schema reconciled to Stripe, governance by classification tags, and erasure
    that can be proven ([stage 1](docs/05-target-architecture.md#the-stages)).
 3. **Databricks or Snowflake is decided by a two-week proof of concept** on criteria and
-   weights fixed in advance ([0005](decisions/0005-databricks-or-snowflake.md)). At this
+   weights fixed in advance ([0005](decisions/0005-databricks-or-snowflake.md)); the
+   Databricks half is done ([11](docs/11-proof-of-concept.md)). At this
    scale the list-price bill does not separate them, from about $370 to $770 a month today
    and $1,500 to $3,100 at 36 months; the people to run a self-built lakehouse would cost
    more than either ([options](docs/04-options.md)).
@@ -55,6 +56,7 @@ product's Postgres on RDS and its one read replica ([the brief](docs/01-brief.md
 | 8 | [Migration](docs/08-migration.md) | inventory, waves, running both, cutover and rollback |
 | 9 | [Operations](docs/09-operations.md) | what is watched, runbooks, change and release |
 | 10 | [Roadmap](docs/10-roadmap.md) | the first 90 days and the year, with costs and team |
+| 11 | [Proof of concept](docs/11-proof-of-concept.md) | the Databricks half: the dbt project, masking by tag, row filters, erasure through time travel |
 | | [Decisions](decisions) | 15 decision records with options, drivers and evidence |
 | | [Risks](docs/risks.md), [principles](docs/principles.md) | the register; the rules across decisions |
 
@@ -67,14 +69,14 @@ product's Postgres on RDS and its one read replica ([the brief](docs/01-brief.md
 | 0002 | [The product's tables reach the platform by change data capture, not extracts](decisions/0002-cdc-from-the-product-database.md) | Accepted | 533 of 570 account changes in a year seen by monthly snapshots; 15.1% of a year's revenue on the wrong plan with a Type 1 account dimension |
 | 0003 | [Files that land are immutable, and every load writes by key](decisions/0003-files-immutable-loads-by-key.md) | Accepted | 1,638 events never loaded by COPY INTO and Auto Loader after a truncated file was corrected under the same name; 0 of 3,198 bad rows promoted when any failing data-quality check held the day |
 | 0004 | [A managed platform, not a self-run lakehouse](decisions/0004-managed-platform.md) | Accepted | 909,968 rows recovered by snapshot rollback; 20 → 1 files merged per partition by optimize |
-| 0005 | [Databricks or Snowflake: decided by a two-week proof of concept on fixed criteria](decisions/0005-databricks-or-snowflake.md) | Proposed | modelled, not yet measured |
+| 0005 | [Databricks or Snowflake: decided by a two-week proof of concept on fixed criteria](decisions/0005-databricks-or-snowflake.md) | Proposed | 11, 46, 3 models, data tests and unit tests that passed when the dbt project was built on Databricks after one change, with revenue figures identical to DuckDB's; 3 of 3 personal columns masked by one policy on the classification tag, including a column on a table created after the policy |
 | 0006 | [Tables are kept in an open format, in storage the client owns](decisions/0006-open-format-in-the-clients-account.md) | Accepted | 909,968 rows recovered by snapshot rollback; 88 ms one-month predicate over 1.5M Iceberg rows |
 | 0007 | [A Kimball star, with Type 2 history for every attribute facts are read against](decisions/0007-history-for-attributes-facts-read-against.md) | Accepted | 15.1% of a year's revenue on the wrong plan with a Type 1 account dimension; 5,048 of 5,048 invoices on the plan they billed, Type 2 dimension from dbt snapshots |
 | 0008 | [Incremental models load their run's window and replace it by key](decisions/0008-incremental-by-interval.md) | Accepted | 96.56% of a month's events lost by high-water-mark loads backfilled newest day first, every run green; 0 of 89,508 events loaded by a data-interval incremental model on Airflow 3's default @daily, in 30 successful runs |
 | 0009 | [Pipelines are scheduled by the platform's own jobs, not a separate orchestrator](decisions/0009-orchestration-on-the-platform.md) | Accepted | 0 of 89,508 events loaded by a data-interval incremental model on Airflow 3's default @daily, in 30 successful runs |
 | 0010 | [Stage 2: customers' usage is served from a store fed by a stream, not from the platform](decisions/0010-customer-usage-serving.md) | Proposed | 6.1 s p99 from event time to queryable in ClickHouse at 1,000 events/s; 9 of 9 failure runs with every event layer exact |
-| 0011 | [Classification tags drive masking and row filters; every table carries the account](decisions/0011-tags-drive-masking-and-row-filters.md) | Proposed | modelled, not yet measured |
-| 0012 | [Erasure: delete by key, then let every copy of the old version expire inside 30 days](decisions/0012-erasure.md) | Proposed | modelled, not yet measured |
+| 0011 | [Classification tags drive masking and row filters; every table carries the account](decisions/0011-tags-drive-masking-and-row-filters.md) | Proposed | 3 of 3 personal columns masked by one policy on the classification tag, including a column on a table created after the policy; 1 of 5 accounts visible through a row filter keyed to the caller's identity |
+| 0012 | [Erasure: delete by key, then let every copy of the old version expire inside 30 days](decisions/0012-erasure.md) | Proposed | 100 of 100 rows of an erased user still returned by time travel after DELETE and after REORG … APPLY (PURGE); refused time travel to the version before the delete, once the table's deleted-file retention had passed and VACUUM had run |
 | 0013 | [Every source has a contract, checked in the producer's CI](decisions/0013-contracts-at-the-producer.md) | Accepted | 0 breaking schema changes passed as safe, in any mode; 2 of 51 changes flagged as breaking that are safe, per direction |
 | 0014 | [Quality gates: tests on rows, checks on the day, reconciliation to billing](decisions/0014-quality-gates.md) | Accepted | 0 of 3,198 bad rows promoted when any failing data-quality check held the day; 4 of 4 deliberate model breaks that failed the build |
 | 0015 | [Every analytical table can be restored to any point in the last 7 days](decisions/0015-restore-points.md) | Accepted | 365 of 365 days back after RESTORE TABLE, following an INSERT OVERWRITE of one day that left 1; 909,968 rows recovered by snapshot rollback |
@@ -90,7 +92,7 @@ Every figure, with its method and source file, is in [EVIDENCE.md](EVIDENCE.md).
 | Loading, history, backfills, quality gates, overwrite and restore on Delta | measured in [data-stack-lab](https://github.com/technobasant/data-stack-lab), on the same synthetic business, partly on Databricks |
 | Contracts | linted in CI; a breaking change is shown to fail the producer-side check |
 | Platform cost | modelled from list prices with stated assumptions ([`cost/`](cost)); the proof of concept measures it |
-| Databricks against Snowflake, governance and erasure on each | designed, with criteria fixed; measured in the proof of concept |
+| Databricks against Snowflake | the Databricks half measured ([11](docs/11-proof-of-concept.md)): the dbt project built with one change and gave identical figures; one policy masked every personal column; erasure is final only after `VACUUM` past the table's retention. The Snowflake half waits for a trial |
 | Stage 2 and the assistant | designed; decided when each stage starts |
 
 The client is fictional and its data synthetic. Nothing here describes a real company's
