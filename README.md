@@ -43,6 +43,16 @@ product's Postgres on RDS and its one read replica ([the brief](docs/01-brief.md
    Months 10–13: the assistant, on the same governed tables
    ([AI architecture](https://github.com/technobasant/ai-platform-architecture)).
 
+## The stages
+
+```mermaid
+flowchart LR
+  today[Today] --> stage1["Stage 1: the platform"] --> stage2["Stage 2: customer usage"] --> stage3["Stage 3: the assistant"]
+```
+
+Detail, timing and exit criteria for each stage are in
+[5. Target architecture](docs/05-target-architecture.md#the-stages).
+
 ## Contents
 
 | | Document | What it answers |
@@ -78,7 +88,7 @@ product's Postgres on RDS and its one read replica ([the brief](docs/01-brief.md
 | 0010 | [Stage 2: customers' usage is served from a store fed by a stream, not from the platform](decisions/0010-customer-usage-serving.md) | Proposed | 6.1 s p99 from event time to queryable in ClickHouse at 1,000 events/s; 9 of 9 failure runs with every event layer exact |
 | 0011 | [Classification tags drive masking and row filters; every table carries the account](decisions/0011-tags-drive-masking-and-row-filters.md) | Proposed | 3 of 3 personal columns masked by one policy on the classification tag, including a column on a table created after the policy; 1 of 5 accounts visible through a row filter keyed to the caller's identity |
 | 0012 | [Erasure: delete by key, then let every copy of the old version expire inside 30 days](decisions/0012-erasure.md) | Proposed | 100 of 100 rows of an erased user still returned by time travel after DELETE and after REORG … APPLY (PURGE); refused time travel to the version before the delete, once the table's deleted-file retention had passed and VACUUM had run |
-| 0013 | [Every source has a contract, checked in the producer's CI](decisions/0013-contracts-at-the-producer.md) | Accepted | 0 breaking schema changes passed as safe, in any mode; 2 of 51 changes flagged as breaking that are safe, per direction |
+| 0013 | [Every source has a contract, checked in the producer's CI](decisions/0013-contracts-at-the-producer.md) | Accepted | reported as breaking what `datacontract breaking` says for the product contract with users.email renamed; an unchanged copy is not reported as breaking; 0 breaking schema changes passed as safe, in any mode |
 | 0014 | [Quality gates: tests on rows, checks on the day, reconciliation to billing](decisions/0014-quality-gates.md) | Accepted | 0 of 3,198 bad rows promoted when any failing data-quality check held the day; 4 of 4 deliberate model breaks that failed the build |
 | 0015 | [Every analytical table can be restored to any point in the last 7 days](decisions/0015-restore-points.md) | Accepted | 365 of 365 days back after RESTORE TABLE, following an INSERT OVERWRITE of one day that left 1; 909,968 rows recovered by snapshot rollback |
 <!-- decisions:end -->
@@ -98,7 +108,33 @@ Every figure, with its method and source file, is in [EVIDENCE.md](EVIDENCE.md).
 
 The client is fictional and its data synthetic. Nothing here describes a real company's
 platform. `python scripts/build.py --check` keeps every decision's evidence, the decision
-tables and the cost tables identical to their sources, and CI checks every link.
+tables and the cost tables identical to their sources, and CI checks every link. For a
+figure measured in this repo's own `results/`, `--check` also re-derives it from the JSON
+and fails if it drifts; a figure from a sibling repo is verified there, not here; a figure
+still being re-measured is marked `check: pending`, with why. What is checked, how, is in
+[EVIDENCE.md](EVIDENCE.md).
+
+## Reproduce
+
+```bash
+uv sync --locked
+```
+
+CI's checks: `pytest` (cost arithmetic, generated sections, relative links),
+`scripts/build.py --check`, `cost/model.py --check`, and the contracts job's
+`datacontract lint` on every contract plus `datacontract breaking` against the
+renamed-column fixture.
+
+**The baseline** ([2. Current state](docs/02-current-state.md)): Docker, two Postgres
+containers, 2 vCPU and 4 GB each; load as [`baseline/README.md`](baseline/README.md) says,
+then `uv sync --group baseline && uv run python baseline/run.py --rate 100` (about 30
+minutes).
+
+**The proof of concept** ([11. Proof of concept](docs/11-proof-of-concept.md)):
+`uv sync --group poc`; `DATABRICKS_HOST`, `DATABRICKS_TOKEN` and `DATABRICKS_HTTP_PATH` for
+a warehouse, with rights to create schemas in the `workspace` catalog and tag policies;
+commands in [`poc/databricks/run.py`](poc/databricks/run.py)'s and
+[`poc/databricks/workload.py`](poc/databricks/workload.py)'s docstrings.
 
 ## Licence
 

@@ -83,3 +83,7 @@ database by a stalled CDC slot, pages the product's on-call.
   unit tests and deliberate breaks, before a merge.
 - Upgrades of the platform's runtime are the vendor's; the team tests dbt against a new
   runtime in development before production moves.
+
+---
+
+[← 8. Migration](08-migration.md) · [README](../README.md) · [10. Roadmap →](10-roadmap.md)

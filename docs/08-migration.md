@@ -71,3 +71,7 @@ The waves, the reconciliation and the rollback are designed here. The proof of c
 builds the reconciliation suite on both platforms against the lab copy of the client's
 database ([2. Current state](02-current-state.md)); until then, the times in the waves
 are estimates for a team of two growing to four.
+
+---
+
+[← 7. Security and governance](07-security-and-governance.md) · [README](../README.md) · [9. Operations →](09-operations.md)

@@ -76,3 +76,7 @@ person in any table or reachable version, and its result is stored in `audit`
 The platform's catalog records table- and column-level lineage for jobs it runs; dbt adds
 model lineage. Lineage turns "this source column changed" into a list of affected marts and
 dashboards, which is what the contract check uses to name the consumers to ask.
+
+---
+
+[← 6. Data model](06-data-model.md) · [README](../README.md) · [8. Migration →](08-migration.md)

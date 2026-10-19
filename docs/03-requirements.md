@@ -49,3 +49,7 @@ When two targets pull against each other, they rank in this order: tenant isolat
 erasure (Q10), product isolation (Q1), correct numbers (Q3, Q6, Q7), then freshness and
 cost. A late dashboard is a bad morning; another customer's data, or an erasure the
 company cannot prove, is a contract breach.
+
+---
+
+[← 2. Current state](02-current-state.md) · [README](../README.md) · [4. Options →](04-options.md)

@@ -111,3 +111,7 @@ client's growth plan, and are assumptions.
 
 The product's application architecture and its database's availability; machine learning
 beyond the assistant; a second region; replacing the BI tool.
+
+---
+
+[README](../README.md) · [2. Current state →](02-current-state.md)

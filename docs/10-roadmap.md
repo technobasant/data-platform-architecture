@@ -55,3 +55,7 @@ sixteen weeks first assumed) pushes both later stages back by the same amount.
 - The product team cannot take on the event stream in month 6: stage 2 slips, and the usage
   page keeps reading the primary, which [0001](../decisions/0001-analytics-off-the-product-database.md)
   accepts as the one remaining analytical load on it.
+
+---
+
+[← 9. Operations](09-operations.md) · [README](../README.md) · [11. Proof of concept →](11-proof-of-concept.md)

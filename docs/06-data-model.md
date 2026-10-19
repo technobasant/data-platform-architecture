@@ -101,3 +101,7 @@ the most expensive to find in a revenue report.
 
 At 36 months `fct_events` holds about 3.8 billion rows (about 0.6 TB compressed); nothing
 here needs partitioning beyond clustering until well past that.
+
+---
+
+[← 5. Target architecture](05-target-architecture.md) · [README](../README.md) · [7. Security and governance →](07-security-and-governance.md)

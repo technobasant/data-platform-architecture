@@ -138,3 +138,7 @@ except the jobs that build `staging`.
 None of these touches the product, which is the point of
 [0001](../decisions/0001-analytics-off-the-product-database.md); the one exception, WAL
 retained by a stalled slot, is alarmed before it matters.
+
+---
+
+[← 4. Options](04-options.md) · [README](../README.md) · [6. Data model →](06-data-model.md)

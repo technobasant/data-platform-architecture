@@ -115,3 +115,7 @@ The decision records: [0001](../decisions/0001-analytics-off-the-product-databas
 (analytics leaves the product database), [0004](../decisions/0004-managed-platform.md)
 (managed, not self-run), [0005](../decisions/0005-databricks-or-snowflake.md) (Databricks
 or Snowflake, Proposed until the PoC).
+
+---
+
+[← 3. Requirements](03-requirements.md) · [README](../README.md) · [5. Target architecture →](05-target-architecture.md)
