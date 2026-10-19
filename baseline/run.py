@@ -3,19 +3,27 @@
 A primary and a streaming replica (2 vCPU, 4 GB each) hold the product's tables at the
 brief's scale. pgbench runs the product's request (`app.sql`: a customer's usage page,
 an activity update, an event insert) at a fixed rate, from its own container. Two
-analyst sessions loop over the BI queries (`analytics.sql`). Four scenarios:
+analyst sessions loop over the BI queries (`analytics.sql`). Five scenarios:
 
-  app_alone           the product only
-  bi_on_primary       BI queries on the primary, as when the replica is down or new
-  bi_on_replica       BI queries on the replica, hot_standby_feedback off (the default)
-  bi_on_replica_fb    the same with hot_standby_feedback on
+  app_alone            the product only
+  bi_on_primary        BI queries on the primary, as when the replica is down or new
+  bi_on_replica        BI queries on the replica, hot_standby_feedback off (the default)
+  bi_on_replica_fb     the same with hot_standby_feedback on
+  bi_on_replica_delay  a replica for BI alone: feedback off, max_standby_streaming_delay
+                       raised from 30 s to 15 minutes, so replay waits for reports instead of
+                       cancelling them, and the replica falls behind instead
 
 Recorded per scenario: the product's latency (p50, p95, p99 from pgbench's per-request
 log), each BI query's duration and outcome, recovery conflicts on the replica, its replay
 lag, and dead rows and size of the `users` table on the primary.
 
     docker compose up -d primary            # then load once: see README.md
-    python baseline/run.py                  # about 25 minutes; writes results/baseline.json
+    python baseline/run.py --rate 12 --out results/baseline-brief-rate.json   # about 30 minutes
+    python baseline/run.py --rate 100       # the stress run in results/baseline.json
+
+Each request records one event, so the rate is events a second: 12 is about three times the
+brief's daily average of 4 (350,000 a day), a weekday peak. 100 is a stress rate, about 25
+times the average, at which the first results were recorded.
 
 Timings depend on the host; they are observations, recorded and not compared in CI.
 """
@@ -39,8 +47,8 @@ OUT = HERE / "out"
 RESULT = ROOT / "results" / "baseline.json"
 PRIMARY = "host=127.0.0.1 port=55432 user=postgres dbname=postgres"
 REPLICA = "host=127.0.0.1 port=55433 user=postgres dbname=postgres"
-RATE, CLIENTS = 100, 8  # product requests per second (about half the lab primary's capacity), connections
-ANALYSTS = 2
+CLIENTS, ANALYSTS = 8, 2  # pgbench connections; analysts running reports
+DELAY = "900s"  # max_standby_streaming_delay of the BI-only replica in bi_on_replica_delay
 
 
 def compose(*args: str, env: dict | None = None) -> None:
@@ -151,7 +159,7 @@ def conflicts() -> int:
                         "from pg_stat_database_conflicts where datname = 'postgres'")[0]  # fmt: skip
 
 
-def scenario(name: str, seconds: int, bi_dsn: str | None) -> dict:
+def scenario(name: str, seconds: int, bi_dsn: str | None, rate: int) -> dict:
     for old in OUT.glob(f"{name}.*"):
         old.unlink()
     settle()
@@ -171,7 +179,7 @@ def scenario(name: str, seconds: int, bi_dsn: str | None) -> dict:
         t.start()
     subprocess.run(
         ["docker", "compose", "run", "--rm", "client", "pgbench", "-h", "primary", "-U", "postgres",
-         "-n", "-f", "/baseline/app.sql", "-c", str(CLIENTS), "-j", "2", "-R", str(RATE),
+         "-n", "-f", "/baseline/app.sql", "-c", str(CLIENTS), "-j", "2", "-R", str(rate),
          "-T", str(seconds), "-l", f"--log-prefix=/out/{name}", "postgres"],
         cwd=HERE, check=True, capture_output=True,
     )  # fmt: skip
@@ -206,28 +214,38 @@ def scenario(name: str, seconds: int, bi_dsn: str | None) -> dict:
     return result
 
 
+def replica(feedback: str, delay: str = "30s") -> None:
+    compose("up", "-d", "replica", env={"FEEDBACK": feedback, "DELAY": delay})
+    wait_ready(REPLICA)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seconds", type=int, default=300, help="length of each scenario")
+    ap.add_argument("--rate", type=int, default=100, help="product requests (events) a second")
+    ap.add_argument("--out", type=Path, default=RESULT)
     args = ap.parse_args()
     OUT.mkdir(exist_ok=True)
     wait_ready(PRIMARY)
     if not one(PRIMARY, "select to_regclass('loaded_marker') is not null")[0]:
         raise SystemExit("load the data first: see baseline/README.md")
-    compose("up", "-d", "replica", env={"FEEDBACK": "off"})
-    wait_ready(REPLICA)
+    replica("off")
     version = one(PRIMARY, "select current_setting('server_version')")[0]
-    out = {"postgres": version, "rate_per_s": RATE, "clients": CLIENTS, "analysts": ANALYSTS}
-    scenario("warmup", 120, None)
-    out["app_alone"] = scenario("app_alone", args.seconds, None)
-    out["bi_on_primary"] = scenario("bi_on_primary", args.seconds, PRIMARY)
-    out["bi_on_replica"] = scenario("bi_on_replica", args.seconds, REPLICA)
-    compose("up", "-d", "replica", env={"FEEDBACK": "on"})
-    wait_ready(REPLICA)
-    out["bi_on_replica_fb"] = scenario("bi_on_replica_fb", args.seconds, REPLICA)
-    compose("up", "-d", "replica", env={"FEEDBACK": "off"})
-    RESULT.write_text(json.dumps(out, indent=2) + "\n")
-    print(f"wrote {RESULT.relative_to(ROOT)}")
+    out = {"postgres": version, "rate_per_s": args.rate, "clients": CLIENTS, "analysts": ANALYSTS}
+    scenario("warmup", 120, None, args.rate)
+    out["app_alone"] = scenario("app_alone", args.seconds, None, args.rate)
+    out["bi_on_primary"] = scenario("bi_on_primary", args.seconds, PRIMARY, args.rate)
+    out["bi_on_replica"] = scenario("bi_on_replica", args.seconds, REPLICA, args.rate)
+    replica("on")
+    out["bi_on_replica_fb"] = scenario("bi_on_replica_fb", args.seconds, REPLICA, args.rate)
+    if args.out != RESULT:  # the stress run predates this scenario
+        replica("off", DELAY)
+        out["bi_on_replica_delay"] = scenario("bi_on_replica_delay", args.seconds, REPLICA, args.rate)
+        out["bi_on_replica_delay"]["max_standby_streaming_delay"] = DELAY
+    replica("off")
+    path = args.out if args.out.is_absolute() else ROOT / args.out
+    path.write_text(json.dumps(out, indent=2) + "\n")
+    print(f"wrote {path.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":

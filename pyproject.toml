@@ -12,6 +12,8 @@ dependencies = ["pyyaml>=6", "httpx>=0.28"]
 dev = ["pytest>=8", "ruff>=0.14"]
 # The current-state measurement only (baseline/): `uv sync --group baseline`. Needs Docker.
 baseline = ["psycopg[binary]==3.3.6"]
+# The proof of concept's speed test (poc/databricks/workload.py): `uv sync --group poc`.
+poc = ["databricks-sql-connector==4.6.0"]
 
 [tool.uv]
 package = false

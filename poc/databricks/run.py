@@ -49,26 +49,31 @@ class Databricks:
     def __init__(self) -> None:
         self.host = os.environ["DATABRICKS_HOST"].rstrip("/")
         self.warehouse = os.environ["DATABRICKS_HTTP_PATH"].rstrip("/").rsplit("/", 1)[-1]
-        self.http = httpx.Client(
-            headers={"Authorization": f"Bearer {os.environ['DATABRICKS_TOKEN']}"}, timeout=120
-        )
+        self.token = os.environ["DATABRICKS_TOKEN"]
+        self.http = httpx.Client(headers={"Authorization": f"Bearer {self.token}"}, timeout=120)
 
     def api(self, method: str, path: str, **kw) -> dict:
         r = self.http.request(method, f"{self.host}{path}", **kw)
         r.raise_for_status()
         return r.json() if r.content else {}
 
-    def sql(self, statement: str) -> list[list]:
-        d = self.api("POST", "/api/2.0/sql/statements",
-                     json={"warehouse_id": self.warehouse, "statement": statement,
-                           "wait_timeout": "50s", "on_wait_timeout": "CONTINUE"})  # fmt: skip
+    def sql(self, statement: str, schema: str | None = None) -> list[list]:
+        return self.statement(statement, schema)[1]
+
+    def statement(self, statement: str, schema: str | None = None) -> tuple[str, list[list]]:
+        """(statement id, rows). `schema` (catalog.schema) resolves unqualified table names."""
+        body = {"warehouse_id": self.warehouse, "statement": statement,
+                "wait_timeout": "50s", "on_wait_timeout": "CONTINUE"}  # fmt: skip
+        if schema:
+            body["catalog"], body["schema"] = schema.split(".")
+        d = self.api("POST", "/api/2.0/sql/statements", json=body)
         while d["status"]["state"] in ("PENDING", "RUNNING"):
-            time.sleep(2)
+            time.sleep(1)
             d = self.api("GET", f"/api/2.0/sql/statements/{d['statement_id']}")
         if d["status"]["state"] != "SUCCEEDED":
             message = d["status"].get("error", {}).get("message", str(d["status"]))
             raise SQLError(message)
-        return (d.get("result") or {}).get("data_array") or []
+        return d["statement_id"], (d.get("result") or {}).get("data_array") or []
 
     def error(self, statement: str) -> str | None:
         """Run a statement expected to fail; its error class, or None if it succeeded."""

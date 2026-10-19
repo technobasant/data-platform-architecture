@@ -37,6 +37,7 @@ services:
     environment:
       FEEDBACK: ${FEEDBACK:-off}
       RECLONE: ${RECLONE:-0}
+      DELAY: ${DELAY:-30s}
     entrypoint: ["/baseline/replica-entrypoint.sh"]
     volumes:
       - ./:/baseline:ro
