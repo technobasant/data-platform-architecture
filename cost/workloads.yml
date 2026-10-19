@@ -24,11 +24,10 @@ medium_engine_hour:
 # decisive.
 engineer_month_usd: 11_000
 operations_fte:
-  Snowflake Standard: 0.1
   Snowflake Enterprise: 0.1
+  Snowflake Business Critical: 0.1
   Databricks SQL Serverless: 0.15
   Trino on EC2: 1.0
-  BigQuery on-demand: 0.1
   Athena: 0.25
 
 tiers:

@@ -1,21 +1,23 @@
-# List prices used by the cost model. On-demand / pay-as-you-go, USD, AWS us-east-1
-# unless stated (BigQuery: US multi-region). Each was read on the vendor's own pricing
-# page on the date below; the quote is what the page said. Re-check before relying on
-# any of them: prices change, and contracts discount them.
-retrieved: "2026-10-18"
+# List prices used by the cost model. On-demand / pay-as-you-go, USD, in AWS EU (Ireland),
+# the region the client's product runs in (docs/01-brief.md: everything stays in one EU
+# region). Each was read on the vendor's own price list on the date below; the quote is what
+# it said. Re-check before relying on any of them: prices change, and contracts discount them.
+retrieved: "2026-10-19"
+region: AWS EU (Ireland), eu-west-1
 
 snowflake:
-  credit_standard:
-    value: 2.00
-    unit: USD per credit
-    source: https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf
-    quote: "Table 2(a): On Demand Platform Credit Pricing … AWS US East (Northern Virginia) $2.00 $3.00 $4.00 $6.00"
   credit_enterprise:
-    value: 3.00
+    value: 3.90
     unit: USD per credit
     source: https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf
-    quote: "Table 2(a): On Demand Platform Credit Pricing … AWS US East (Northern Virginia) $2.00 $3.00 $4.00 $6.00"
-    note: the columns are Standard, Enterprise, Business Critical and VPS
+    quote: "Table 2(a): On Demand Platform Credit Pricing … AWS EU Dublin $2.60 $3.90 $5.20 $7.80"
+    note: the columns are Standard, Enterprise, Business Critical and VPS. Enterprise is the least that meets the requirements (masking and row access policies, Time Travel past one day)
+  credit_business_critical:
+    value: 5.20
+    unit: USD per credit
+    source: https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf
+    quote: "Table 2(a): On Demand Platform Credit Pricing … AWS EU Dublin $2.60 $3.90 $5.20 $7.80"
+    note: needed for AWS PrivateLink to Snowflake; docs/07 says when that is required
   medium_warehouse_credits_per_hour:
     value: 4
     unit: credits per hour (Gen1)
@@ -25,55 +27,40 @@ snowflake:
     value: 23.00
     unit: USD per TB-month
     source: https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf
-    quote: "Table 3(a) On Demand Storage Pricing (TB/mo) … US East (Northern Virginia) $23.00"
+    quote: "Table 3(a): Standard Storage Pricing … AWS EU Dublin $23.00"
 
 databricks:
   sql_serverless_per_dbu:
-    value: 0.70
+    value: 0.91
     unit: USD per DBU, cloud instances included
-    source: https://www.databricks.com/product/pricing/databricks-sql
-    quote: "SQL Serverless … $0.70 / DBU *Includes cloud instance cost"
+    source: "Databricks system.billing.list_prices, read in the PoC workspace"
+    quote: "PREMIUM_SERVERLESS_SQL_COMPUTE_EUROPE_IRELAND 0.91; ENTERPRISE_SERVERLESS_SQL_COMPUTE_EUROPE_IRELAND 0.91"
+    note: the same price on the Premium and Enterprise tiers; Enterprise is the tier with PrivateLink on AWS
   medium_warehouse_dbu_per_hour:
     value: 24
     unit: DBU per hour
     source: https://www.databricks.com/product/pricing/product-pricing/instance-types
     quote: "Medium | 24.000DBU/hr | $16.8/hr (SQL Serverless, Premium, US East (N. Virginia))"
-
-bigquery:
-  on_demand_per_tib:
-    value: 6.25
-    unit: USD per TiB scanned
-    source: https://cloud.google.com/bigquery/pricing
-    quote: "1 tebibyte and above $6.25 / 1 tebibyte … The first 1 TiB per month is free."
-  on_demand_free_tib_per_month:
-    value: 1
-    unit: TiB per month
-    source: https://cloud.google.com/bigquery/pricing
-    quote: "0 tebibyte to 1 tebibyte Free per 1 month / account"
-  active_physical_storage_per_gib_month:
-    value: 0.04
-    unit: USD per GiB-month
-    source: https://cloud.google.com/bigquery/pricing
-    note: summarised from the page's storage table, physical storage, active; long-term physical is $0.02
+    note: the DBU rate of a size is the same in every region; the price per DBU is not
 
 aws:
   s3_standard_per_gb_month:
     value: 0.023
     unit: USD per GB-month, first 50 TB
     source: https://aws.amazon.com/s3/pricing/
-    quote: "First 50 TB / Month $0.023 per GB"
+    quote: "EU (Ireland) | Standard Storage First 50 TB per GB Mo | 0.0230000000"
   athena_per_tb_scanned:
     value: 5.00
     unit: USD per TB scanned
     source: https://aws.amazon.com/athena/pricing/
-    quote: "Athena Queries … 'price': '5.0000000000' (US East (N. Virginia))"
+    quote: "EU (Ireland) | Athena Queries | 5.0000000000"
   ec2_r7i_2xlarge_per_hour:
-    value: 0.5292
+    value: 0.5922
     unit: USD per hour, Linux on-demand
     source: https://aws.amazon.com/ec2/pricing/on-demand/
-    quote: "'price': '0.5292000000' … 'Instance Type': 'r7i.2xlarge', 'Memory': '64 GiB'"
+    quote: "EU (Ireland) r7i.2xlarge 'price': '0.5922000000' … 'Memory': '64 GiB'"
   ec2_m7i_2xlarge_per_hour:
-    value: 0.4032
+    value: 0.4494
     unit: USD per hour, Linux on-demand
     source: https://aws.amazon.com/ec2/pricing/on-demand/
-    quote: "'price': '0.4032000000' … 'Instance Type': 'm7i.2xlarge', 'Memory': '32 GiB'"
+    quote: "EU (Ireland) m7i.2xlarge 'price': '0.4494000000' … 'Memory': '32 GiB'"

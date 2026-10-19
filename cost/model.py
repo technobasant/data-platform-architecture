@@ -1,9 +1,10 @@
-"""Monthly cost of the analytical layer on five engines, from list prices.
+"""Monthly cost of the analytical layer on five options, from list prices in the client's
+EU region.
 
 Two outputs:
 
   break-even   how many TB one hour of a medium-sized engine must scan before per-scan
-               pricing (BigQuery on-demand, Athena) costs more than paying for the hour.
+               pricing (Athena) costs more than paying for the hour.
                This depends only on list prices, so it is the robust result.
   tiers        monthly cost at the client's three points of scale (docs/01-brief.md):
                the vendor bill, then with the share of an engineer each option takes to
@@ -25,7 +26,7 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-TB, GIB, TIB = 1e12, 2**30, 2**40
+TB = 1e12
 RESULT = ROOT / "results" / "cost.json"
 
 
@@ -45,8 +46,8 @@ def hourly(prices: dict, workloads: dict) -> dict[str, float]:
     workers = workloads["medium_engine_hour"]["trino_workers_r7i_2xlarge"]
     medium_credits = p(prices, "snowflake.medium_warehouse_credits_per_hour")
     return {
-        "Snowflake Standard": medium_credits * p(prices, "snowflake.credit_standard"),
         "Snowflake Enterprise": medium_credits * p(prices, "snowflake.credit_enterprise"),
+        "Snowflake Business Critical": medium_credits * p(prices, "snowflake.credit_business_critical"),
         "Databricks SQL Serverless": p(prices, "databricks.medium_warehouse_dbu_per_hour")
         * p(prices, "databricks.sql_serverless_per_dbu"),
         "Trino on EC2 (workers only)": workers * p(prices, "aws.ec2_r7i_2xlarge_per_hour"),
@@ -55,10 +56,7 @@ def hourly(prices: dict, workloads: dict) -> dict[str, float]:
 
 def per_scanned_tb(prices: dict) -> dict[str, float]:
     """USD per TB scanned, per scan-billed option (ignoring free tiers)."""
-    return {
-        "BigQuery on-demand": p(prices, "bigquery.on_demand_per_tib") * TB / TIB,
-        "Athena": p(prices, "aws.athena_per_tb_scanned"),
-    }
+    return {"Athena": p(prices, "aws.athena_per_tb_scanned")}
 
 
 def break_even(prices: dict, workloads: dict) -> dict:
@@ -85,23 +83,12 @@ def tier_costs(prices: dict, workloads: dict, tier: dict) -> dict:
     s3 = stored * 1000 * p(prices, "aws.s3_standard_per_gb_month")
     rates = hourly(prices, workloads)
     coordinator = p(prices, "aws.ec2_m7i_2xlarge_per_hour") * 24 * days
-    free_tib = p(prices, "bigquery.on_demand_free_tib_per_month")
-    bq_scan = max(0.0, scanned_tb * TB / TIB - free_tib) * p(prices, "bigquery.on_demand_per_tib")
+    snowflake_storage = stored * p(prices, "snowflake.storage_per_tb_month")
     costs = {
-        "Snowflake Standard": (
-            hours * rates["Snowflake Standard"],
-            stored * p(prices, "snowflake.storage_per_tb_month"),
-        ),  # fmt: skip
-        "Snowflake Enterprise": (
-            hours * rates["Snowflake Enterprise"],
-            stored * p(prices, "snowflake.storage_per_tb_month"),
-        ),  # fmt: skip
+        "Snowflake Enterprise": (hours * rates["Snowflake Enterprise"], snowflake_storage),
+        "Snowflake Business Critical": (hours * rates["Snowflake Business Critical"], snowflake_storage),
         "Databricks SQL Serverless": (hours * rates["Databricks SQL Serverless"], s3),
         "Trino on EC2": (hours * rates["Trino on EC2 (workers only)"] + coordinator, s3),
-        "BigQuery on-demand": (
-            bq_scan,
-            stored * TB / GIB * p(prices, "bigquery.active_physical_storage_per_gib_month"),
-        ),  # fmt: skip
         "Athena": (scanned_tb * p(prices, "aws.athena_per_tb_scanned"), s3),
     }
     people = {name: workloads["operations_fte"][name] * workloads["engineer_month_usd"] for name in costs}
@@ -127,6 +114,7 @@ def run() -> dict:
     prices, workloads = load()
     return {
         "prices_retrieved": prices["retrieved"],
+        "region": prices["region"],
         "break_even": break_even(prices, workloads),
         "tiers": {name: tier_costs(prices, workloads, t) for name, t in workloads["tiers"].items()},
     }
@@ -134,7 +122,7 @@ def run() -> dict:
 
 def report(r: dict) -> str:
     lines = [
-        f"List prices retrieved {r['prices_retrieved']}.",
+        f"List prices retrieved {r['prices_retrieved']}, {r['region']}.",
         "",
         "Break-even: TB one medium engine-hour must scan before per-scan pricing costs more",
         "",

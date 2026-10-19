@@ -24,9 +24,9 @@ option once the engineer it needs is counted ([4. Options](../docs/04-options.md
 
 | | Team of two to four | Bill at 36 months | With operations | Governance built in | Open format |
 |---|---|---|---|---|---|
-| **Managed platform (Databricks or Snowflake)** | ✔ | $1,476–3,081 | $2,576–4,731 | ✔ | ◐ by configuration |
+| **Managed platform (Databricks or Snowflake)** | ✔ | $2,862–4,001 | $3,962–5,651 | ✔ | ◐ by configuration |
 | AWS-native, assembled (Athena, Glue, Lake Formation) | ◐ | $55 | $2,805 | ◐ | ✔ |
-| Self-run Iceberg, catalog and Trino on Kubernetes | ✘ about one engineer full time | $697 | $11,697 | ✘ | ✔ |
+| Self-run Iceberg, catalog and Trino on Kubernetes | ✘ about one engineer full time | $777 | $11,777 | ✘ | ✔ |
 
 Figures from [`results/cost.json`](../results/cost.json), on list prices and the stated
 assumptions.

@@ -27,7 +27,7 @@ waves 1 and 2, by month 5.
 
 | Month | Milestone | Stage | Platform bill (list price, modelled) |
 |---|---|---|---|
-| 4 | finance on the platform (wave 2) | 1 | about $370–770 a month |
+| 4 | finance on the platform (wave 2) | 1 | about $710–1,000 a month |
 | 6 | stage 1 done (wave 4); stage 2 starts: the event stream agreed with product; [0010](../decisions/0010-customer-usage-serving.md) decided | 1 done → 2 | |
 | 9 | the usage page reads the usage store; isolation tests on its path | 2 | stream and store added: priced at the decision |
 | 10 | stage 2 done: Q11 and Q12 met | 2 done | about $730–1,540 a month for the platform |

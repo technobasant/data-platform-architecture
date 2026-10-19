@@ -38,8 +38,9 @@ product's Postgres on RDS and its one read replica ([the brief](docs/01-brief.md
 3. **Databricks or Snowflake is decided by a two-week proof of concept** on criteria and
    weights fixed in advance ([0005](decisions/0005-databricks-or-snowflake.md)); the
    Databricks half is done ([11](docs/11-proof-of-concept.md)). At this
-   scale the list-price bill does not separate them, from about $370 to $770 a month today
-   and $1,500 to $3,100 at 36 months; the people to run a self-built lakehouse would cost
+   scale the list-price bill does not separate them: in the client's EU region, at the
+   editions the requirements need, about $710 to $1,000 a month today and $2,900 to $4,000 at
+   36 months, against a $15,000 budget; the people to run a self-built lakehouse would cost
    more than either ([options](docs/04-options.md)).
 4. Months 6–10: customers' usage under a minute old from a store fed by a stream (stage 2).
    Months 10–13: the assistant, on the same governed tables

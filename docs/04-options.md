@@ -45,26 +45,25 @@ compute assumption with measured usage. Ingestion services (DMS, Openflow, Lakef
 Connect) and the stage-2 serving store are not in these figures.
 
 <!-- cost:start -->
-List prices retrieved 2026-10-18 ([`cost/prices.yml`](../cost/prices.yml)).
+List prices in AWS EU (Ireland), eu-west-1, retrieved 2026-10-19 ([`cost/prices.yml`](../cost/prices.yml)).
 
 **Break-even.** One hour of a medium-sized engine costs the same as scanning this much on a per-scan engine. Below it, per-scan is cheaper; above it, paying for the hour is.
 
-| Engine paid by the hour | USD per hour | BigQuery on-demand | Athena |
-|---|---:|---:|---:|
-| Snowflake Standard | $8.00 | 1.41 TB | 1.6 TB |
-| Snowflake Enterprise | $12.00 | 2.11 TB | 2.4 TB |
-| Databricks SQL Serverless | $16.80 | 2.96 TB | 3.36 TB |
-| Trino on EC2 (workers only) | $2.12 | 0.37 TB | 0.42 TB |
+| Engine paid by the hour | USD per hour | TB scanned on Athena for the same money |
+|---|---:|---:|
+| Snowflake Enterprise | $15.60 | 3.12 TB |
+| Snowflake Business Critical | $20.80 | 4.16 TB |
+| Databricks SQL Serverless | $21.84 | 4.37 TB |
+| Trino on EC2 (workers only) | $2.37 | 0.47 TB |
 
 **The client's scale**, today and in its growth plan, under the assumptions in [`cost/workloads.yml`](../cost/workloads.yml). The vendor bill for the analytical layer, per month:
 
 | Option | Today | In 12 months | In 36 months |
 |---|---:|---:|---:|
-| Snowflake Standard | $366 | $733 | $1,476 |
-| Snowflake Enterprise | $548 | $1,098 | $2,206 |
-| Databricks SQL Serverless | $767 | $1,536 | $3,081 |
-| Trino on EC2 | $392 | $491 | $697 |
-| BigQuery on-demand | $2 | $8 | $65 |
+| Snowflake Enterprise | $713 | $1,426 | $2,862 |
+| Snowflake Business Critical | $950 | $1,900 | $3,811 |
+| Databricks SQL Serverless | $997 | $1,995 | $4,001 |
+| Trino on EC2 | $437 | $547 | $777 |
 | Athena | $3 | $11 | $55 |
 | *assumed TB scanned per engine-hour* | 0.007 | 0.017 | 0.042 |
 | *stored TB* | 0.052 | 0.148 | 0.741 |
@@ -73,17 +72,20 @@ List prices retrieved 2026-10-18 ([`cost/prices.yml`](../cost/prices.yml)).
 
 | Option | Today | In 12 months | In 36 months |
 |---|---:|---:|---:|
-| Snowflake Standard | $1,466 | $1,833 | $2,576 |
-| Snowflake Enterprise | $1,648 | $2,198 | $3,306 |
-| Databricks SQL Serverless | $2,417 | $3,186 | $4,731 |
-| Trino on EC2 | $11,392 | $11,491 | $11,697 |
-| BigQuery on-demand | $1,102 | $1,108 | $1,165 |
+| Snowflake Enterprise | $1,813 | $2,526 | $3,962 |
+| Snowflake Business Critical | $2,050 | $3,000 | $4,911 |
+| Databricks SQL Serverless | $2,647 | $3,645 | $5,651 |
+| Trino on EC2 | $11,437 | $11,547 | $11,777 |
 | Athena | $2,753 | $2,761 | $2,805 |
 <!-- cost:end -->
 
-BigQuery appears above only as a reference point for the break-even table, not as a sixth
-option: it is a Google Cloud service, and [0006](../decisions/0006-open-format-in-the-clients-account.md)
-keeps the client's data in storage the client owns, in its own AWS account.
+Prices are for AWS EU (Ireland), the client's region. Snowflake Standard is not shown: it
+cannot meet the requirements (masking and row access policies, and Time Travel past one day,
+need Enterprise). Business Critical is shown because PrivateLink to Snowflake needs it; on
+Databricks, PrivateLink is on the Enterprise tier at the same price per DBU. BigQuery is not
+an option: it is a Google Cloud service, and
+[0006](../decisions/0006-open-format-in-the-clients-account.md) keeps the client's data in
+storage the client owns, in its own AWS account.
 
 At this scale **the bill does not decide it**. Every managed option stays far inside the
 $15,000 a month budget at 36 months, and per-scan engines (Athena) cost almost nothing. The
@@ -95,9 +97,11 @@ break-even table above says when paying per hour beats paying per scan.
 ## Recommendation
 
 1. **Now: option A as a stopgap, for three months at most.** Point every BI query at the
-   replica, never the primary, and accept that long reports will sometimes be cancelled.
-   It costs nothing and protects the product while the platform is built. It cannot meet
-   Q2 or Q4, and it is not the destination.
+   replica, never the primary, and make the replica the reports' alone with a 15-minute
+   replay delay ([0001](../decisions/0001-analytics-off-the-product-database.md)): in the
+   lab every report then finished, and the replica fell minutes behind, which no report
+   minds. It costs nothing and protects the product while the platform is built. It cannot
+   meet Q4, and it is not the destination.
 2. **Destination: C or D, decided by a two-week proof of concept** on criteria fixed before
    it starts ([0005](../decisions/0005-databricks-or-snowflake.md)). Both meet the stage-1
    requirements on paper. The differences that matter for this client can be measured: the

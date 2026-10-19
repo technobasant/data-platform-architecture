@@ -165,19 +165,18 @@ def cost_tables() -> str:
     tiers = list(r["tiers"].values())
     out = [
         "<!-- cost:start -->",
-        f"List prices retrieved {r['prices_retrieved']} ([`cost/prices.yml`](../cost/prices.yml)).",
+        f"List prices in {r['region']}, retrieved {r['prices_retrieved']} "
+        "([`cost/prices.yml`](../cost/prices.yml)).",
         "",
         "**Break-even.** One hour of a medium-sized engine costs the same as scanning this much on a "
         "per-scan engine. Below it, per-scan is cheaper; above it, paying for the hour is.",
         "",
-        "| Engine paid by the hour | USD per hour | BigQuery on-demand | Athena |",
-        "|---|---:|---:|---:|",
+        "| Engine paid by the hour | USD per hour | TB scanned on Athena for the same money |",
+        "|---|---:|---:|",
     ]
     for engine, b in r["break_even"].items():
         t = b["tb_per_hour"]
-        out.append(
-            f"| {engine} | ${b['usd_per_hour']:.2f} | {t['BigQuery on-demand']} TB | {t['Athena']} TB |"
-        )
+        out.append(f"| {engine} | ${b['usd_per_hour']:.2f} | {t['Athena']} TB |")
     out += [
         "",
         "**The client's scale**, today and in its growth plan, under the assumptions in "
