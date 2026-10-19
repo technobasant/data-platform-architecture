@@ -57,5 +57,27 @@
     "time_travel_after_retention": "DELTA_UNSUPPORTED_TIME_TRAVEL_BEYOND_DELETED_FILE_RETENTION_DURATION",
     "current_rows_after": 0,
     "retention_hours": 1
+  },
+  "erasure_uniform": {
+    "with_deletion_vectors": "DELTA_ICEBERG_COMPAT_VIOLATION.DELETION_VECTORS_SHOULD_BE_DISABLED",
+    "properties": {
+      "delta.enableDeletionVectors": "false",
+      "delta.enableIcebergCompatV2": "true",
+      "delta.universalFormat.enabledFormats": "iceberg"
+    },
+    "rows_of_the_user": 100,
+    "after_delete": {
+      "current_rows": 0,
+      "time_travel_rows": 100,
+      "deletion_vectors_added": 0,
+      "files_removed": 8,
+      "files_added": 1
+    },
+    "vacuum_default_now": "ran",
+    "time_travel_after_default_vacuum": 100,
+    "vacuum_after_retention": "ran",
+    "time_travel_after_retention": "DELTA_UNSUPPORTED_TIME_TRAVEL_BEYOND_DELETED_FILE_RETENTION_DURATION",
+    "current_rows_after": 0,
+    "retention_hours": 1
   }
 }

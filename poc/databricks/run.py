@@ -16,9 +16,11 @@ Three experiments on a Unity Catalog schema, through the SQL Statement Execution
               what time travel still shows, what REORG ... APPLY (PURGE) rewrites, what VACUUM
               refuses, and, after the table's retention has passed, whether time travel to
               the version before the delete still works.
+  erasure_uniform  The same on Delta with UniForm (Iceberg-readable), the format the design
+              chose: whether deletion vectors are allowed, and what a DELETE then rewrites.
 
-    python poc/databricks/run.py                       # all three; erasure waits an hour
-    python poc/databricks/run.py --retention-hours 1
+    python poc/databricks/run.py                       # all four; each erasure waits an hour
+    python poc/databricks/run.py --only uniform        # just the erasure on a UniForm table
 
 Needs DATABRICKS_HOST, DATABRICKS_TOKEN and DATABRICKS_HTTP_PATH (a SQL warehouse). Creates
 and replaces the schema workspace.dpa_poc and the governed tag `class`.
@@ -220,12 +222,70 @@ def erasure(db: Databricks, retention_hours: int) -> dict:
     return out
 
 
+def erasure_uniform(db: Databricks, retention_hours: int) -> dict:
+    """The same erasure on the table format the design chose: Delta with UniForm, so other
+    engines read it as Iceberg (0006). UniForm's Iceberg compatibility does not take deletion
+    vectors, so a DELETE has to rewrite files; the question is what that changes."""
+    t = f"{SCHEMA}.user_events_uniform"
+    uniform = ("'delta.enableIcebergCompatV2' = 'true', "
+               "'delta.universalFormat.enabledFormats' = 'iceberg'")  # fmt: skip
+    columns = "(user_id BIGINT, email STRING, event_type STRING)"
+    out = {"with_deletion_vectors": db.error(
+        f"CREATE OR REPLACE TABLE {t} {columns} TBLPROPERTIES ({uniform}, "
+        "'delta.enableDeletionVectors' = 'true')") or "created"}  # fmt: skip
+    db.sql(f"CREATE OR REPLACE TABLE {t} {columns} TBLPROPERTIES ({uniform}, "
+           "'delta.enableDeletionVectors' = 'false')")  # fmt: skip
+    db.sql(
+        f"INSERT INTO {t} SELECT id % 50, concat('user', id % 50, '@example.test'), 'login' FROM range(5000)"
+    )
+    props = dict(db.sql(f"SHOW TBLPROPERTIES {t}"))
+    keys = (
+        "delta.enableDeletionVectors",
+        "delta.enableIcebergCompatV2",
+        "delta.universalFormat.enabledFormats",
+    )
+    out["properties"] = {k: props.get(k) for k in keys}
+    before = int(db.sql(f"SELECT MAX(version) FROM (DESCRIBE HISTORY {t})")[0][0])
+    out["rows_of_the_user"] = user_rows(db, t)
+    db.sql(f"DELETE FROM {t} WHERE user_id = 7")
+    metrics = ", ".join(
+        f"operationMetrics.{m}" for m in ("numDeletionVectorsAdded", "numRemovedFiles", "numAddedFiles")
+    )
+    hist = db.sql(f"SELECT {metrics} FROM (DESCRIBE HISTORY {t}) WHERE operation = 'DELETE'")[0]
+    out["after_delete"] = {
+        "current_rows": user_rows(db, t),
+        "time_travel_rows": user_rows(db, t, before),
+        "deletion_vectors_added": int(hist[0] or 0),
+        "files_removed": int(hist[1] or 0),
+        "files_added": int(hist[2] or 0),
+    }
+    out["vacuum_default_now"] = db.error(f"VACUUM {t}") or "ran"
+    out["time_travel_after_default_vacuum"] = user_rows(db, t, before)
+    db.sql(f"ALTER TABLE {t} SET TBLPROPERTIES ('delta.deletedFileRetentionDuration' = "
+           f"'interval {retention_hours} hours')")  # fmt: skip
+    print(f"  erasure on UniForm: waiting {retention_hours} h for the table's retention to pass", flush=True)
+    time.sleep(retention_hours * 3600 + 120)
+    out["vacuum_after_retention"] = db.error(f"VACUUM {t} RETAIN {retention_hours} HOURS") or "ran"
+    out["time_travel_after_retention"] = db.error(f"SELECT COUNT(*) FROM {t} VERSION AS OF {before}") or "ran"
+    out["current_rows_after"] = user_rows(db, t)
+    out["retention_hours"] = retention_hours
+    return out
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--retention-hours", type=int, default=1)
+    ap.add_argument("--only", choices=("uniform",), help="run one experiment and add it to the results")
     args = ap.parse_args()
     db = Databricks()
     db.sql(f"CREATE SCHEMA IF NOT EXISTS {SCHEMA}")
+    if args.only == "uniform":
+        result = json.loads(RESULT.read_text())
+        result["erasure_uniform"] = erasure_uniform(db, args.retention_hours)
+        print("erasure on UniForm:", json.dumps(result["erasure_uniform"]), flush=True)
+        RESULT.write_text(json.dumps(result, indent=2) + "\n")
+        print(f"wrote {RESULT.relative_to(ROOT)}")
+        return
     version = db.sql("SELECT current_version().dbsql_version")[0][0]
     started = datetime.now(UTC).isoformat(timespec="seconds")
     result = {"databricks_sql": version, "started": started}
@@ -235,6 +295,8 @@ def main() -> None:
     print("row filter:", json.dumps(result["row_filter"]), flush=True)
     result["erasure"] = erasure(db, args.retention_hours)
     print("erasure:", json.dumps(result["erasure"]), flush=True)
+    result["erasure_uniform"] = erasure_uniform(db, args.retention_hours)
+    print("erasure on UniForm:", json.dumps(result["erasure_uniform"]), flush=True)
     RESULT.write_text(json.dumps(result, indent=2) + "\n")
     print(f"wrote {RESULT.relative_to(ROOT)}")
 

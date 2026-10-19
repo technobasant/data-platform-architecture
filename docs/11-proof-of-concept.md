@@ -21,7 +21,7 @@ Free Edition runs no bill; the cost below is what its billing table records, pri
 | 2 | Ingestion: corrected, late and duplicate files; CDC | measured in [data-stack-lab](https://github.com/technobasant/data-stack-lab/tree/main/databricks): only Auto Loader with `allowOverwrites` and a `MERGE` was exact | waiting for a trial |
 | 3 | Governance: masking and row filters | **measured, below** | waiting for a trial |
 | 4 | Erasure through time travel | **measured, below** | waiting for a trial |
-| 5 | Cost from the billing tables | the billing tables are readable (`system.billing.usage`); not yet run on the workload | waiting for a trial |
+| 5 | Cost from the billing tables | **measured, below**: a day's build and reports took 38 s and were billed 0.743 DBU, 94% of it the auto-stop wait; $21 to $961 a month at EU list price by how often the warehouse wakes, far inside the budget | waiting for a trial |
 | 6 | Speed of the BI query set | **measured, below**: every query under 3 s at concurrency 8, on the smallest warehouse | not yet run |
 | 7 | Operability and Terraform coverage | **measured, below**: Terraform owned the governed tag, schema, table, column tags, mask policy and grants, and planned clean after applying; the mask function needs SQL | waiting for a trial |
 
@@ -86,6 +86,22 @@ which Databricks refuses time travel to those versions. `VACUUM` refuses a short
 than the table's setting unless a safety check is switched off, which the erasure design does
 not do.
 
+On the format the design chose, Delta with UniForm so other engines read it as Iceberg
+([0006](../decisions/0006-open-format-in-the-clients-account.md)), the same steps go
+differently:
+
+| Step, on a UniForm table | The user's rows, current table | By time travel to before the delete |
+|---|---:|---:|
+| Create it with deletion vectors | refused: `DELTA_ICEBERG_COMPAT_VIOLATION.DELETION_VECTORS_SHOULD_BE_DISABLED` | |
+| `DELETE`: 0 deletion vectors, 8 files removed, 1 written | 0 | **100** |
+| `VACUUM`, default retention (7 days) | 0 | **100** |
+| `VACUUM` after the table's retention (1 hour for the test) had passed | 0 | refused |
+
+UniForm refuses deletion vectors, so the `DELETE` rewrites every file that holds the user's
+rows and no purge is needed. The old files stay reachable by time travel for the same
+retention, so the timeline is the same; what changes is that every row-level change, the
+weekly erasure and the CDC merges included, rewrites whole files.
+
 For [0012](../decisions/0012-erasure.md) on Databricks: delete by key, purge, and `VACUUM` once
 the retention has passed. With the default 7-day retention, a weekly erasure job and a daily
 `VACUUM`, a request is unrecoverable within 15 days, inside the 30 the DPA allows, and the
@@ -119,6 +135,47 @@ The comparison is not like for like, and is not meant to be: the Postgres figure
 client's lab database on 2 vCPU under the product's own load, and the warehouse is a managed
 service of undisclosed hardware. What it shows is the order of magnitude the client buys:
 interactive dashboards on the full history, with no load on the product.
+
+## Cost: what the billing table charged
+
+One day of the client's work on the same 2X-Small warehouse, alone in a clock hour from a
+stopped warehouse, so the hour's billing rows belong to it: the daily build (30 September's
+350,000 events loaded with `INSERT … REPLACE WHERE`, the usage mart's last three days
+replaced as [0008](../decisions/0008-incremental-by-interval.md) has it, the mart contract's
+quality check), then the four reports once by each of two analysts. Then the warehouse was
+left to stop itself, after the default 10 minutes idle.
+
+| | |
+|---|---|
+| Work, first statement to last | 38 s (the build 23.7 s, the reports 7.5 s) |
+| Running, from `system.compute.warehouse_events` | 11 min 9 s |
+| Billed, from `system.billing.usage` | **0.743 DBU**, at 4 DBU an hour of uptime |
+| Of the bill, the wait for auto-stop | 94% |
+
+The billing table charges uptime at the size's rate, whatever runs: in two other hours the
+same warehouse was up 54.2 and 33.45 minutes and was charged 3.614 and 2.230 DBU, again 4
+an hour. The work does not set the bill; how often the warehouse wakes does. At list price
+in the client's region (serverless SQL $0.91 a DBU in AWS EU Ireland, so $3.64 an hour for
+a 2X-Small):
+
+| How the warehouse is used | Hours awake a month | A month at list price |
+|---|---:|---:|
+| Woken once a day for the build and the reports | 5.6 | $21 |
+| The build, and reports in six separate sessions on working days | about 30 | about $109 |
+| Awake through EU working hours | 264 | $961 |
+| Awake all month | 730 | $2,657 |
+
+The cost model's assumption for Databricks today, 1.5 hours a day of a Medium warehouse
+([`cost/workloads.yml`](../cost/workloads.yml)), is $996 a month at the same price: about what
+the smallest size costs awake through every working hour, and more than the measured work
+needs. At 36 months the data is about 14 times larger; if report time grows with the rows
+read, keeping the reports to seconds takes a Small or a Medium (4 and 8 times the workers),
+$2,883 to $5,766 a month awake through working hours: inside the budget either way. Criterion
+5 passes on Databricks; the number that matters for the client is the hours awake, which is
+set by auto-stop, by how analysts use dashboards, and by keeping always-on consumers off the
+warehouse. The stage-3 assistant is one: a warehouse kept awake for it would cost $2,657 a
+month at the smallest size, more than its own budget, so its queries go to the stage-2 store
+([ai-platform-architecture 0014](https://github.com/technobasant/ai-platform-architecture/blob/main/decisions/0014-cost-per-answer.md)).
 
 ## Operability: what Terraform can own
 
