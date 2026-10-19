@@ -9,8 +9,9 @@ migration, and the decisions, each backed by measured results.
 
 ## Executive summary
 
-**The client.** 6,000 customer accounts, 350,000 product events a day growing threefold a
-year, a data team of two, and everything the business knows about itself read from the
+**The client.** 6,000 customer accounts, 350,000 product events a day growing about
+threefold in the first year and then roughly 2.2 times a year, a data team of two, and
+everything the business knows about itself read from the
 product's Postgres on RDS and its one read replica ([the brief](docs/01-brief.md)).
 
 **What is wrong, measured** on a lab copy of its database ([current state](docs/02-current-state.md)):
@@ -29,7 +30,7 @@ product's Postgres on RDS and its one read replica ([the brief](docs/01-brief.md
 
 1. Now: every report on the replica, never the primary. A cancelled report is a better
    failure than a slower product ([0001](decisions/0001-analytics-off-the-product-database.md)).
-2. Within four months: a managed analytical platform fed by change data capture, with a
+2. Within six months: a managed analytical platform fed by change data capture, with a
    Type 2 star schema reconciled to Stripe, governance by classification tags, and erasure
    that can be proven ([stage 1](docs/05-target-architecture.md#the-stages)).
 3. **Databricks or Snowflake is decided by a two-week proof of concept** on criteria and
@@ -38,8 +39,8 @@ product's Postgres on RDS and its one read replica ([the brief](docs/01-brief.md
    scale the list-price bill does not separate them, from about $370 to $770 a month today
    and $1,500 to $3,100 at 36 months; the people to run a self-built lakehouse would cost
    more than either ([options](docs/04-options.md)).
-4. Months 5–9: customers' usage under a minute old from a store fed by a stream (stage 2).
-   Months 9–12: the assistant, on the same governed tables
+4. Months 6–10: customers' usage under a minute old from a store fed by a stream (stage 2).
+   Months 10–13: the assistant, on the same governed tables
    ([AI architecture](https://github.com/technobasant/ai-platform-architecture)).
 
 ## Contents
@@ -55,7 +56,7 @@ product's Postgres on RDS and its one read replica ([the brief](docs/01-brief.md
 | 7 | [Security and governance](docs/07-security-and-governance.md) | classification, roles, row filters, erasure, SOC 2 and GDPR controls |
 | 8 | [Migration](docs/08-migration.md) | inventory, waves, running both, cutover and rollback |
 | 9 | [Operations](docs/09-operations.md) | what is watched, runbooks, change and release |
-| 10 | [Roadmap](docs/10-roadmap.md) | the first 90 days and the year, with costs and team |
+| 10 | [Roadmap](docs/10-roadmap.md) | week by week to the platform live, then the year, with costs and team |
 | 11 | [Proof of concept](docs/11-proof-of-concept.md) | the Databricks half: the dbt project, masking by tag, row filters, erasure through time travel |
 | | [Decisions](decisions) | 15 decision records with options, drivers and evidence |
 | | [Risks](docs/risks.md), [principles](docs/principles.md) | the register; the rules across decisions |
@@ -71,7 +72,7 @@ product's Postgres on RDS and its one read replica ([the brief](docs/01-brief.md
 | 0004 | [A managed platform, not a self-run lakehouse](decisions/0004-managed-platform.md) | Accepted | 909,968 rows recovered by snapshot rollback; 20 → 1 files merged per partition by optimize |
 | 0005 | [Databricks or Snowflake: decided by a two-week proof of concept on fixed criteria](decisions/0005-databricks-or-snowflake.md) | Proposed | 11, 46, 3 models, data tests and unit tests that passed when the dbt project was built on Databricks after one change, with revenue figures identical to DuckDB's; 3 of 3 personal columns masked by one policy on the classification tag, including a column on a table created after the policy |
 | 0006 | [Tables are kept in an open format, in storage the client owns](decisions/0006-open-format-in-the-clients-account.md) | Accepted | 909,968 rows recovered by snapshot rollback; 88 ms one-month predicate over 1.5M Iceberg rows |
-| 0007 | [A Kimball star, with Type 2 history for every attribute facts are read against](decisions/0007-history-for-attributes-facts-read-against.md) | Accepted | 15.1% of a year's revenue on the wrong plan with a Type 1 account dimension; 5,048 of 5,048 invoices on the plan they billed, Type 2 dimension from dbt snapshots |
+| 0007 | [A Kimball star, with Type 2 history for every attribute a fact is reported by](decisions/0007-history-for-attributes-facts-read-against.md) | Accepted | 15.1% of a year's revenue on the wrong plan with a Type 1 account dimension; 5,048 of 5,048 invoices on the plan they billed, Type 2 dimension from dbt snapshots |
 | 0008 | [Incremental models load their run's window and replace it by key](decisions/0008-incremental-by-interval.md) | Accepted | 96.56% of a month's events lost by high-water-mark loads backfilled newest day first, every run green; 0 of 89,508 events loaded by a data-interval incremental model on Airflow 3's default @daily, in 30 successful runs |
 | 0009 | [Pipelines are scheduled by the platform's own jobs, not a separate orchestrator](decisions/0009-orchestration-on-the-platform.md) | Accepted | 0 of 89,508 events loaded by a data-interval incremental model on Airflow 3's default @daily, in 30 successful runs |
 | 0010 | [Stage 2: customers' usage is served from a store fed by a stream, not from the platform](decisions/0010-customer-usage-serving.md) | Proposed | 6.1 s p99 from event time to queryable in ClickHouse at 1,000 events/s; 9 of 9 failure runs with every event layer exact |

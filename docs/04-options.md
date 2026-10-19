@@ -31,8 +31,8 @@ first three months.
 | Q9 restore a table | ✘ beyond whole-database restore | ✔ Iceberg snapshots | ✔ Delta `RESTORE` ([measured](https://github.com/technobasant/data-stack-lab/blob/main/MEASUREMENTS.md)) | ✔ Time Travel, up to 90 days on Enterprise | ✔ Iceberg snapshots ([measured](https://github.com/technobasant/lakehouse-lab)) |
 | Q10 erasure, provably | ✔ one database | ◐ delete, then expire snapshots | ◐ delete, then `VACUUM` past the retention window | ◐ delete; Time Travel, then 7 days of Fail-safe on permanent tables | ◐ as B |
 | Q11, Q13 tenant isolation, masking, audit | ◐ application code; one shared login | ◐ Lake Formation filters; CloudTrail | ✔ Unity Catalog row filters, column masks, audit logs | ✔ row access and masking policies (Enterprise), access history | ✘ to be built |
-| Q12 usage in the product under 60 s | ✔ today, by loading the primary | ✘ | ◐ needs a serving store (stage 2) | ◐ needs a serving store (stage 2) | ◐ as C |
-| Stage 3: the assistant | ✘ | ◐ Bedrock, built | ✔ AI/BI Genie on governed tables | ✔ Cortex Analyst on governed tables | ✘ built |
+| Q12 usage in the product under 60 s | ✔ today, by loading the primary | ◐ needs a serving store (stage 2) | ◐ needs a serving store (stage 2) | ◐ needs a serving store (stage 2) | ◐ as C |
+| Stage 3: the assistant | ✘ | ◐ Bedrock, built | ◐ the customer-facing assistant is the client's own service regardless of platform ([ai-platform-architecture 0004](https://github.com/technobasant/ai-platform-architecture/blob/main/decisions/0004-own-service-genie-for-staff.md)); AI/BI Genie on governed tables is for staff only | ◐ same: the client's own service for customers; Cortex Analyst on governed tables is for staff only | ✘ built |
 | Runs with a team of two to four | ✔ | ◐ many services to wire | ✔ serverless | ✔ | ✘ about one engineer full time |
 | Leaving it later | n/a | ✔ open tables in the client's account | ◐ Delta on the client's S3, readable as Iceberg through UniForm | ◐ Snowflake tables need export; Iceberg tables do not | ✔ |
 
@@ -80,6 +80,10 @@ List prices retrieved 2026-10-18 ([`cost/prices.yml`](../cost/prices.yml)).
 | BigQuery on-demand | $1,102 | $1,108 | $1,165 |
 | Athena | $2,753 | $2,761 | $2,805 |
 <!-- cost:end -->
+
+BigQuery appears above only as a reference point for the break-even table, not as a sixth
+option: it is a Google Cloud service, and [0006](../decisions/0006-open-format-in-the-clients-account.md)
+keeps the client's data in storage the client owns, in its own AWS account.
 
 At this scale **the bill does not decide it**. Every managed option stays far inside the
 $15,000 a month budget at 36 months, and per-scan engines (Athena) cost almost nothing. The

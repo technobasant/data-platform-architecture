@@ -13,6 +13,7 @@ database by a stalled CDC slot, pages the product's on-call.
 | CDC lag, raw behind the product | 30 min | data team, business hours | Q5 at risk |
 | Each mart's last successful build | 06:00 UTC | data team | Q5 |
 | A day held by a quality gate | any | data team | [0014](../decisions/0014-quality-gates.md) |
+| Per-day event count, for days the product has already purged | falls below yesterday's count for that day | data team | the platform should ignore the product's 90-day purge on `events` ([0002](../decisions/0002-cdc-from-the-product-database.md)); a fall means a delete leaked through |
 | Platform spend against the monthly budget | 50%, 80%, 100% of pro-rata | data lead, CFO at 100% | Q14 |
 | Isolation and tag-coverage tests | any failure | data team, blocks deploy | Q11 |
 
@@ -53,6 +54,9 @@ database by a stalled CDC slot, pages the product's on-call.
 - **Rehearsed:** a Delta table overwritten to 1 day of 365 was restored to 365 by one
   statement ([data-stack-lab](https://github.com/technobasant/data-stack-lab/blob/main/MEASUREMENTS.md));
   quarterly drill on a copy of a production table, timed.
+- **If the bucket itself is gone** (a bucket, key or Terraform mistake): restore it from the
+  AWS Backup vault in the separate AWS account, then re-apply the erasure log before anyone
+  reads the restored data ([0015](../decisions/0015-restore-points.md)).
 
 ### A producer wants a breaking change
 

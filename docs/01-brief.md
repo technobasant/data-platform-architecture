@@ -13,7 +13,7 @@ A B2B SaaS company selling a collaborative reporting product to other businesses
 |---|---|
 | Customer accounts | 6,000 on four plans: free, team ($49 a month), business ($199), enterprise ($899) |
 | Users | about 60,000 |
-| Product events | about 350,000 a day, growing roughly threefold a year as larger accounts sign |
+| Product events | about 350,000 a day, growing about threefold in the first year and then roughly 2.2 times a year as larger accounts sign |
 | Revenue | about $18M a year; 40% from customers in the EU |
 | Staff | about 140; product engineering 45 |
 | Data team | one analytics engineer and one analyst; two data engineers approved to hire |
@@ -64,7 +64,7 @@ The CTO and the CFO commissioned this together after one quarter in which:
 | Security, access, personal data and erasure, and the SOC 2 controls they support | [7. Security and governance](07-security-and-governance.md) |
 | A migration off the current setup without disrupting the product | [8. Migration](08-migration.md) |
 | How it is run, by a team of four | [9. Operations](09-operations.md) |
-| A twelve-month roadmap with costs | [10. Roadmap](10-roadmap.md), [cost](../cost) |
+| A roadmap with costs, to the assistant | [10. Roadmap](10-roadmap.md), [cost](../cost) |
 | The decisions, and the risks | [decisions](../decisions), [risks](risks.md) |
 
 ## Stakeholders
@@ -84,9 +84,10 @@ The CTO and the CFO commissioned this together after one quarter in which:
   include them, and the platform must not need a dedicated operator.
 - **Money.** Platform run cost, including the vendor bill and anything self-hosted, under
   $15,000 a month in year one.
-- **The product is not touched.** The application database stays Postgres on RDS. No
-  migration step may need product downtime or a schema change the product team has not
-  agreed to.
+- **The product is not touched.** The application database stays Postgres on RDS. One
+  planned restart of the primary, in a maintenance window agreed with the product team,
+  enables logical replication; beyond that, no migration step may need product downtime or
+  a schema change the product team has not agreed to.
 - **Compliance.** SOC 2 Type II audit window opens in month three. Erasure within 30 days of
   a request, including backups and copies, under the DPA.
 - **One region.** Everything stays in the EU region the product runs in.

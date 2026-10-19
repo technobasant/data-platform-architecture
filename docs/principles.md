@@ -7,7 +7,7 @@ result that went wrong in a lab first.
   database. When the two conflict, the analytical side gives way: a cancelled report, a
   dropped slot, a stale dashboard.
 - **Keep history where it is cheapest to get.** Read changes from the database's log, and
-  model every attribute facts are read against as Type 2. A periodic copy never sees a
+  model every attribute a fact is reported by as Type 2. A periodic copy never sees a
   change undone between two copies.
 - **Files are immutable; loads write by key.** Duplicates and corrections resolve in a
   `MERGE`, never by trusting a loader to read a file twice or once.

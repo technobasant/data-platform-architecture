@@ -1,6 +1,6 @@
 # 6. Data model
 
-A Kimball star with Type 2 history for every attribute facts are read against
+A Kimball star with Type 2 history for every attribute a fact is reported by
 ([0007](../decisions/0007-history-for-attributes-facts-read-against.md)). The same model is
 built and tested, on the same shape of data, in
 [data-stack-lab's dbt project](https://github.com/technobasant/data-stack-lab/tree/main/dbt),
