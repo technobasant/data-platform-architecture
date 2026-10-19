@@ -16,6 +16,6 @@ def test_fixture_differs_only_by_the_rename_and_version() -> None:
     assert len(original) == len(renamed)
     changed = [(a, b) for a, b in zip(original, renamed, strict=True) if a != b]
     assert changed == [
-        ("version: 1.0.0", "version: 1.1.0"),
+        ("version: 1.0.0", "version: 2.0.0"),
         ("      - name: email", "      - name: email_address"),
     ]

@@ -23,7 +23,7 @@ env:
 jobs:
   checks:
     name: Decisions, evidence, cost model and links
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -51,7 +51,7 @@ jobs:
   # renamed (tests/fixtures) must be reported as breaking, and an unchanged copy must not.
   contracts:
     name: Data contracts, and the breaking-change check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
       DATACONTRACT: datacontract-cli==1.2.6
@@ -72,7 +72,7 @@ jobs:
           original=models/contracts/product-database.odcs.yaml
           renamed=tests/fixtures/product-database-renamed-column.odcs.yaml
           if uvx --from "$DATACONTRACT" datacontract breaking "$original" "$renamed"; then
-            echo "::error::removing users.email was not reported as breaking"
+            echo "::error::renaming users.email to email_address was not reported as breaking"
             exit 1
           fi
           uvx --from "$DATACONTRACT" datacontract breaking "$original" "$original"
