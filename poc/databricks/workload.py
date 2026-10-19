@@ -105,7 +105,8 @@ LOAD = [
        FROM accounts AS a
        JOIN plans AS p USING (plan_id)
        CROSS JOIN (SELECT explode(sequence(TIMESTAMP '2024-10-01 00:00:00+00:00',
-                                           TIMESTAMP '2026-09-01 00:00:00+00:00', INTERVAL 1 MONTH)) AS m) AS m
+                                           TIMESTAMP '2026-09-01 00:00:00+00:00',
+                                           INTERVAL 1 MONTH)) AS m) AS m
        WHERE p.monthly_price_usd > 0 AND m.m >= date_trunc('MONTH', a.signup_at)""",
     f"CREATE OR REPLACE TABLE events AS {events_select(0, DAYS * EVENTS_A_DAY)}",
 ]
@@ -152,7 +153,9 @@ def bi_queries() -> dict[str, str]:
         elif name:
             queries[name] += line + "\n"
     return {
-        n: re.sub(r"timestamptz '([\d-]+) ([\d:]+)\+00'", r"TIMESTAMP '\1 \2:00+00:00'", q).strip().rstrip(";")
+        n: re.sub(r"timestamptz '([\d-]+) ([\d:]+)\+00'", r"TIMESTAMP '\1 \2:00+00:00'", q)
+        .strip()
+        .rstrip(";")
         for n, q in queries.items()
     }
 
@@ -210,7 +213,9 @@ def summarize(log: list[dict], seen: dict[str, dict]) -> dict:
 
     out: dict = {"queries": len(log), "in_history": sum(e["statement_id"] in seen for e in log)}
     found = [e for e in log if e["statement_id"] in seen]
-    out["from_result_cache"] = sum(seen[e["statement_id"]]["from_result_cache"] in (True, "true") for e in found)
+    out["from_result_cache"] = sum(
+        seen[e["statement_id"]]["from_result_cache"] in (True, "true") for e in found
+    )
     out["by_query"] = {}
     for name in dict.fromkeys(e["query"] for e in found):
         mine = [e for e in found if e["query"] == name]
@@ -219,9 +224,11 @@ def summarize(log: list[dict], seen: dict[str, dict]) -> dict:
             "runs": len(mine),
             "seconds_median": round(statistics.median(total), 2),
             "seconds_max": round(total[-1], 2),
-            "executing_seconds_median": round(statistics.median(ms(e, "execution_duration_ms") for e in mine), 2),
+            "executing_seconds_median": round(statistics.median(ms(e, "execution_duration_ms")
+                                                                for e in mine), 2),
             "queued_seconds_max": round(max(ms(e, "waiting_at_capacity_duration_ms") for e in mine), 2),
-            "rows_read_median": int(statistics.median(int(seen[e["statement_id"]]["read_rows"] or 0) for e in mine)),
+            "rows_read_median": int(statistics.median(int(seen[e["statement_id"]]["read_rows"] or 0)
+                                                      for e in mine)),
         }  # fmt: skip
     every = sorted(ms(e, "total_duration_ms") for e in found)
     out["seconds_median"] = round(statistics.median(every), 2)
@@ -232,7 +239,9 @@ def summarize(log: list[dict], seen: dict[str, dict]) -> dict:
 
 def postgres_medians() -> dict:
     """The same queries on the Postgres replica with hot_standby_feedback (baseline.json)."""
-    log = json.loads((ROOT / "results" / "baseline.json").read_text())["bi_on_replica_fb"]["bi_queries"]["log"]
+    log = json.loads((ROOT / "results" / "baseline.json").read_text())["bi_on_replica_fb"]["bi_queries"][
+        "log"
+    ]
     names = dict.fromkeys(e["query"] for e in log)
     return {n: statistics.median(e["seconds"] for e in log if e["query"] == n) for n in names}
 
@@ -295,7 +304,8 @@ def step_day(db: Databricks) -> dict:
         statement_id, rows = db.statement(statement, SCHEMA)
         build.append({"step": name, "statement_id": statement_id,
                       "client_seconds": round(time.perf_counter() - started, 2),
-                      **({"duplicates": int(rows[0][0])} if name == "contract_quality_check" else {})})  # fmt: skip
+                      **({"duplicates": int(rows[0][0])}
+                         if name == "contract_quality_check" else {})})  # fmt: skip
         print(f"  {name}: {build[-1]['client_seconds']} s", flush=True)
     out["build"] = build
     out["analysts"] = analysts(db, 2, 1, "day")
@@ -309,7 +319,9 @@ def step_bill(db: Databricks, day: dict) -> dict:
     """Billed DBUs for the day's hour, against uptime and busy time."""
     started = datetime.fromisoformat(day["started"])
     hour = started.replace(minute=0, second=0, microsecond=0)
-    until = datetime.fromisoformat(day["stopped"]).replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
+    until = datetime.fromisoformat(day["stopped"]).replace(minute=0, second=0, microsecond=0) + timedelta(
+        hours=1
+    )
     window = f"TIMESTAMP '{hour:%Y-%m-%d %H:%M:%S}+00:00' AND TIMESTAMP '{until:%Y-%m-%d %H:%M:%S}+00:00'"
     wid = db.warehouse
     billed = db.sql(f"""
@@ -320,8 +332,8 @@ def step_bill(db: Databricks, day: dict) -> dict:
           ON p.sku_name = u.sku_name AND p.usage_unit = u.usage_unit
          AND u.usage_end_time >= p.price_start_time
          AND (p.price_end_time IS NULL OR u.usage_end_time < p.price_end_time)
-        WHERE u.usage_metadata.warehouse_id = '{wid}' AND u.usage_start_time >= {window.split(' AND ')[0]}
-          AND u.usage_end_time <= {window.split(' AND ')[1]}
+        WHERE u.usage_metadata.warehouse_id = '{wid}' AND u.usage_start_time >= {window.split(" AND ")[0]}
+          AND u.usage_end_time <= {window.split(" AND ")[1]}
         ORDER BY 1""")
     events = db.sql(f"""
         SELECT event_type, event_time FROM system.compute.warehouse_events
@@ -336,8 +348,11 @@ def step_bill(db: Databricks, day: dict) -> dict:
             running_since = None
     ids = [b["statement_id"] for b in day["build"]] + [a["statement_id"] for a in day["analysts"]]
     seen = history(db, ids)
-    spans = sorted((datetime.fromisoformat(s["start_time"].replace("Z", "+00:00")),
-                    datetime.fromisoformat(s["end_time"].replace("Z", "+00:00"))) for s in seen.values())  # fmt: skip
+
+    def at(text: str) -> datetime:
+        return datetime.fromisoformat(text.replace("Z", "+00:00"))
+
+    spans = sorted((at(s["start_time"]), at(s["end_time"])) for s in seen.values())
     busy, edge = 0.0, None
     for s, e in spans:  # the union of the statements' intervals
         if edge is None or s > edge:
@@ -356,8 +371,15 @@ def step_bill(db: Databricks, day: dict) -> dict:
         "uptime_minutes": round(up / 60, 1),
         "busy_minutes": round(busy / 60, 2),
         "dbu_for_the_uptime_at_4_an_hour": round(up / 3600 * rate, 3),
-        "build_executing_seconds": round(sum(int(seen[b["statement_id"]]["execution_duration_ms"] or 0)
-                                             for b in day["build"] if b["statement_id"] in seen) / 1000, 1),  # fmt: skip
+        "build_executing_seconds": round(
+            sum(
+                int(seen[b["statement_id"]]["execution_duration_ms"] or 0)
+                for b in day["build"]
+                if b["statement_id"] in seen
+            )
+            / 1000,
+            1,
+        ),  # fmt: skip
         "share_of_uptime_idle": round(1 - busy / up, 3) if up else None,
     }
 
