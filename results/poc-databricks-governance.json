@@ -1,0 +1,109 @@
+{
+  "databricks_sql": "2026.39",
+  "erasure-by-model": {
+    "personal_data_in_every_event": {
+      "table": {
+        "files": 3,
+        "rows": 31850000
+      },
+      "rows_of_the_person": 551,
+      "update": {
+        "operation": "UPDATE",
+        "numRemovedFiles": 3,
+        "numAddedFiles": 4,
+        "numUpdatedRows": 551,
+        "numCopiedRows": 31849449,
+        "numDeletionVectorsAdded": 0,
+        "executionTimeMs": 7607
+      }
+    },
+    "personal_data_in_one_dimension": {
+      "table": {
+        "files": 1,
+        "rows": 60000
+      },
+      "rows_of_the_person": 1,
+      "update": {
+        "operation": "UPDATE",
+        "numRemovedFiles": 1,
+        "numAddedFiles": 1,
+        "numUpdatedRows": 1,
+        "numCopiedRows": 59999,
+        "numDeletionVectorsAdded": 0,
+        "executionTimeMs": 1082
+      }
+    },
+    "personal_data_in_every_event_deletion_vectors": {
+      "table": {
+        "files": 3,
+        "rows": 31850000
+      },
+      "rows_of_the_person": 551,
+      "update": {
+        "operation": "UPDATE",
+        "numRemovedFiles": 0,
+        "numAddedFiles": 4,
+        "numUpdatedRows": 551,
+        "numCopiedRows": 0,
+        "numDeletionVectorsAdded": 3,
+        "executionTimeMs": 3819
+      },
+      "purge": {
+        "operation": "REORG",
+        "numRemovedFiles": 3,
+        "numAddedFiles": 3,
+        "numUpdatedRows": 0,
+        "numCopiedRows": 0,
+        "numDeletionVectorsAdded": 0,
+        "executionTimeMs": 0
+      }
+    }
+  },
+  "audit": {
+    "columns_tagged_personal": 5,
+    "window_days": 90,
+    "reads": [
+      {
+        "reader": "principal-7752e19d",
+        "through": "SQL query",
+        "column": "workspace.dpa_poc.t.email",
+        "reads": 3,
+        "first": "2026-10-19T07:53:56.776Z",
+        "last": "2026-10-19T07:56:02.656Z"
+      },
+      {
+        "reader": "principal-7752e19d",
+        "through": "SQL query",
+        "column": "workspace.dpa_poc.users.email",
+        "reads": 1,
+        "first": "2026-10-19T08:00:20.849Z",
+        "last": "2026-10-19T08:00:20.849Z"
+      },
+      {
+        "reader": "principal-7752e19d",
+        "through": "SQL query",
+        "column": "workspace.dpa_poc.users.full_name",
+        "reads": 1,
+        "first": "2026-10-19T08:00:22.003Z",
+        "last": "2026-10-19T08:00:22.003Z"
+      },
+      {
+        "reader": "principal-7752e19d",
+        "through": "SQL query",
+        "column": "workspace.dpa_poc.support_contacts.phone",
+        "reads": 1,
+        "first": "2026-10-19T08:00:23.101Z",
+        "last": "2026-10-19T08:00:23.101Z"
+      },
+      {
+        "reader": "principal-7752e19d",
+        "through": "SQL query",
+        "column": "workspace.dpa_poc.t2.email",
+        "reads": 1,
+        "first": "2026-10-19T07:56:07.762Z",
+        "last": "2026-10-19T07:56:07.762Z"
+      }
+    ],
+    "query_seconds": 4.69
+  }
+}

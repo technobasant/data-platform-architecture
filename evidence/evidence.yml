@@ -288,3 +288,20 @@ dpa_day_bill:
   repo: data-platform-architecture
   file: results/poc-databricks-workload.json
   check: {json: results/poc-databricks-workload.json, expr: 'str(d["bill"]["dbu"]) + " DBU"'}
+
+dpa_erasure_model:
+  value: "31,849,449 rows"
+  label: "rewritten to erase one person (551 events) when the model copies e-mail and name into every event row; 59,999 when they live only in a 60,000-row user table"
+  method: "Databricks SQL 2026.39 on Free Edition, UniForm tables (no deletion vectors) built from the proof of concept's 31.85 million events: UPDATE … SET email = NULL, full_name = NULL for one user; the wide table's 3 files were all rewritten (7.6 s), the user table's 1 file (1.1 s); on plain Delta with deletion vectors the update wrote 3 vectors and the purge then rewrote all 3 files"
+  repo: data-platform-architecture
+  file: results/poc-databricks-governance.json
+  check: {json: results/poc-databricks-governance.json, expr: 'format(d["erasure-by-model"]["personal_data_in_every_event"]["update"]["numCopiedRows"], ",") + " rows"'}
+
+dpa_audit_query:
+  value: "5 of 5"
+  label: "columns tagged personal whose every read in 90 days one query found, by reader, column and time, from the catalog's tags and the platform's column lineage"
+  method: "Databricks SQL 2026.39 on Free Edition: information_schema.column_tags (class = personal) joined to system.access.column_lineage; readers pseudonymised in the result; answered in 4.7 s"
+  repo: data-platform-architecture
+  file: results/poc-databricks-governance.json
+  check: {json: results/poc-databricks-governance.json, expr: 'str(len({r["column"] for r in d["audit"]["reads"]})) + " of " + str(d["audit"]["columns_tagged_personal"])'}
+
