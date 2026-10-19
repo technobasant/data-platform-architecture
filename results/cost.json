@@ -31,111 +31,147 @@
     }
   },
   "tiers": {
-    "small": {
-      "storage_tb": 0.154,
-      "assumed_tb_scanned_per_engine_hour": 0.023,
+    "today": {
+      "storage_tb": 0.052,
+      "assumed_tb_scanned_per_engine_hour": 0.007,
+      "monthly_usd": {
+        "Snowflake Standard": {
+          "compute": 365,
+          "storage": 1,
+          "total": 366,
+          "operations": 1100,
+          "total_with_operations": 1466
+        },
+        "Snowflake Enterprise": {
+          "compute": 547,
+          "storage": 1,
+          "total": 548,
+          "operations": 1100,
+          "total_with_operations": 1648
+        },
+        "Databricks SQL Serverless": {
+          "compute": 766,
+          "storage": 1,
+          "total": 767,
+          "operations": 1650,
+          "total_with_operations": 2417
+        },
+        "Trino on EC2": {
+          "compute": 391,
+          "storage": 1,
+          "total": 392,
+          "operations": 11000,
+          "total_with_operations": 11392
+        },
+        "BigQuery on-demand": {
+          "compute": 0,
+          "storage": 2,
+          "total": 2,
+          "operations": 1100,
+          "total_with_operations": 1102
+        },
+        "Athena": {
+          "compute": 2,
+          "storage": 1,
+          "total": 3,
+          "operations": 2750,
+          "total_with_operations": 2753
+        }
+      }
+    },
+    "in_12_months": {
+      "storage_tb": 0.148,
+      "assumed_tb_scanned_per_engine_hour": 0.017,
       "monthly_usd": {
         "Snowflake Standard": {
           "compute": 730,
-          "storage": 4,
-          "total": 733
+          "storage": 3,
+          "total": 733,
+          "operations": 1100,
+          "total_with_operations": 1833
         },
         "Snowflake Enterprise": {
           "compute": 1094,
-          "storage": 4,
-          "total": 1098
+          "storage": 3,
+          "total": 1098,
+          "operations": 1100,
+          "total_with_operations": 2198
         },
         "Databricks SQL Serverless": {
           "compute": 1532,
-          "storage": 4,
-          "total": 1536
+          "storage": 3,
+          "total": 1536,
+          "operations": 1650,
+          "total_with_operations": 3186
         },
         "Trino on EC2": {
           "compute": 487,
-          "storage": 4,
-          "total": 491
+          "storage": 3,
+          "total": 491,
+          "operations": 11000,
+          "total_with_operations": 11491
         },
         "BigQuery on-demand": {
-          "compute": 6,
+          "compute": 2,
           "storage": 6,
-          "total": 12
+          "total": 8,
+          "operations": 1100,
+          "total_with_operations": 1108
         },
         "Athena": {
-          "compute": 11,
-          "storage": 4,
-          "total": 14
+          "compute": 8,
+          "storage": 3,
+          "total": 11,
+          "operations": 2750,
+          "total_with_operations": 2761
         }
       }
     },
-    "medium": {
-      "storage_tb": 2.311,
-      "assumed_tb_scanned_per_engine_hour": 0.089,
+    "in_36_months": {
+      "storage_tb": 0.741,
+      "assumed_tb_scanned_per_engine_hour": 0.042,
       "monthly_usd": {
         "Snowflake Standard": {
+          "compute": 1459,
+          "storage": 17,
+          "total": 1476,
+          "operations": 1100,
+          "total_with_operations": 2576
+        },
+        "Snowflake Enterprise": {
           "compute": 2189,
-          "storage": 53,
-          "total": 2242
-        },
-        "Snowflake Enterprise": {
-          "compute": 3283,
-          "storage": 53,
-          "total": 3336
+          "storage": 17,
+          "total": 2206,
+          "operations": 1100,
+          "total_with_operations": 3306
         },
         "Databricks SQL Serverless": {
-          "compute": 4596,
-          "storage": 53,
-          "total": 4650
+          "compute": 3064,
+          "storage": 17,
+          "total": 3081,
+          "operations": 1650,
+          "total_with_operations": 4731
         },
         "Trino on EC2": {
-          "compute": 873,
-          "storage": 53,
-          "total": 926
+          "compute": 680,
+          "storage": 17,
+          "total": 697,
+          "operations": 11000,
+          "total_with_operations": 11697
         },
         "BigQuery on-demand": {
-          "compute": 132,
-          "storage": 86,
-          "total": 218
+          "compute": 37,
+          "storage": 28,
+          "total": 65,
+          "operations": 1100,
+          "total_with_operations": 1165
         },
         "Athena": {
-          "compute": 122,
-          "storage": 53,
-          "total": 175
-        }
-      }
-    },
-    "large": {
-      "storage_tb": 23.108,
-      "assumed_tb_scanned_per_engine_hour": 0.4,
-      "monthly_usd": {
-        "Snowflake Standard": {
-          "compute": 4864,
-          "storage": 531,
-          "total": 5395
-        },
-        "Snowflake Enterprise": {
-          "compute": 7296,
-          "storage": 531,
-          "total": 7827
-        },
-        "Databricks SQL Serverless": {
-          "compute": 10214,
-          "storage": 531,
-          "total": 10746
-        },
-        "Trino on EC2": {
-          "compute": 1581,
-          "storage": 531,
-          "total": 2113
-        },
-        "BigQuery on-demand": {
-          "compute": 1376,
-          "storage": 861,
-          "total": 2237
-        },
-        "Athena": {
-          "compute": 1216,
-          "storage": 531,
-          "total": 1747
+          "compute": 38,
+          "storage": 17,
+          "total": 55,
+          "operations": 2750,
+          "total_with_operations": 2805
         }
       }
     }

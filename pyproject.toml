@@ -1,7 +1,7 @@
 [project]
 name = "data-platform-architecture"
-version = "0.1.0"
-description = "A reference architecture for a SaaS data platform, with every decision backed by a measured result."
+version = "0.2.0"
+description = "A data architecture engagement for a fictional SaaS company leaving Postgres: current state measured, options, target, decisions with evidence."
 readme = "README.md"
 license = "Apache-2.0"
 authors = [{ name = "Basant Bhattarai" }]
@@ -10,6 +10,8 @@ dependencies = ["pyyaml>=6", "httpx>=0.28"]
 
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.14"]
+# The current-state measurement only (baseline/): `uv sync --group baseline`. Needs Docker.
+baseline = ["psycopg[binary]==3.3.6"]
 
 [tool.uv]
 package = false

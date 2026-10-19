@@ -44,13 +44,6 @@ stream_freshness_p99:
   repo: streaming-platform
   file: MEASUREMENTS.md
 
-stream_stall_page:
-  value: "59\u201362 s"
-  label: "from a frozen pipeline to a firing burn-rate alert"
-  method: "both TaskManagers paused for 150 s at 500 events/s; freshness probes every 5 s; multi-window burn-rate rules compressed 12\u00D7 from the 1 h/5 m pair; alert state polled every second"
-  repo: streaming-platform
-  file: MEASUREMENTS.md
-
 registry_false_negatives:
   value: "0"
   label: "breaking schema changes passed as safe, in any mode"
@@ -62,20 +55,6 @@ registry_false_alarms:
   value: "2 of 51"
   label: "changes flagged as breaking that are safe, per direction"
   method: "the same 51 cases; a widened and a narrowed regular expression, an added anyOf branch and an added multipleOf are flagged in both directions by design, and each truly breaks only one"
-  repo: dataset-registry
-  file: MEASUREMENTS.md
-
-registry_breach_delay:
-  value: "7.5 s"
-  label: "median freshness-breach detection delay at the 15 s default"
-  method: "200 datasets with a 60 s SLO whose deadlines fall evenly over two evaluator intervals; delay = detected_at \u2212 deadline as the registry recorded it"
-  repo: dataset-registry
-  file: MEASUREMENTS.md
-
-registry_lineage_5hop:
-  value: "2.34 ms"
-  label: "p50 for five hops downstream in a 10,000-dataset graph"
-  method: "100 queries from random roots in a 10-layer DAG with fan-in 3, issued one at a time; median of three runs; one hop costs the same at 100 and 10,000 datasets"
   repo: dataset-registry
   file: MEASUREMENTS.md
 
@@ -121,108 +100,51 @@ dsl_default_daily_loaded:
   repo: data-stack-lab
   file: MEASUREMENTS.md
 
-ddb_rebalance_errors:
-  value: "0 errors"
-  label: "while a worker joined and 7 shard groups moved under load"
-  method: "8 client threads for 600 s, 80% one-tenant reads and 20% single-row inserts against the Citus coordinator; every acknowledged write counted back afterwards"
-  repo: distributed-db-lab
+dsl_quality_block:
+  value: "0 of 3,198"
+  label: "bad rows promoted when any failing data-quality check held the day"
+  method: "September delivered daily with nine injected defects and checked in dbt (contract, row tests, batch tests against seven accepted days, manifest control totals); every delivered row labelled good or bad by its defect"
+  repo: data-stack-lab
   file: MEASUREMENTS.md
 
-ddb_colocation_join:
-  value: "4.2\u00D7"
-  label: "faster join co-located than repartitioned"
-  method: "the same join over tenants 1\u2013400, both returning 617,895 rows; p50 of 7 runs, 1,251.7 ms co-located on (tenant_id, user_id) vs 5,206.0 ms against a copy distributed by user_id"
-  repo: distributed-db-lab
+dsl_spark_static_overwrite:
+  value: "1 of 365"
+  label: "daily partitions left after re-running one day with Spark's default static overwrite"
+  method: "PySpark 4.2.0, a 365-day rollup written with partitionBy(activity_date); one day recomputed and written back with mode(\"overwrite\"); dynamic partitionOverwriteMode kept all 365"
+  repo: data-stack-lab
   file: MEASUREMENTS.md
 
-ddb_skew_spread:
-  value: "2.36\u00D7 \u2192 1.10\u00D7"
-  label: "spread between the largest and smallest worker"
-  method: "node bytes after the default by_disk_size rebalance, then after isolating the largest tenant to its own shard and rebalancing with citus.rebalancer_by_disk_size_base_cost set to 0"
-  repo: distributed-db-lab
+dsl_databricks_corrected_missed:
+  value: "1,638"
+  label: "events never loaded by COPY INTO and Auto Loader after a truncated file was corrected under the same name"
+  method: "Databricks Free Edition (Databricks SQL 2026.39): ten days of event files (29,095 events) delivered into a Unity Catalog volume and loaded six ways after each delivery; the counts matched a prediction made from the documented semantics"
+  repo: data-stack-lab
   file: MEASUREMENTS.md
 
-ddb_tsdb_compression:
-  value: "17.0\u00D7"
-  label: "smaller after TimescaleDB columnstore"
-  method: "11 of 12 one-day chunks of 20.7M ticks, segmented by entity and metric; 2,785.5 MB \u2192 163.4 MB from hypertable_compression_stats"
-  repo: distributed-db-lab
+dsl_delta_restore:
+  value: "365 of 365"
+  label: "days back after RESTORE TABLE, following an INSERT OVERWRITE of one day that left 1"
+  method: "Databricks SQL 2026.39 on Free Edition: a 365-day rollup (333,082 rows) as a Delta table partitioned by day; 15 September rewritten with INSERT OVERWRITE, then RESTORE TABLE TO VERSION AS OF 0"
+  repo: data-stack-lab
   file: MEASUREMENTS.md
 
-ddb_ch_replica_outage:
-  value: "40 of 40"
-  label: "inserts succeeded with a ClickHouse replica down"
-  method: "one replica of a 2-shard \u00D7 2-replica ReplicatedMergeTree cluster killed for 60.3 s while inserts and reads ran through the Distributed table"
-  repo: distributed-db-lab
-  file: MEASUREMENTS.md
+baseline_bi_on_primary:
+  value: "93 → 794 ms"
+  label: "product p95 request latency, without and with the BI tool's reports on the primary"
+  method: "a lab copy of the client's database (Postgres 17, 2 vCPU and 4 GB, 31.5 million events); the product's request at 100 a second from pgbench; two analysts running the four BI queries in turn; five minutes per scenario after a checkpoint. Requests over 100 ms went from 4.8% to 23.0%"
+  repo: data-platform-architecture
+  file: results/baseline.json
 
-lab_scenarios:
-  value: "8 of 8"
-  label: "failover scenarios passed"
-  method: "my own test plan, executed on Docker with 8 CPU / 12.5 GB"
-  repo: db-failover-lab
-  file: RESULTS.md
+baseline_replica_long_reports:
+  value: "3 of 412"
+  label: "runs of the three long reports that finished on the read replica in five minutes; 409 were cancelled by recovery conflicts"
+  method: "the same lab, reports on a streaming replica with the default max_standby_streaming_delay of 30 s and hot_standby_feedback off, while the product updated users at 100 requests a second; analysts retried at once"
+  repo: data-platform-architecture
+  file: results/baseline.json
 
-lab_pg_replay_lag:
-  value: "383 \u00B5s"
-  label: "replay lag measured on one host"
-  method: "a single pg_stat_replication reading with primary and hot standby on the same machine \u2014 loopback, no network, so it is a floor for the configuration rather than a latency anyone should expect across hosts"
-  repo: db-failover-lab
-  file: RESULTS.md
-
-lab_redis_promotion:
-  value: "~5 s"
-  label: "Redis Sentinel primary promotion"
-  method: "wall-clock from `docker stop` of the primary to a writable replica"
-  repo: db-failover-lab
-  file: RESULTS.md
-
-lab_patroni_promotion:
-  value: "10\u201320 s"
-  label: "observed promotion window after SIGKILL"
-  method: "SIGKILL of the Patroni leader, then patronictl polled every 10 s until the survivor showed as Leader \u2014 so 10 s is the measurement resolution, not the precision of the result"
-  repo: postgres-ha-lab
-  file: README.md
-
-lab_replica_rebuild:
-  value: "~5 s"
-  label: "replica rebuilt from backup"
-  method: "patronictl reinit; the pgBackRest restore itself logged 5,020 ms, then Patroni reported the replica created"
-  repo: postgres-ha-lab
-  file: README.md
-
-lab_pitr_recovery:
-  value: "5 of 5"
-  label: "rows recovered by point-in-time restore"
-  method: "dropped a table, restored to a timestamp taken before the DROP, counted rows against the pre-incident total"
-  repo: postgres-ha-lab
-  file: README.md
-
-rtml_leakage:
-  value: "0.363 vs 0.941"
-  label: "future AUC-PR, naive join against point-in-time join"
-  method: "same rows, labels, model and hyperparameters; only the training join differs. Scored on the two weeks after training with point-in-time features and true labels, on seeded synthetic payments (874,446 transactions, 0.80% fraud)"
-  repo: realtime-ml
-  file: MEASUREMENTS.md
-
-rtml_parity:
-  value: "99.905%"
-  label: "of 9,500 live requests served exactly the training features"
-  method: "features logged by the API compared with Feast's point-in-time join for the same transactions, on a live stack replaying a day in about seven minutes"
-  repo: realtime-ml
-  file: MEASUREMENTS.md
-
-deploy_bad_release_aborted:
-  value: "6 of 6"
-  label: "bad releases aborted by canary analysis"
-  method: "a release whose Envoy sidecar returns 500 on 30% of requests, under 20 req/s from k6; three runs with keep-alive clients, three with a new connection per request; Prometheus analysis every 15 s after a 30 s initial delay"
-  repo: platform-deployments
-  file: MEASUREMENTS.md
-
-deploy_good_release_failures:
-  value: "0 of 18,003"
-  label: "requests failed across three good canary releases"
-  method: "k6 at 20 req/s for five minutes per run, GET /healthz and GET /review-queue with a 10 s timeout; canary 20% \u2192 50% with 60 s pauses, background analysis and an evidence step before 100%"
-  repo: platform-deployments
-  file: MEASUREMENTS.md
-
+baseline_replica_feedback:
+  value: "20 of 20"
+  label: "runs of the long reports that finished on the replica with hot_standby_feedback on"
+  method: "the same lab and load; the cost, cleanup on the primary held back for as long as the longest report, was not visible in a five-minute window with reports of one to two minutes"
+  repo: data-platform-architecture
+  file: results/baseline.json

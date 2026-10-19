@@ -1,0 +1,57 @@
+# The client's current state: one Postgres primary and one streaming read replica, the
+# same shape as its RDS setup at lab size. Local only: trust authentication on a private
+# network, nothing exposed beyond localhost.
+name: dpa-baseline
+
+x-postgres: &postgres
+  image: postgres:17-bookworm
+  cpus: 2
+  mem_limit: 4g
+  shm_size: 1g
+  environment:
+    POSTGRES_HOST_AUTH_METHOD: trust
+  volumes:
+    - ./:/baseline:ro
+
+services:
+  primary:
+    <<: *postgres
+    command: >
+      postgres -c shared_buffers=1GB -c work_mem=64MB -c maintenance_work_mem=512MB
+      -c wal_level=replica -c max_wal_senders=4 -c max_wal_size=4GB
+      -c autovacuum_naptime=10s -c track_io_timing=on -c checkpoint_timeout=30min
+    volumes:
+      - ./:/baseline:ro
+      - ./primary-init.sh:/docker-entrypoint-initdb.d/10-replication.sh:ro
+      - primary-data:/var/lib/postgresql/data
+    ports: ["127.0.0.1:55432:5432"]
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 2s
+      retries: 60
+
+  replica:
+    <<: *postgres
+    depends_on:
+      primary: {condition: service_healthy}
+    environment:
+      FEEDBACK: ${FEEDBACK:-off}
+      RECLONE: ${RECLONE:-0}
+    entrypoint: ["/baseline/replica-entrypoint.sh"]
+    volumes:
+      - ./:/baseline:ro
+      - replica-data:/var/lib/postgresql/data
+    ports: ["127.0.0.1:55433:5432"]
+
+  # pgbench runs here, not on the primary, so it does not take the primary's CPUs.
+  client:
+    image: postgres:17-bookworm
+    profiles: [tools]
+    entrypoint: []
+    volumes:
+      - ./:/baseline:ro
+      - ./out:/out
+
+volumes:
+  primary-data:
+  replica-data:

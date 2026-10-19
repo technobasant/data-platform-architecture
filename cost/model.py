@@ -5,9 +5,11 @@ Two outputs:
   break-even   how many TB one hour of a medium-sized engine must scan before per-scan
                pricing (BigQuery on-demand, Athena) costs more than paying for the hour.
                This depends only on list prices, so it is the robust result.
-  tiers        monthly cost for the three workload tiers of docs/context.md. These rest
-               on an assumed ratio of data scanned to engine-hours, which nothing here
-               measured; the output prints that ratio next to the result.
+  tiers        monthly cost at the client's three points of scale (docs/01-brief.md):
+               the vendor bill, then with the share of an engineer each option takes to
+               run. These rest on an assumed ratio of data scanned to engine-hours and on
+               assumed operations effort, which nothing here measured; the output prints
+               the ratio next to the result.
 
     python cost/model.py            # print, and write results/cost.json
     python cost/model.py --check    # fail if results/cost.json is out of date
@@ -102,13 +104,20 @@ def tier_costs(prices: dict, workloads: dict, tier: dict) -> dict:
         ),  # fmt: skip
         "Athena": (scanned_tb * p(prices, "aws.athena_per_tb_scanned"), s3),
     }
+    people = {name: workloads["operations_fte"][name] * workloads["engineer_month_usd"] for name in costs}
     return {
         "storage_tb": round(stored, 3),
         "assumed_tb_scanned_per_engine_hour": round(
             tier["scanned_tb_per_day"] / tier["compute_hours_per_day"], 3
         ),
         "monthly_usd": {
-            name: {"compute": round(c), "storage": round(s), "total": round(c + s)}
+            name: {
+                "compute": round(c),
+                "storage": round(s),
+                "total": round(c + s),
+                "operations": round(people[name]),
+                "total_with_operations": round(c + s + people[name]),
+            }
             for name, (c, s) in costs.items()
         },  # fmt: skip
     }
@@ -138,7 +147,8 @@ def report(r: dict) -> str:
                   f"{t['assumed_tb_scanned_per_engine_hour']} TB scanned per engine-hour"]  # fmt: skip
         for option, c in sorted(t["monthly_usd"].items(), key=lambda kv: kv[1]["total"]):
             split = f"compute ${c['compute']:,}, storage ${c['storage']:,}"
-            lines.append(f"  {option:<28} ${c['total']:>8,}/month  ({split})")
+            lines.append(f"  {option:<28} ${c['total']:>8,}/month  ({split}); "
+                         f"with operations ${c['total_with_operations']:,}")  # fmt: skip
     return "\n".join(lines)
 
 

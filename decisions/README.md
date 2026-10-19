@@ -1,35 +1,54 @@
 # Decisions
 
-Platform-level decisions for the reference architecture, one file each: context, decision, consequences, alternatives, and the measured evidence (generated from [`../evidence/evidence.yml`](../evidence/evidence.yml) by `scripts/build.py`).
+The architecture decisions for the client in [the brief](../docs/01-brief.md), one file each.
+
+Every record follows the same template, and `scripts/build.py --check` fails CI if one does
+not:
+
+- **Status:** Accepted, Proposed (waiting for a measurement or for its stage to start), or
+  Superseded.
+- **Context:** the problem, in the client's terms.
+- **Decision drivers:** the requirements and constraints that decide it, by number where
+  [3. Requirements](../docs/03-requirements.md) has one.
+- **Options:** the realistic alternatives, scored against the drivers.
+- **Decision**, and **Consequences**: what it costs, what it makes harder, and how easily it
+  can be undone.
+- **Revisit when:** the observable condition that should reopen it.
+- **Evidence:** measured results, generated from
+  [`../evidence/evidence.yml`](../evidence/evidence.yml). A record is Accepted only if it
+  cites at least one.
 
 <!-- decisions:start -->
 | # | Decision | Status | Backed by |
 |---|---|---|---|
-| 0001 | [Three ways in: events through Kafka, database changes through CDC, vendor exports as files](0001-three-ways-in.md) | Accepted | 9 of 9 failure runs with every event layer exact; 533 of 570 account changes in a year seen by monthly snapshots |
-| 0002 | [Iceberg tables on object storage, behind a catalog that vends scoped credentials](0002-open-tables-scoped-credentials.md) | Accepted | 909,968 rows recovered by snapshot rollback; 20 → 1 files merged per partition by optimize |
-| 0003 | [Exactly-once by transactions upstream, idempotence at the edge, and counts reconciled per layer](0003-exactly-once.md) | Accepted | 9 of 9 failure runs with every event layer exact; 59.8% of on-time events left in the window counts after one broker kill |
-| 0004 | [Contracts at every producer boundary; breaking changes wait for their consumers](0004-contracts-with-acknowledgement.md) | Accepted | 0 breaking schema changes passed as safe, in any mode; 2 of 51 changes flagged as breaking that are safe, per direction |
-| 0005 | [Keep history for every attribute that facts are read against](0005-history-for-attributes-facts-read-against.md) | Accepted | 15.1% of a year's revenue on the wrong plan with a Type 1 account dimension; 5,048 of 5,048 invoices on the plan they billed, Type 2 dimension from dbt snapshots |
-| 0006 | [Incremental loads take the run's data interval and replace by key; schedules name their timetable](0006-incremental-by-interval.md) | Accepted | 96.56% of a month's events lost by high-water-mark loads backfilled newest day first, every run green; 0 of 89,508 events loaded by a data-interval incremental model on Airflow 3's default @daily, in 30 successful runs |
-| 0007 | [Freshness is an SLO measured from the consumer's side and alerted on burn rate](0007-freshness-slo-from-the-consumer.md) | Accepted | 6.1 s p99 from event time to queryable in ClickHouse at 1,000 events/s; 59–62 s from a frozen pipeline to a firing burn-rate alert |
-| 0008 | [Serve by access pattern: a real-time OLAP store, distributed Postgres, and the lakehouse](0008-serve-by-access-pattern.md) | Accepted | 6.1 s p99 from event time to queryable in ClickHouse at 1,000 events/s; 4.2× faster join co-located than repartitioned |
-| 0009 | [Every stateful store has a rehearsed failover and restore with measured times](0009-rehearsed-recovery.md) | Accepted | 8 of 8 failover scenarios passed; 10–20 s observed promotion window after SIGKILL |
-| 0010 | [Three layers of tests: logic on written rows, data on real rows, and breaks to prove both](0010-three-layers-of-tests.md) | Accepted | 4 of 4 deliberate model breaks that failed the build; 5,048 of 5,048 invoices on the plan they billed, Type 2 dimension from dbt snapshots |
-| 0011 | [Features for models are served point-in-time correct, from one definition online and offline](0011-point-in-time-features.md) | Accepted | 0.363 vs 0.941 future AUC-PR, naive join against point-in-time join; 99.905% of 9,500 live requests served exactly the training features |
-| 0012 | [Platform services ship by canary, judged against the stable version](0012-canary-releases.md) | Accepted | 6 of 6 bad releases aborted by canary analysis; 0 of 18,003 requests failed across three good canary releases |
-| 0013 | [A managed warehouse or lakehouse platform is chosen per workload, with the cost model and the team in view](0013-managed-platform-per-workload.md) | Proposed | modelled, not yet measured |
+| 0001 | [Analytics moves off the product's database onto a separate platform](0001-analytics-off-the-product-database.md) | Accepted | 93 → 794 ms product p95 request latency, without and with the BI tool's reports on the primary; 3 of 412 runs of the three long reports that finished on the read replica in five minutes; 409 were cancelled by recovery conflicts |
+| 0002 | [The product's tables reach the platform by change data capture, not extracts](0002-cdc-from-the-product-database.md) | Accepted | 533 of 570 account changes in a year seen by monthly snapshots; 15.1% of a year's revenue on the wrong plan with a Type 1 account dimension |
+| 0003 | [Files that land are immutable, and every load writes by key](0003-files-immutable-loads-by-key.md) | Accepted | 1,638 events never loaded by COPY INTO and Auto Loader after a truncated file was corrected under the same name; 0 of 3,198 bad rows promoted when any failing data-quality check held the day |
+| 0004 | [A managed platform, not a self-run lakehouse](0004-managed-platform.md) | Accepted | 909,968 rows recovered by snapshot rollback; 20 → 1 files merged per partition by optimize |
+| 0005 | [Databricks or Snowflake: decided by a two-week proof of concept on fixed criteria](0005-databricks-or-snowflake.md) | Proposed | modelled, not yet measured |
+| 0006 | [Tables are kept in an open format, in storage the client owns](0006-open-format-in-the-clients-account.md) | Accepted | 909,968 rows recovered by snapshot rollback; 88 ms one-month predicate over 1.5M Iceberg rows |
+| 0007 | [A Kimball star, with Type 2 history for every attribute facts are read against](0007-history-for-attributes-facts-read-against.md) | Accepted | 15.1% of a year's revenue on the wrong plan with a Type 1 account dimension; 5,048 of 5,048 invoices on the plan they billed, Type 2 dimension from dbt snapshots |
+| 0008 | [Incremental models load their run's window and replace it by key](0008-incremental-by-interval.md) | Accepted | 96.56% of a month's events lost by high-water-mark loads backfilled newest day first, every run green; 0 of 89,508 events loaded by a data-interval incremental model on Airflow 3's default @daily, in 30 successful runs |
+| 0009 | [Pipelines are scheduled by the platform's own jobs, not a separate orchestrator](0009-orchestration-on-the-platform.md) | Accepted | 0 of 89,508 events loaded by a data-interval incremental model on Airflow 3's default @daily, in 30 successful runs |
+| 0010 | [Stage 2: customers' usage is served from a store fed by a stream, not from the platform](0010-customer-usage-serving.md) | Proposed | 6.1 s p99 from event time to queryable in ClickHouse at 1,000 events/s; 9 of 9 failure runs with every event layer exact |
+| 0011 | [Classification tags drive masking and row filters; every table carries the account](0011-tags-drive-masking-and-row-filters.md) | Proposed | modelled, not yet measured |
+| 0012 | [Erasure: delete by key, then let every copy of the old version expire inside 30 days](0012-erasure.md) | Proposed | modelled, not yet measured |
+| 0013 | [Every source has a contract, checked in the producer's CI](0013-contracts-at-the-producer.md) | Accepted | 0 breaking schema changes passed as safe, in any mode; 2 of 51 changes flagged as breaking that are safe, per direction |
+| 0014 | [Quality gates: tests on rows, checks on the day, reconciliation to billing](0014-quality-gates.md) | Accepted | 0 of 3,198 bad rows promoted when any failing data-quality check held the day; 4 of 4 deliberate model breaks that failed the build |
+| 0015 | [Every analytical table can be restored to any point in the last 7 days](0015-restore-points.md) | Accepted | 365 of 365 days back after RESTORE TABLE, following an INSERT OVERWRITE of one day that left 1; 909,968 rows recovered by snapshot rollback |
 <!-- decisions:end -->
+
+Principles that hold across these decisions, rather than being one of them, are in
+[principles](../docs/principles.md). The records of this repository's first version, a
+reference architecture without a client, are in the
+[v0.1.0 tag](https://github.com/technobasant/data-platform-architecture/tree/v0.1.0/decisions).
 
 ## Decisions inside the labs
 
-The labs record their own, narrower decisions. Each platform decision above links to the ones it rests on.
+The labs record their own, narrower decisions; the stage-2 and contract records here rest
+on them.
 
 | Repository | Decision records |
 |---|---|
 | [streaming-platform](https://github.com/technobasant/streaming-platform/tree/main/docs/adr) | 7: Kafka in KRaft mode, the transactional contract gate, Avro FULL_TRANSITIVE, end-to-end exactly-once, the Iceberg REST catalog, event-time deduplication and late data, the freshness SLO |
 | [dataset-registry](https://github.com/technobasant/dataset-registry/tree/main/docs/adr) | 6: Go and sqlc, OpenLineage, JSON Schema validity sets, acknowledgement instead of blocking, freshness from the last write, tokens and open reads |
-| [realtime-ml](https://github.com/technobasant/realtime-ml/tree/main/docs/adr) | 7: Feast with DuckDB and Redis, two implementations per feature, window semantics, label maturity, the promotion gate, Kafka KRaft, drift monitoring |
-| [platform-deployments](https://github.com/technobasant/platform-deployments/tree/main/docs/adr) | 8: Argo CD app of apps, the Rollouts canary, the Envoy sidecar, CloudNativePG, Kyverno, kind, static Terraform, in-cluster Git |
-| [governed-agent](https://github.com/technobasant/governed-agent/tree/main/docs/adr) | 6: the explicit graph, MCP as the boundary, the grounding check, review before execute, the outbox, the replayed model in CI |
-| [retrieval-bench](https://github.com/technobasant/retrieval-bench/tree/main/docs/adr) | 5: embed once, iso-recall comparison, latency measurement, datasets, Postgres full text |
-| [evalproof](https://github.com/technobasant/evalproof/tree/main/docs/adr) | 3: the judge as a classifier, local-first providers, gating on significance |

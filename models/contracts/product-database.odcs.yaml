@@ -1,0 +1,178 @@
+# The product's tables, as the platform receives them by change data capture (0002).
+# Owned by the product team; checked in the product's CI (0013). Classification drives
+# masking (0011).
+apiVersion: v3.2.0
+kind: DataContract
+id: urn:datacontract:client:product-database
+name: Product database (CDC)
+version: 1.0.0
+status: active
+domain: product
+dataProduct: product-database
+team:
+  name: Product engineering
+description:
+  purpose: Every change to the product's accounts, users, plans and events, for history and analytics.
+  usage: Read only by the platform's ingestion; analysts read the modelled marts, never these tables.
+  limitations: >-
+    History starts the day capture starts. Rows are deleted in the product after 90 days
+    (events) or on erasure (users); deletes arrive as change events.
+schema:
+  - name: accounts
+    physicalName: public.accounts
+    physicalType: table
+    description: One row per customer account; updated in place when plan or status changes.
+    properties:
+      - name: account_id
+        logicalType: integer
+        physicalType: bigint
+        primaryKey: true
+        required: true
+        classification: internal
+      - name: account_name
+        logicalType: string
+        physicalType: text
+        required: true
+        classification: confidential
+      - name: domain
+        logicalType: string
+        physicalType: text
+        required: true
+        classification: confidential
+      - name: industry
+        logicalType: string
+        physicalType: text
+        required: true
+        classification: internal
+      - name: country
+        logicalType: string
+        physicalType: text
+        required: true
+        classification: internal
+      - name: plan_id
+        logicalType: integer
+        physicalType: int
+        required: true
+        classification: internal
+        description: The plan now. Its history exists only in the change events.
+      - name: status
+        logicalType: string
+        physicalType: text
+        required: true
+        classification: internal
+      - name: signup_at
+        logicalType: timestamp
+        physicalType: timestamptz
+        required: true
+        classification: internal
+      - name: updated_at
+        logicalType: timestamp
+        physicalType: timestamptz
+        required: true
+        classification: internal
+  - name: users
+    physicalName: public.users
+    physicalType: table
+    description: One row per person on an account. Erased on request.
+    properties:
+      - name: user_id
+        logicalType: integer
+        physicalType: bigint
+        primaryKey: true
+        required: true
+        classification: internal
+      - name: account_id
+        logicalType: integer
+        physicalType: bigint
+        required: true
+        classification: internal
+      - name: email
+        logicalType: string
+        physicalType: text
+        required: true
+        classification: personal
+      - name: full_name
+        logicalType: string
+        physicalType: text
+        required: true
+        classification: personal
+      - name: role
+        logicalType: string
+        physicalType: text
+        required: true
+        classification: internal
+      - name: created_at
+        logicalType: timestamp
+        physicalType: timestamptz
+        required: true
+        classification: internal
+      - name: last_seen_at
+        logicalType: timestamp
+        physicalType: timestamptz
+        classification: internal
+  - name: plans
+    physicalName: public.plans
+    physicalType: table
+    properties:
+      - name: plan_id
+        logicalType: integer
+        physicalType: int
+        primaryKey: true
+        required: true
+        classification: public
+      - name: plan_name
+        logicalType: string
+        physicalType: text
+        required: true
+        classification: public
+      - name: monthly_price_usd
+        logicalType: number
+        physicalType: numeric(10,2)
+        required: true
+        classification: public
+  - name: events
+    physicalName: public.events
+    physicalType: table
+    description: One row per product event, appended; deleted in the product after 90 days.
+    properties:
+      - name: event_id
+        logicalType: integer
+        physicalType: bigint
+        primaryKey: true
+        required: true
+        classification: internal
+      - name: account_id
+        logicalType: integer
+        physicalType: bigint
+        required: true
+        classification: internal
+      - name: user_id
+        logicalType: integer
+        physicalType: bigint
+        required: true
+        classification: internal
+      - name: event_type
+        logicalType: string
+        physicalType: text
+        required: true
+        classification: internal
+      - name: platform
+        logicalType: string
+        physicalType: text
+        required: true
+        classification: internal
+      - name: event_at
+        logicalType: timestamp
+        physicalType: timestamptz
+        required: true
+        classification: internal
+      - name: received_at
+        logicalType: timestamp
+        physicalType: timestamptz
+        required: true
+        classification: internal
+slaProperties:
+  - property: latency
+    value: 15
+    unit: m
+    description: A committed change is in the platform's raw layer within 15 minutes.

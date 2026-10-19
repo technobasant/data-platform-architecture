@@ -1,0 +1,83 @@
+# Stripe's daily export of invoices, landed as files in the client's S3 (0003). Stripe is
+# the system of record for revenue: the platform reconciles to it, never the reverse.
+apiVersion: v3.2.0
+kind: DataContract
+id: urn:datacontract:client:stripe-billing
+name: Stripe billing export
+version: 1.0.0
+status: active
+domain: finance
+dataProduct: stripe-billing
+team:
+  name: Finance systems
+description:
+  purpose: Invoices as billed, so revenue can be attributed to the plan each invoice billed and reconciled to the cent.
+  usage: Loaded into raw by a file-tracking loader and merged on invoice_id into staging.
+  limitations: >-
+    Files are immutable. A correction is delivered as a new file with a new name, never by
+    overwriting a file already delivered. Each file has a manifest with its row count.
+schema:
+  - name: invoices
+    physicalName: stripe/invoices/received_date=YYYY-MM-DD/*.parquet
+    physicalType: file
+    description: One row per invoice, as of the export.
+    properties:
+      - name: invoice_id
+        logicalType: string
+        physicalType: string
+        primaryKey: true
+        required: true
+        classification: internal
+        description: Stripe's in_... id.
+      - name: account_id
+        logicalType: integer
+        physicalType: int64
+        required: true
+        classification: internal
+        description: From the Stripe customer's metadata, set by the product at signup.
+      - name: plan_id
+        logicalType: integer
+        physicalType: int64
+        required: true
+        classification: internal
+        description: The plan the invoice billed, from the price's metadata.
+      - name: status
+        logicalType: string
+        physicalType: string
+        required: true
+        classification: internal
+      - name: currency
+        logicalType: string
+        physicalType: string
+        required: true
+        classification: internal
+      - name: amount_paid
+        logicalType: number
+        physicalType: decimal(12,2)
+        required: true
+        classification: confidential
+      - name: period_start
+        logicalType: timestamp
+        physicalType: timestamp
+        required: true
+        classification: internal
+      - name: period_end
+        logicalType: timestamp
+        physicalType: timestamp
+        required: true
+        classification: internal
+      - name: invoiced_at
+        logicalType: timestamp
+        physicalType: timestamp
+        required: true
+        classification: internal
+      - name: billing_email
+        logicalType: string
+        physicalType: string
+        classification: personal
+        description: Kept in raw and staging only; erased by account on request.
+slaProperties:
+  - property: latency
+    value: 1
+    unit: d
+    description: Yesterday's invoices are in S3 by 02:00 UTC.

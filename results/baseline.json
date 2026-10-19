@@ -1,0 +1,3137 @@
+{
+  "postgres": "17.11 (Debian 17.11-1.pgdg12+2)",
+  "rate_per_s": 100,
+  "clients": 8,
+  "analysts": 2,
+  "app_alone": {
+    "seconds": 300,
+    "app": {
+      "requests": 30126,
+      "p50_ms": 4.9,
+      "p95_ms": 93.2,
+      "p99_ms": 483.3,
+      "max_ms": 1617.5,
+      "mean_ms": 24.5,
+      "over_100ms_pct": 4.78
+    },
+    "bi_queries": {
+      "run": 0,
+      "completed": 0,
+      "cancelled_by_recovery_conflict": 0,
+      "long_queries_completed": 0,
+      "long_queries_run": 0,
+      "log": []
+    },
+    "replica": {
+      "recovery_conflicts": 0,
+      "replay_lag_max_s": 0.7,
+      "replay_lag_median_s": 0.0
+    },
+    "users_table": {
+      "before": {
+        "dead_rows": 8984,
+        "live_rows": 60000,
+        "size_kb": 7592
+      },
+      "after": {
+        "dead_rows": 9215,
+        "live_rows": 60000,
+        "size_kb": 7592
+      }
+    }
+  },
+  "bi_on_primary": {
+    "seconds": 300,
+    "app": {
+      "requests": 29721,
+      "p50_ms": 14.3,
+      "p95_ms": 794.1,
+      "p99_ms": 1846.8,
+      "max_ms": 2882.3,
+      "mean_ms": 140.8,
+      "over_100ms_pct": 23.04
+    },
+    "bi_queries": {
+      "run": 19,
+      "completed": 19,
+      "cancelled_by_recovery_conflict": 0,
+      "long_queries_completed": 14,
+      "long_queries_run": 14,
+      "log": [
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.2,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 76.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 98.3,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 18.4,
+          "outcome": "ok"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 90.6,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 60.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 16.4,
+          "outcome": "ok"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 38.4,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 55.5,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 6.6,
+          "outcome": "ok"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 47.4,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 36.6,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 11.2,
+          "outcome": "ok"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.2,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 34.5,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 49.8,
+          "outcome": "ok"
+        }
+      ]
+    },
+    "replica": {
+      "recovery_conflicts": 0,
+      "replay_lag_max_s": 1.9,
+      "replay_lag_median_s": 0.0
+    },
+    "users_table": {
+      "before": {
+        "dead_rows": 9215,
+        "live_rows": 60000,
+        "size_kb": 7592
+      },
+      "after": {
+        "dead_rows": 9363,
+        "live_rows": 60000,
+        "size_kb": 7792
+      }
+    }
+  },
+  "bi_on_replica": {
+    "seconds": 300,
+    "app": {
+      "requests": 29850,
+      "p50_ms": 12.4,
+      "p95_ms": 561.1,
+      "p99_ms": 2205.1,
+      "max_ms": 3964.4,
+      "mean_ms": 115.9,
+      "over_100ms_pct": 19.04
+    },
+    "bi_queries": {
+      "run": 550,
+      "completed": 76,
+      "cancelled_by_recovery_conflict": 474,
+      "long_queries_completed": 3,
+      "long_queries_run": 412,
+      "log": [
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 32.9,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 32.8,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.8,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.2,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 1.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.7,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.7,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.2,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.6,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 1.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.8,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.6,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.4,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.4,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.2,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.4,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 31.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 31.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.5,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.8,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.8,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.7,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.6,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.4,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.9,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 1.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.7,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.2,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.4,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.4,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 16.9,
+          "outcome": "ok"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 14.8,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 31.8,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.7,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.4,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.4,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.6,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 22.7,
+          "outcome": "ok"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 7.9,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 30.7,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.8,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.9,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 12.6,
+          "outcome": "ok"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 30.9,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 18.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.4,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.7,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.4,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.4,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 31.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 31.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 31.5,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 31.4,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.4,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.4,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.4,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 31.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 30.9,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.3,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.2,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.1,
+          "outcome": "40001"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 30.6,
+          "outcome": "40001"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 30.6,
+          "outcome": "40001"
+        }
+      ]
+    },
+    "replica": {
+      "recovery_conflicts": 474,
+      "replay_lag_max_s": 30.8,
+      "replay_lag_median_s": 16.4
+    },
+    "users_table": {
+      "before": {
+        "dead_rows": 9363,
+        "live_rows": 60000,
+        "size_kb": 7792
+      },
+      "after": {
+        "dead_rows": 8593,
+        "live_rows": 60000,
+        "size_kb": 7792
+      }
+    }
+  },
+  "bi_on_replica_fb": {
+    "seconds": 300,
+    "app": {
+      "requests": 29854,
+      "p50_ms": 6.7,
+      "p95_ms": 508.6,
+      "p99_ms": 1683.7,
+      "max_ms": 2536.1,
+      "mean_ms": 88.7,
+      "over_100ms_pct": 13.42
+    },
+    "bi_queries": {
+      "run": 27,
+      "completed": 27,
+      "cancelled_by_recovery_conflict": 0,
+      "long_queries_completed": 20,
+      "long_queries_run": 20,
+      "log": [
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.2,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 40.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 54.5,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 9.6,
+          "outcome": "ok"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 47.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 32.8,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 10.4,
+          "outcome": "ok"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.6,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 35.5,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 48.5,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 9.5,
+          "outcome": "ok"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 50.3,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 36.6,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 8.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 34.9,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 53.2,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 7.9,
+          "outcome": "ok"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.1,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 49.8,
+          "outcome": "ok"
+        },
+        {
+          "query": "top_accounts_30d",
+          "seconds": 5.3,
+          "outcome": "ok"
+        },
+        {
+          "query": "revenue_by_plan_month",
+          "seconds": 0.0,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 29.8,
+          "outcome": "ok"
+        },
+        {
+          "query": "active_users_by_plan_day",
+          "seconds": 28.7,
+          "outcome": "ok"
+        },
+        {
+          "query": "weekly_event_mix",
+          "seconds": 38.4,
+          "outcome": "ok"
+        }
+      ]
+    },
+    "replica": {
+      "recovery_conflicts": 0,
+      "replay_lag_max_s": 32.3,
+      "replay_lag_median_s": 0.0
+    },
+    "users_table": {
+      "before": {
+        "dead_rows": 8593,
+        "live_rows": 60000,
+        "size_kb": 7792
+      },
+      "after": {
+        "dead_rows": 3551,
+        "live_rows": 60000,
+        "size_kb": 8008
+      }
+    }
+  }
+}

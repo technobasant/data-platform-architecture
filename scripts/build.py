@@ -3,13 +3,13 @@
   - each ADR's "Evidence" section, from the ids on its "- Evidence:" line
   - the decision table in README.md and decisions/README.md
   - EVIDENCE.md: every figure, its method, and the file it was measured in
-  - the cost tables in docs/platform-selection.md, from results/cost.json
+  - the cost tables in docs/04-options.md, from results/cost.json
 
     python scripts/build.py           # write
     python scripts/build.py --check   # fail if anything generated is out of date
 
-It also fails if an ADR cites an unknown evidence id, lacks a required section, or if
-an "Accepted" decision cites no evidence.
+It also fails if an ADR cites an unknown evidence id, lacks a section of the template
+(decisions/README.md), has an unknown status, or is "Accepted" without evidence.
 """
 
 from __future__ import annotations
@@ -24,8 +24,9 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 GITHUB = "https://github.com/technobasant"
-SECTIONS = ("## Context", "## Decision", "## Consequences", "## Alternatives considered",
-            "## Evidence")  # fmt: skip
+SECTIONS = ("## Context", "## Decision drivers", "## Options", "## Decision", "## Consequences",
+            "## Revisit when", "## Evidence")  # fmt: skip
+STATUSES = ("Accepted", "Proposed", "Superseded")
 
 
 def source_url(item: dict) -> str:
@@ -115,9 +116,11 @@ def cost_tables() -> str:
         )
     out += [
         "",
-        "**The three tiers**, under the assumptions in [`cost/workloads.yml`](../cost/workloads.yml):",
+        "**The client's scale**, today and in its growth plan, under the assumptions in "
+        "[`cost/workloads.yml`](../cost/workloads.yml). The vendor bill for the analytical layer, "
+        "per month:",
         "",
-        "| Option | Small | Medium | Large |",
+        "| Option | Today | In 12 months | In 36 months |",
         "|---|---:|---:|---:|",
     ]
     for o in tiers[0]["monthly_usd"]:
@@ -125,6 +128,20 @@ def cost_tables() -> str:
     ratio = " | ".join(str(t["assumed_tb_scanned_per_engine_hour"]) for t in tiers)
     out.append(f"| *assumed TB scanned per engine-hour* | {ratio} |")
     out.append("| *stored TB* | " + " | ".join(str(t["storage_tb"]) for t in tiers) + " |")
+    out += [
+        "",
+        "**With the people to run it**: the bill plus the share of an engineer each option is "
+        "assumed to take, per month:",
+        "",
+        "| Option | Today | In 12 months | In 36 months |",
+        "|---|---:|---:|---:|",
+    ]
+    for o in tiers[0]["monthly_usd"]:
+        out.append(
+            f"| {o} | "
+            + " | ".join(f"${t['monthly_usd'][o]['total_with_operations']:,}" for t in tiers)
+            + " |"
+        )
     out.append("<!-- cost:end -->")
     return "\n".join(out)
 
@@ -150,6 +167,8 @@ def main() -> None:
         for i in a["evidence"]:
             if i not in evidence:
                 problems.append(f"{a['path'].name}: unknown evidence id '{i}'")
+        if a["status"] not in STATUSES:
+            problems.append(f"{a['path'].name}: status must be one of {', '.join(STATUSES)}")
         if a["status"] == "Accepted" and not a["evidence"]:
             problems.append(f"{a['path'].name}: an Accepted decision must cite evidence")
     if problems:
@@ -161,7 +180,7 @@ def main() -> None:
     for path, prefix in ((ROOT / "README.md", "decisions/"), (ROOT / "decisions" / "README.md", "")):
         outputs[path] = replace_block(path.read_text(), "decisions", decision_table(adrs, evidence, prefix))
     outputs[ROOT / "EVIDENCE.md"] = evidence_page(adrs, evidence)
-    guide = ROOT / "docs" / "platform-selection.md"
+    guide = ROOT / "docs" / "04-options.md"
     outputs[guide] = replace_block(guide.read_text(), "cost", cost_tables())
 
     stale = [p for p, text in outputs.items() if not p.exists() or p.read_text() != text]

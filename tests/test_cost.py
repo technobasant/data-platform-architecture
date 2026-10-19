@@ -38,7 +38,7 @@ def test_break_even_is_hourly_price_over_scan_price(inputs) -> None:
 def test_storage_grows_with_events_retention_and_derived_tables(inputs) -> None:
     _, workloads = inputs
     tier = {"events_per_day": 30_000_000}
-    assert storage_tb(workloads, tier) == pytest.approx(30e6 * 150 * 395 * 1.3 / 1e12)
+    assert storage_tb(workloads, tier) == pytest.approx(30e6 * 150 * 760 * 1.3 / 1e12)
 
 
 def test_bigquery_free_tier_is_subtracted_once(inputs) -> None:
@@ -56,3 +56,11 @@ def test_every_price_cites_its_source(inputs) -> None:
         for key, item in items.items():
             assert item["source"].startswith("https://"), f"{group}.{key}"
             assert "quote" in item or "note" in item, f"{group}.{key}"
+
+
+def test_operations_are_added_on_top_of_the_bill(inputs) -> None:
+    prices, workloads = inputs
+    today = workloads["tiers"]["today"]
+    for option, c in tier_costs(prices, workloads, today)["monthly_usd"].items():
+        people = workloads["operations_fte"][option] * workloads["engineer_month_usd"]
+        assert c["total_with_operations"] == pytest.approx(c["total"] + people, abs=1)

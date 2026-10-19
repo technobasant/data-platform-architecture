@@ -1,0 +1,71 @@
+# The usage mart, as the platform publishes it to the BI tool and, in stage 3, to the
+# assistant. The platform team is the producer here: this contract is its promise.
+apiVersion: v3.2.0
+kind: DataContract
+id: urn:datacontract:client:usage-mart
+name: Usage mart
+version: 1.0.0
+status: active
+domain: analytics
+dataProduct: usage
+team:
+  name: Data team
+description:
+  purpose: Daily product usage per account, user role and event type, on the plan in effect that day.
+  usage: Dashboards, customer-success health reports and, in stage 3, the assistant. Readers acting for a customer see only that customer's rows (0011).
+  limitations: History from the day change data capture started. No personal data.
+schema:
+  - name: fct_daily_usage
+    physicalType: table
+    description: One row per account, user role, event type and day.
+    properties:
+      - name: activity_date
+        logicalType: date
+        required: true
+        classification: internal
+      - name: account_id
+        logicalType: integer
+        required: true
+        classification: internal
+        description: The row filter key for every customer-facing reader.
+      - name: account_key
+        logicalType: string
+        required: true
+        classification: internal
+        description: The dim_account version in effect on activity_date.
+      - name: plan_id
+        logicalType: integer
+        required: true
+        classification: internal
+        description: The plan the account was on that day, not today.
+      - name: user_role
+        logicalType: string
+        required: true
+        classification: internal
+      - name: event_type
+        logicalType: string
+        required: true
+        classification: internal
+      - name: events
+        logicalType: integer
+        required: true
+        classification: internal
+      - name: active_users
+        logicalType: integer
+        required: true
+        classification: internal
+    quality:
+      - type: sql
+        description: One row per account, user role, event type and day.
+        query: >-
+          select count(*) from (select activity_date, account_id, user_role, event_type
+          from fct_daily_usage group by 1, 2, 3, 4 having count(*) > 1) d
+        mustBe: 0
+slaProperties:
+  - property: latency
+    value: 1
+    unit: d
+    description: Yesterday complete by 06:00 UTC (Q5).
+  - property: retention
+    value: 25
+    unit: m

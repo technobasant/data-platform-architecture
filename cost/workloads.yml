@@ -1,10 +1,12 @@
-# The three workload tiers of docs/context.md, as the cost model reads them.
-# Every number is an assumption about a plausible SaaS business, not a measurement.
+# The client's scale (docs/01-brief.md) as the cost model reads it: today, and its growth
+# plan at 12 and 36 months. Volumes are the brief's; the compute, scan and people figures
+# are assumptions, to be replaced by what the platform PoC measures.
 days_per_month: 30.4
 
-# Stored bytes per event after columnar compression, and how long events are kept.
+# Stored bytes per event after columnar compression, and how long events are kept
+# (25 months, the history the requirements ask for).
 stored_bytes_per_event: 150
-retention_days: 395
+retention_days: 760
 # Marts, snapshots and dimensions on top of the event history, as a share of it.
 derived_storage_share: 0.3
 
@@ -16,16 +18,29 @@ medium_engine_hour:
   databricks_sql_warehouse: Medium   # 24 DBU/hour, serverless
   trino_workers_r7i_2xlarge: 4       # plus an always-on coordinator
 
+# People. The share of one engineer each option takes to run (sizing, upgrades,
+# incidents, table maintenance), and what an engineer-month costs the client fully
+# loaded. The largest assumption in the model, and the one the brief's team size makes
+# decisive.
+engineer_month_usd: 11_000
+operations_fte:
+  Snowflake Standard: 0.1
+  Snowflake Enterprise: 0.1
+  Databricks SQL Serverless: 0.15
+  Trino on EC2: 1.0
+  BigQuery on-demand: 0.1
+  Athena: 0.25
+
 tiers:
-  small:
-    events_per_day: 2_000_000
-    compute_hours_per_day: 3     # transformation and analyst queries, medium-engine hours
-    scanned_tb_per_day: 0.07     # what per-scan engines bill: analysts plus transformation
-  medium:
-    events_per_day: 30_000_000
-    compute_hours_per_day: 9
-    scanned_tb_per_day: 0.8
-  large:
-    events_per_day: 300_000_000
-    compute_hours_per_day: 20
-    scanned_tb_per_day: 8
+  today:
+    events_per_day: 350_000
+    compute_hours_per_day: 1.5   # the daily build plus analysts' queries, medium-engine hours
+    scanned_tb_per_day: 0.01     # what per-scan engines bill: analysts plus transformation
+  in_12_months:
+    events_per_day: 1_000_000
+    compute_hours_per_day: 3
+    scanned_tb_per_day: 0.05
+  in_36_months:
+    events_per_day: 5_000_000
+    compute_hours_per_day: 6
+    scanned_tb_per_day: 0.25
