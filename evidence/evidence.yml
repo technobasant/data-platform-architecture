@@ -256,3 +256,19 @@ dpa_erasure_after_retention:
   repo: data-platform-architecture
   file: results/poc-databricks.json
   check: {json: results/poc-databricks.json, expr: '"refused" if d["erasure"]["time_travel_after_retention"] == "DELTA_UNSUPPORTED_TIME_TRAVEL_BEYOND_DELETED_FILE_RETENTION_DURATION" else d["erasure"]["time_travel_after_retention"]'}
+
+dpa_bi_speed:
+  value: "2.82 s"
+  label: "the slowest BI report's median on the smallest Databricks warehouse with eight analysts at once; 62 s on the product's Postgres"
+  method: "the four queries of baseline/analytics.sql on the brief's data at today's scale (31.5 million events), Databricks SQL 2026.39 on Free Edition, a 2X-Small serverless warehouse with one cluster, result cache off, timings from system.query.history; no query waited for capacity. Postgres: the same queries on the primary at the brief's peak rate"
+  repo: data-platform-architecture
+  file: results/poc-databricks-workload.json
+  check: {json: results/poc-databricks-workload.json, expr: 'str(max(v["seconds_median"] for v in d["speed"]["analysts_8"]["by_query"].values())) + " s"'}
+
+dpa_terraform_coverage:
+  value: "6 of 7"
+  label: "kinds of governance object Terraform owned on Databricks, with a clean plan after applying; the seventh, the mask function, needs SQL"
+  method: "OpenTofu 1.13.1 and the Databricks provider 1.138.0 from an empty state: the governed tag (adopted with an import block), schema, table, column tags, the tag-matching mask policy and grants; nine resources; a row read back masked"
+  repo: data-platform-architecture
+  file: results/poc-databricks-terraform.json
+  check: {json: results/poc-databricks-terraform.json, expr: 'str(len(d["in_terraform"]["kinds"])) + " of " + str(len(d["in_terraform"]["kinds"]) + len(d["outside_terraform"]))'}

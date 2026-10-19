@@ -36,7 +36,7 @@ built here is not only for the usage page.
 | | Q12 freshness | Q11 isolation | Cost at product request rates | Systems to run |
 |---|---|---|---|---|
 | Keep reading the primary | ✔ today; ✘ at 36 months, once a customer asks past the primary's own 90 days | ◐ application code | ✔ | ✔ |
-| Query the analytical platform from the product | ✘ minutes behind | ◐ row filters | ✘ a warehouse awake all day | ✔ |
+| Query the analytical platform from the product | ✘ minutes behind | ◐ row filters | ✘ a warehouse awake all day: $2,657 a month at the smallest size in the client's region, 4 DBU an hour measured in the proof of concept at $0.91 a DBU | ✔ |
 | Pre-computed per-account tables pushed back to Postgres | ✘ batch | ✔ | ✔ | ◐ |
 | **Events streamed into a real-time OLAP store keyed by account** (managed ClickHouse, or the platform's own low-latency option) | ✔ | ✔ account first in every key | ✔ | ✘ a stream and a store |
 

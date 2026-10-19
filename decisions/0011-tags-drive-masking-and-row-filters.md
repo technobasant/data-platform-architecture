@@ -3,7 +3,7 @@
 - Status: Proposed
 - Date: 2026-10-19
 - Deciders: security and compliance lead, data lead; proposed by the architect
-- Evidence: dpa_tag_masking, dpa_row_filter_identity, dpa_session_variable_filter
+- Evidence: dpa_tag_masking, dpa_row_filter_identity, dpa_session_variable_filter, dpa_terraform_coverage
 
 ## Context
 
@@ -67,4 +67,5 @@ The proof of concept completes; then Accepted with the isolation test results as
 - **3 of 3** personal columns masked by one policy on the classification tag, including a column on a table created after the policy. Databricks SQL 2026.39 on Free Edition: a governed tag `class`; the product contract's four tables created and all 26 columns tagged from the contract; one schema-level column-mask policy matching has_tag_value('class', 'personal'); every non-personal column stayed readable. Source: [data-platform-architecture/results/poc-databricks.json](https://github.com/technobasant/data-platform-architecture/blob/main/results/poc-databricks.json)
 - **1 of 5** accounts visible through a row filter keyed to the caller's identity. A row filter on account_id that admits the accounts mapped to current_user() in a mapping table; moving the mapping moved the scope to the other account. Source: [data-platform-architecture/results/poc-databricks.json](https://github.com/technobasant/data-platform-architecture/blob/main/results/poc-databricks.json)
 - **UNRESOLVED_COLUMN** what Databricks returns for a row filter function that reads a session variable: a per-request value cannot scope rows. DECLARE VARIABLE request_account, then CREATE FUNCTION … RETURN account_id = request_account, on Databricks SQL 2026.39. Source: [data-platform-architecture/results/poc-databricks.json](https://github.com/technobasant/data-platform-architecture/blob/main/results/poc-databricks.json)
+- **6 of 7** kinds of governance object Terraform owned on Databricks, with a clean plan after applying; the seventh, the mask function, needs SQL. OpenTofu 1.13.1 and the Databricks provider 1.138.0 from an empty state: the governed tag (adopted with an import block), schema, table, column tags, the tag-matching mask policy and grants; nine resources; a row read back masked. Source: [data-platform-architecture/results/poc-databricks-terraform.json](https://github.com/technobasant/data-platform-architecture/blob/main/results/poc-databricks-terraform.json)
 <!-- evidence:end -->

@@ -23,7 +23,7 @@ Free Edition runs no bill; the cost below is what its billing table records, pri
 | 4 | Erasure through time travel | **measured, below** | waiting for a trial |
 | 5 | Cost from the billing tables | the billing tables are readable (`system.billing.usage`); not yet run on the workload | waiting for a trial |
 | 6 | Speed of the BI query set | **measured, below**: every query under 3 s at concurrency 8, on the smallest warehouse | not yet run |
-| 7 | Operability and Terraform coverage | the tag policy, masks and row filters were all created by API and SQL, so Terraform can own them | waiting for a trial |
+| 7 | Operability and Terraform coverage | **measured, below**: Terraform owned the governed tag, schema, table, column tags, mask policy and grants, and planned clean after applying; the mask function needs SQL | waiting for a trial |
 
 ## Governance: masking by classification
 
@@ -119,3 +119,39 @@ The comparison is not like for like, and is not meant to be: the Postgres figure
 client's lab database on 2 vCPU under the product's own load, and the warehouse is a managed
 service of undisclosed hardware. What it shows is the order of magnitude the client buys:
 interactive dashboards on the full history, with no load on the product.
+
+## Operability: what Terraform can own
+
+The governance above was built by API and SQL. [`poc/databricks/terraform/`](../poc/databricks/terraform/main.tf)
+declares the same objects in a schema of their own, and
+[`terraform.py`](../poc/databricks/terraform.py) applies them from an empty state, plans
+again, checks the result and destroys it (OpenTofu 1.13.1, Databricks provider 1.138.0).
+
+| Object | Resource | In Terraform |
+|---|---|---|
+| The governed tag `class`, created earlier through the API | `databricks_tag_policy`, adopted with an `import` block | ✔ |
+| The schema and the `users` table | `databricks_schema`, `databricks_sql_table` | ✔ |
+| Each column's classification, from the contract | `databricks_entity_tag_assignment` (4) | ✔ |
+| The schema's mask policy, matching `has_tag_value('class', 'personal')` | `databricks_policy_info` | ✔ |
+| Grants on the schema | `databricks_grants` | ✔ |
+| The mask function the policy calls | none: the provider has no resource for a Unity Catalog function | ✘ SQL |
+
+| Step | Exit | Seconds |
+|---|---:|---:|
+| Apply the schema and the table, targeted | 0 | 7.8 |
+| Create the mask function, SQL | | 2.0 |
+| Apply everything | 0 | 6.8 |
+| Plan again | 0, no changes | 3.8 |
+| Destroy, the shared tag left in place | 0 | 10.0 |
+
+Nine resources, and a plan with no changes after the apply. A row inserted into the
+Terraform-built table read back with `email` and `full_name` as `***` and `role` readable:
+the policy Terraform declared, on the tags Terraform set, did the masking.
+
+The gap is the function. A policy and the function it calls are in different tools, so on an
+empty workspace the policy cannot be applied until the function exists: the deployment is
+two applies with a SQL step between them, or a SQL migration that runs before Terraform's
+policy step, and a change to the function is reviewed like a change to the policy. The same
+resource declares attribute-based row filters, which were not exercised here. Nothing
+broke on the platform's side; the one failure in the run was in my own check, which inserted
+values in declared order while Terraform had created the columns in a map's key order.

@@ -1,0 +1,55 @@
+{
+  "provider": "databricks/databricks 1.138.0",
+  "tool": "OpenTofu v1.13.1",
+  "steps": {
+    "init": {
+      "command": "tofu init",
+      "exit": 0,
+      "seconds": 0.5
+    },
+    "apply_schema_and_table": {
+      "command": "tofu apply",
+      "exit": 0,
+      "seconds": 7.8
+    },
+    "mask_function_by_sql": {
+      "seconds": 2.0
+    },
+    "apply_all": {
+      "command": "tofu apply",
+      "exit": 0,
+      "seconds": 6.8
+    },
+    "plan_after_apply": {
+      "command": "tofu plan",
+      "exit": 0,
+      "seconds": 3.8
+    },
+    "destroy": {
+      "command": "tofu destroy",
+      "exit": 0,
+      "seconds": 10.0
+    }
+  },
+  "in_terraform": {
+    "resources": 9,
+    "kinds": [
+      "databricks_entity_tag_assignment",
+      "databricks_grants",
+      "databricks_policy_info",
+      "databricks_schema",
+      "databricks_sql_table",
+      "databricks_tag_policy"
+    ]
+  },
+  "outside_terraform": [
+    "the mask function: no Unity Catalog function resource, created with SQL"
+  ],
+  "plan_after_apply_clean": true,
+  "row_read_back": {
+    "email": "***",
+    "full_name": "***",
+    "role": "admin"
+  },
+  "personal_columns_masked": true
+}
