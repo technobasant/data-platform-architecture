@@ -43,7 +43,7 @@ not:
 
 Principles that hold across these decisions, rather than being one of them, are in
 [principles](../docs/principles.md). The records of this repository's first version, a
-reference architecture without a company, are in the
+general reference architecture before it took on this scenario, are in the
 [v0.1.0 tag](https://github.com/technobasant/data-platform-architecture/tree/v0.1.0/decisions).
 
 ## Decisions inside the labs
