@@ -1,5 +1,5 @@
--- Seeded data at the brief's scale: 6,000 accounts, 60,000 users, two years of invoices,
--- and 90 days of events (events.sql).
+-- Generated data (fixed seed) at the brief's scale: 6,000 accounts, 60,000 users, two years
+-- of invoices, and 90 days of events (events.sql).
 \set ON_ERROR_STOP on
 \timing on
 select setseed(0.42);
