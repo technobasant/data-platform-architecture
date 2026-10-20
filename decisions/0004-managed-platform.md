@@ -7,7 +7,7 @@
 
 ## Context
 
-The client has two data people, four by month six, and no one on call for a data
+The company has two data people, four by month six, and no one on call for a data
 platform. The cost model puts every managed option inside the budget at 36 months; a
 self-run lakehouse is the cheapest bill after the per-scan engines and the most expensive
 option once the engineer it needs is counted ([4. Options](../docs/04-options.md)).
@@ -18,7 +18,7 @@ option once the engineer it needs is counted ([4. Options](../docs/04-options.md
 - Cost: under $15,000 a month in year one.
 - Q9, Q10, Q11, Q13: restore, erasure, row filters, masking and audit, which a managed
   platform provides and a self-run one has to build.
-- Leaving later: data in open formats in the client's account.
+- Leaving later: data in open formats in the company's account.
 
 ## Options
 

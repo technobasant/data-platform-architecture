@@ -1,7 +1,7 @@
 # data-platform-architecture
 
-A data architecture engagement for a fictional B2B SaaS company that has outgrown running its
-analytics on the product's Postgres: the brief, the current state measured, the options, a
+A reference data architecture for a B2B SaaS company that has outgrown running its
+analytics on the product's Postgres, a scenario common across the industry: the brief, the current state measured, the options, a
 staged target architecture, the data model and contracts, security and governance, the
 migration, and the decisions, each backed by measured results.
 
@@ -9,7 +9,7 @@ migration, and the decisions, each backed by measured results.
 
 ## Executive summary
 
-**The client.** 6,000 customer accounts, 350,000 product events a day growing about
+**The company.** 6,000 customer accounts, 350,000 product events a day growing about
 threefold in the first year and then roughly 2.2 times a year, a data team of two, and
 everything the business knows about itself read from the
 product's Postgres on RDS and its one read replica ([the brief](docs/01-brief.md)).
@@ -43,7 +43,7 @@ product's Postgres on RDS and its one read replica ([the brief](docs/01-brief.md
 3. **Databricks or Snowflake is decided by a two-week proof of concept** on criteria and
    weights fixed in advance ([0005](decisions/0005-databricks-or-snowflake.md)); the
    Databricks half is done ([11](docs/11-proof-of-concept.md)). At this
-   scale the list-price bill does not separate them: in the client's EU region, at the
+   scale the list-price bill does not separate them: in the company's EU region, at the
    editions the requirements need, about $710 to $1,000 a month today and $2,900 to $4,000 at
    36 months, against a $15,000 budget; the people to run a self-built lakehouse would cost
    more than either ([options](docs/04-options.md)).
@@ -65,7 +65,7 @@ Detail, timing and exit criteria for each stage are in
 
 | | Document | What it answers |
 |---|---|---|
-| 1 | [Brief](docs/01-brief.md) | who the client is, why now, stakeholders, constraints, scale |
+| 1 | [Brief](docs/01-brief.md) | who the company is, why now, stakeholders, constraints, scale |
 | 2 | [Current state](docs/02-current-state.md) | what running analytics on the product's database costs, measured |
 | 3 | [Requirements](docs/03-requirements.md) | each consumer's needs; 15 quality targets as testable scenarios |
 | 4 | [Options](docs/04-options.md) | five options against the requirements; cost with and without people |
@@ -91,7 +91,7 @@ Detail, timing and exit criteria for each stage are in
 | 0003 | [Files that land are immutable, and every load writes by key](decisions/0003-files-immutable-loads-by-key.md) | Accepted | 1,638 events never loaded by COPY INTO and Auto Loader after a truncated file was corrected under the same name; 0 of 3,198 bad rows promoted when any failing data-quality check held the day |
 | 0004 | [A managed platform, not a self-run lakehouse](decisions/0004-managed-platform.md) | Accepted | 909,968 rows recovered by snapshot rollback; 20 → 1 files merged per partition by optimize |
 | 0005 | [Databricks or Snowflake: decided by a two-week proof of concept on fixed criteria](decisions/0005-databricks-or-snowflake.md) | Proposed | 11, 46, 3 models, data tests and unit tests that passed when the dbt project was built on Databricks after one change, with revenue figures identical to DuckDB's; 3 of 3 personal columns masked by one policy on the classification tag, including a column on a table created after the policy |
-| 0006 | [Tables are kept in an open format, in storage the client owns](decisions/0006-open-format-in-the-clients-account.md) | Accepted | 909,968 rows recovered by snapshot rollback; 88 ms one-month predicate over 1.5M Iceberg rows |
+| 0006 | [Tables are kept in an open format, in storage the company owns](decisions/0006-open-format-in-the-clients-account.md) | Accepted | 909,968 rows recovered by snapshot rollback; 88 ms one-month predicate over 1.5M Iceberg rows |
 | 0007 | [A Kimball star, with Type 2 history for every attribute a fact is reported by](decisions/0007-history-for-attributes-facts-read-against.md) | Accepted | 15.1% of a year's revenue on the wrong plan with a Type 1 account dimension; 5,048 of 5,048 invoices on the plan they billed, Type 2 dimension from dbt snapshots |
 | 0008 | [Incremental models load their run's window and replace it by key](decisions/0008-incremental-by-interval.md) | Accepted | 96.56% of a month's events lost by high-water-mark loads backfilled newest day first, every run green; 0 of 89,508 events loaded by a data-interval incremental model on Airflow 3's default @daily, in 30 successful runs |
 | 0009 | [Pipelines are scheduled by the platform's own jobs, not a separate orchestrator](decisions/0009-orchestration-on-the-platform.md) | Accepted | 0 of 89,508 events loaded by a data-interval incremental model on Airflow 3's default @daily, in 30 successful runs |
@@ -112,15 +112,16 @@ Every figure, with its method and source file, is in [EVIDENCE.md](EVIDENCE.md).
 
 | | Status |
 |---|---|
-| The current state | measured: [`baseline/`](baseline) runs the client's database and workload in Docker, four scenarios ([`results/baseline.json`](results/baseline.json)) |
-| Loading, history, backfills, quality gates, overwrite and restore on Delta | measured in [data-stack-lab](https://github.com/technobasant/data-stack-lab), on the same synthetic business, partly on Databricks |
+| The current state | measured: [`baseline/`](baseline) runs the company's database and workload in Docker, four scenarios ([`results/baseline.json`](results/baseline.json)) |
+| Loading, history, backfills, quality gates, overwrite and restore on Delta | measured in [data-stack-lab](https://github.com/technobasant/data-stack-lab), on the same generated business data, partly on Databricks |
 | Contracts | linted in CI; a breaking change is shown to fail the producer-side check |
 | Platform cost | modelled from list prices with stated assumptions ([`cost/`](cost)); the proof of concept measures it |
 | Databricks against Snowflake | the Databricks half measured ([11](docs/11-proof-of-concept.md)): the dbt project built with one change and gave identical figures; one policy masked every personal column; erasure is final only after `VACUUM` past the table's retention. The Snowflake half waits for a trial |
 | Stage 2 and the assistant | designed; decided when each stage starts |
 
-The client is fictional and its data synthetic. Nothing here describes a real company's
-platform. `python scripts/build.py --check` keeps every decision's evidence, the decision
+Data: generated to the scenario's shape and rebuilt identically in CI, so every figure can
+be re-run. Nothing here describes a real company's platform.
+`python scripts/build.py --check` keeps every decision's evidence, the decision
 tables and the cost tables identical to their sources, and CI checks every link. For a
 figure measured in this repo's own `results/`, `--check` also re-derives it from the JSON
 and fails if it drifts; a figure from a sibling repo is verified there, not here; a figure

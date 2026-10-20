@@ -241,7 +241,7 @@ real-time OLAP store is chosen (its evidence is ClickHouse's):
 
 This is a design the decision proposes, not something run or measured in this repository;
 [0010](../decisions/0010-customer-usage-serving.md)'s own evidence is from a sibling
-streaming lab, not this client's data.
+streaming lab, not this company's data.
 
 ### 3. The product database's growth path (an option, not a decision)
 
@@ -251,11 +251,11 @@ events than a single-writer Postgres instance comfortably serves — one option 
 colocated, so every product query touches one shard, and `plans` kept as a small reference
 table replicated to every worker. This is not evaluated against the brief's constraints
 here (Postgres stays untouched, [0001](../decisions/0001-analytics-off-the-product-database.md)),
-and nothing in this engagement measures it on the client's data. The sibling
+and nothing in this reference architecture measures it on the company's data. The sibling
 [distributed-db-lab](https://github.com/technobasant/distributed-db-lab) measures the
 mechanism itself: an online rebalance with 0 errors while a worker joined and 7 shard groups
 moved under load, and skew falling from 2.36× to 1.10× after rebalancing. That is evidence
-for the growth path being workable in principle, not for this client's workload, which has
+for the growth path being workable in principle, not for this company's workload, which has
 not been run against it.
 
 ### 4. The stage-3 assistant reads the stage-2 store, not a warehouse

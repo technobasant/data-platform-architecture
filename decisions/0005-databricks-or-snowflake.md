@@ -8,8 +8,8 @@
 ## Context
 
 Both vendors have pitched, and on paper both meet the stage-1 requirements
-([4. Options](../docs/04-options.md)). At the client's scale the list-price bill does not
-separate them. What does is how each handles this client's data and constraints, which
+([4. Options](../docs/04-options.md)). At the company's scale the list-price bill does not
+separate them. What does is how each handles this company's data and constraints, which
 can be measured. The criteria and their weights are fixed here, before the proof of
 concept runs, so the result cannot be argued backwards.
 
@@ -17,16 +17,16 @@ concept runs, so the result cannot be argued backwards.
 
 - The stage-1 requirements, Q1 to Q15.
 - A team of two to four.
-- The budget, measured on the client's workload rather than assumed.
+- The budget, measured on the company's workload rather than assumed.
 - Stage 3: an assistant on governed tables.
 
 ## Options
 
-| | Strengths for this client, on paper | Open questions the PoC answers |
+| | Strengths for this company, on paper | Open questions the PoC answers |
 |---|---|---|
-| Databricks | Delta on the client's S3 with UniForm; Unity Catalog row filters, column masks and audit; Auto Loader and Lakeflow; AI/BI Genie | the PostgreSQL CDC connector is in Public Preview; the bill for a small, bursty SQL workload on serverless |
+| Databricks | Delta on the company's S3 with UniForm; Unity Catalog row filters, column masks and audit; Auto Loader and Lakeflow; AI/BI Genie | the PostgreSQL CDC connector is in Public Preview; the bill for a small, bursty SQL workload on serverless |
 | Snowflake | least to operate for SQL-first work; Openflow PostgreSQL connector generally available; masking and row access policies; Cortex Analyst | Enterprise edition is needed for masking and row access policies and for Time Travel past one day; erasure through 7 days of Fail-safe |
-| AWS-native (control) | the lowest bill; data stays open in the client's account | how much assembly a team of two can carry |
+| AWS-native (control) | the lowest bill; data stays open in the company's account | how much assembly a team of two can carry |
 
 ## Decision
 
@@ -66,5 +66,5 @@ After that, at contract renewal, or if the measured bill passes the budget.
 - **1,638** events never loaded by COPY INTO and Auto Loader after a truncated file was corrected under the same name. Databricks Free Edition (Databricks SQL 2026.39): ten days of event files (29,095 events) delivered into a Unity Catalog volume and loaded six ways after each delivery; the counts matched a prediction made from the documented semantics. Source: [data-stack-lab/MEASUREMENTS.md](https://github.com/technobasant/data-stack-lab/blob/main/MEASUREMENTS.md)
 - **2.82 s** the slowest BI report's median on the smallest Databricks warehouse with eight analysts at once; 62 s on the product's Postgres. The four queries of baseline/analytics.sql on the brief's data at today's scale (31.5 million events), Databricks SQL 2026.39 on Free Edition, a 2X-Small serverless warehouse with one cluster, result cache off, timings from system.query.history; no query waited for capacity. Postgres: the same queries on the primary at the brief's peak rate. Source: [data-platform-architecture/results/poc-databricks-workload.json](https://github.com/technobasant/data-platform-architecture/blob/main/results/poc-databricks-workload.json)
 - **6 of 7** kinds of governance object Terraform owned on Databricks, with a clean plan after applying; the seventh, the mask function, needs SQL. OpenTofu 1.13.1 and the Databricks provider 1.138.0 from an empty state: the governed tag (adopted with an import block), schema, table, column tags, the tag-matching mask policy and grants; nine resources; a row read back masked. Source: [data-platform-architecture/results/poc-databricks-terraform.json](https://github.com/technobasant/data-platform-architecture/blob/main/results/poc-databricks-terraform.json)
-- **0.743 DBU** billed for one day's build and reports on the smallest Databricks SQL warehouse: 38 s of work, 11 min 9 s awake, 95% of it the wait for auto-stop. Databricks SQL 2026.39 on Free Edition, a 2X-Small serverless warehouse with the default 10-minute auto-stop, started from stopped at the top of an hour with nothing else on it; the daily build (350,000 events by REPLACE WHERE, three days of the usage mart, the contract check) and the four reports by two analysts; system.billing.usage for that hour against uptime from system.compute.warehouse_events, 4 DBU an hour; $0.52 at list price in the workspace's region, $0.68 in the client's. Source: [data-platform-architecture/results/poc-databricks-workload.json](https://github.com/technobasant/data-platform-architecture/blob/main/results/poc-databricks-workload.json)
+- **0.743 DBU** billed for one day's build and reports on the smallest Databricks SQL warehouse: 38 s of work, 11 min 9 s awake, 95% of it the wait for auto-stop. Databricks SQL 2026.39 on Free Edition, a 2X-Small serverless warehouse with the default 10-minute auto-stop, started from stopped at the top of an hour with nothing else on it; the daily build (350,000 events by REPLACE WHERE, three days of the usage mart, the contract check) and the four reports by two analysts; system.billing.usage for that hour against uptime from system.compute.warehouse_events, 4 DBU an hour; $0.52 at list price in the workspace's region, $0.68 in the company's. Source: [data-platform-architecture/results/poc-databricks-workload.json](https://github.com/technobasant/data-platform-architecture/blob/main/results/poc-databricks-workload.json)
 <!-- evidence:end -->

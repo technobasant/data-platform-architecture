@@ -1,4 +1,4 @@
-"""Monthly cost of the analytical layer on five options, from list prices in the client's
+"""Monthly cost of the analytical layer on five options, from list prices in the company's
 EU region.
 
 Two outputs:
@@ -6,7 +6,7 @@ Two outputs:
   break-even   how many TB one hour of a medium-sized engine must scan before per-scan
                pricing (Athena) costs more than paying for the hour.
                This depends only on list prices, so it is the robust result.
-  tiers        monthly cost at the client's three points of scale (docs/01-brief.md):
+  tiers        monthly cost at the company's three points of scale (docs/01-brief.md):
                the vendor bill, then with the share of an engineer each option takes to
                run. These rest on an assumed ratio of data scanned to engine-hours and on
                assumed operations effort, which nothing here measured; the output prints

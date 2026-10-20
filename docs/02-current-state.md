@@ -1,12 +1,12 @@
 # 2. Current state
 
 Every report, dashboard and export reads the product's Postgres. This section measures what
-that costs, on a lab copy of the client's database at today's scale, and records the other
+that costs, on a lab copy of the company's database at today's scale, and records the other
 problems the brief describes.
 
 ## How it was measured
 
-[`baseline/`](../baseline) builds the client's database in Docker: a Postgres 17 primary and
+[`baseline/`](../baseline) builds the company's database in Docker: a Postgres 17 primary and
 a streaming read replica, 2 vCPU and 4 GB each, with 6,000 accounts, 60,000 users and 90 days
 of events (31.5 million rows, 5 GB with indexes). The product's own request (a customer's
 usage page, an activity update and an event insert) runs at a fixed rate. Each request

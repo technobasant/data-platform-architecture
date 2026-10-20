@@ -1,4 +1,4 @@
-# Stripe's daily export of invoices, landed as files in the client's S3 (0003). Stripe is
+# Stripe's daily export of invoices, landed as files in the company's S3 (0003). Stripe is
 # the system of record for revenue: the platform reconciles to it, never the reverse.
 apiVersion: v3.2.0
 kind: DataContract

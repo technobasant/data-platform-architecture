@@ -68,7 +68,7 @@ a number that changed.
 ## What is measured, and what is not yet
 
 The waves, the reconciliation and the rollback are designed here. The proof of concept
-builds the reconciliation suite on both platforms against the lab copy of the client's
+builds the reconciliation suite on both platforms against the lab copy of the company's
 database ([2. Current state](02-current-state.md)); until then, the times in the waves
 are estimates for a team of two growing to four.
 

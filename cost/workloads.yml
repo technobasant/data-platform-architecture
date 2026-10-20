@@ -1,4 +1,4 @@
-# The client's scale (docs/01-brief.md) as the cost model reads it: today, and its growth
+# The company's scale (docs/01-brief.md) as the cost model reads it: today, and its growth
 # plan at 12 and 36 months. Volumes are the brief's; the compute, scan and people figures
 # are assumptions, to be replaced by what the platform PoC measures.
 days_per_month: 30.4
@@ -19,7 +19,7 @@ medium_engine_hour:
   trino_workers_r7i_2xlarge: 4       # plus an always-on coordinator
 
 # People. The share of one engineer each option takes to run (sizing, upgrades,
-# incidents, table maintenance), and what an engineer-month costs the client fully
+# incidents, table maintenance), and what an engineer-month costs the company fully
 # loaded. The largest assumption in the model, and the one the brief's team size makes
 # decisive.
 engineer_month_usd: 11_000

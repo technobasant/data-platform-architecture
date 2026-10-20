@@ -1,4 +1,4 @@
-# The client's current state: one Postgres primary and one streaming read replica, the
+# The company's current state: one Postgres primary and one streaming read replica, the
 # same shape as its RDS setup at lab size. Local only: trust authentication on a private
 # network, nothing exposed beyond localhost.
 name: dpa-baseline

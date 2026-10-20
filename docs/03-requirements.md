@@ -17,7 +17,7 @@ the platform responds, and a number says whether the response was good enough.
 
 ## Quality scenarios
 
-"Today" is the current state, measured on the lab copy of the client's database where a
+"Today" is the current state, measured on the lab copy of the company's database where a
 number is given ([2. Current state](02-current-state.md)). "Stage" is the stage of the
 [target architecture](05-target-architecture.md) that meets it.
 

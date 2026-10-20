@@ -19,7 +19,7 @@ result that went wrong in a lab first.
   the models on purpose.
 - **Governance is a property of the data, not of the query.** Classification travels with
   the column, from contract to catalog tag to masking policy.
-- **One copy, open format, the client's account.** Engines can change; the history should
+- **One copy, open format, the company's account.** Engines can change; the history should
   not have to move.
 - **Measure before deciding, and fix the criteria first.** A choice between platforms is a
   measurement with weights written down before the run.

@@ -132,13 +132,13 @@ revenue report, which reads a few thousand rows, was faster on Postgres; nothing
 table faster than a warm database it already lives in.
 
 The comparison is not like for like, and is not meant to be: the Postgres figures are the
-client's lab database on 2 vCPU under the product's own load, and the warehouse is a managed
-service of undisclosed hardware. What it shows is the order of magnitude the client buys:
+company's lab database on 2 vCPU under the product's own load, and the warehouse is a managed
+service of undisclosed hardware. What it shows is the order of magnitude the company buys:
 interactive dashboards on the full history, with no load on the product.
 
 ## Cost: what the billing table charged
 
-One day of the client's work on the same 2X-Small warehouse, alone in a clock hour from a
+One day of the company's work on the same 2X-Small warehouse, alone in a clock hour from a
 stopped warehouse, so the hour's billing rows belong to it: the daily build (30 September's
 350,000 events loaded with `INSERT … REPLACE WHERE`, the usage mart's last three days
 replaced as [0008](../decisions/0008-incremental-by-interval.md) has it, the mart contract's
@@ -155,7 +155,7 @@ left to stop itself, after the default 10 minutes idle.
 The billing table charges uptime at the size's rate, whatever runs: in three other hours
 the same warehouse was up 54.2, 33.45 and 27.37 minutes and was charged 3.614, 2.230 and
 1.825 DBU, again 4 an hour. The work does not set the bill; how often the warehouse wakes does. At list price
-in the client's region (serverless SQL $0.91 a DBU in AWS EU Ireland, so $3.64 an hour for
+in the company's region (serverless SQL $0.91 a DBU in AWS EU Ireland, so $3.64 an hour for
 a 2X-Small):
 
 | How the warehouse is used | Hours awake a month | A month at list price |
@@ -171,7 +171,7 @@ the smallest size costs awake through every working hour, and more than the meas
 needs. At 36 months the data is about 14 times larger; if report time grows with the rows
 read, keeping the reports to seconds takes a Small or a Medium (4 and 8 times the workers),
 $2,883 to $5,766 a month awake through working hours: inside the budget either way. Criterion
-5 passes on Databricks; the number that matters for the client is the hours awake, which is
+5 passes on Databricks; the number that matters for the company is the hours awake, which is
 set by auto-stop, by how analysts use dashboards, and by keeping always-on consumers off the
 warehouse. The stage-3 assistant is one: a warehouse kept awake for it would cost $2,657 a
 month at the smallest size, more than its own budget, so its queries go to the stage-2 store

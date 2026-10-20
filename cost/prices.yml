@@ -1,5 +1,5 @@
 # List prices used by the cost model. On-demand / pay-as-you-go, USD, in AWS EU (Ireland),
-# the region the client's product runs in (docs/01-brief.md: everything stays in one EU
+# the region the company's product runs in (docs/01-brief.md: everything stays in one EU
 # region). Each was read on the vendor's own price list on the date below; the quote is what
 # it said. Re-check before relying on any of them: prices change, and contracts discount them.
 retrieved: "2026-10-19"

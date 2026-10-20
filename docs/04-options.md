@@ -1,7 +1,7 @@
 # 4. Options
 
 Five ways to meet the [requirements](03-requirements.md), compared against them, the
-[constraints](01-brief.md#constraints) and the cost model. The client asked for a choice
+[constraints](01-brief.md#constraints) and the cost model. The company asked for a choice
 between Databricks and Snowflake; the other three are here because a recommendation is only
 as good as what it was compared with, and because one of them is the right answer for the
 first three months.
@@ -12,7 +12,7 @@ first three months.
 |---|---|---|
 | A | **Scale the Postgres setup** | a dedicated reporting replica, partitioned events, summary tables, longer retention |
 | B | **AWS-native, lean** | Iceberg tables on S3, the Glue catalog, Athena, Lake Formation; AWS DMS for change data capture |
-| C | **Databricks** | Delta tables on the client's S3, Unity Catalog, serverless SQL and Lakeflow pipelines |
+| C | **Databricks** | Delta tables on the company's S3, Unity Catalog, serverless SQL and Lakeflow pipelines |
 | D | **Snowflake** | Snowflake-managed tables (or Iceberg tables on S3), Enterprise edition, Openflow or Snowpipe for ingestion |
 | E | **Self-run open lakehouse** | Iceberg, a REST catalog, Trino and Airflow on Kubernetes |
 
@@ -32,13 +32,13 @@ first three months.
 | Q10 erasure, provably | ✔ one database | ◐ delete, then expire snapshots | ◐ delete, then `VACUUM` past the retention window | ◐ delete; Time Travel, then 7 days of Fail-safe on permanent tables | ◐ as B |
 | Q11, Q13 tenant isolation, masking, audit | ◐ application code; one shared login | ◐ Lake Formation filters; CloudTrail | ✔ Unity Catalog row filters, column masks, audit logs | ✔ row access and masking policies (Enterprise), access history | ✘ to be built |
 | Q12 usage in the product under 60 s | ✔ today, by loading the primary | ◐ needs a serving store (stage 2) | ◐ needs a serving store (stage 2) | ◐ needs a serving store (stage 2) | ◐ as C |
-| Stage 3: the assistant | ✘ | ◐ Bedrock, built | ◐ the customer-facing assistant is the client's own service regardless of platform ([ai-platform-architecture 0004](https://github.com/technobasant/ai-platform-architecture/blob/main/decisions/0004-own-service-genie-for-staff.md)); AI/BI Genie on governed tables is for staff only | ◐ same: the client's own service for customers; Cortex Analyst on governed tables is for staff only | ✘ built |
+| Stage 3: the assistant | ✘ | ◐ Bedrock, built | ◐ the customer-facing assistant is the company's own service regardless of platform ([ai-platform-architecture 0004](https://github.com/technobasant/ai-platform-architecture/blob/main/decisions/0004-own-service-genie-for-staff.md)); AI/BI Genie on governed tables is for staff only | ◐ same: the company's own service for customers; Cortex Analyst on governed tables is for staff only | ✘ built |
 | Runs with a team of two to four | ✔ | ◐ many services to wire | ✔ serverless | ✔ | ✘ about one engineer full time |
-| Leaving it later | n/a | ✔ open tables in the client's account | ◐ Delta on the client's S3, readable as Iceberg through UniForm | ◐ Snowflake tables need export; Iceberg tables do not | ✔ |
+| Leaving it later | n/a | ✔ open tables in the company's account | ◐ Delta on the company's S3, readable as Iceberg through UniForm | ◐ Snowflake tables need export; Iceberg tables do not | ✔ |
 
 ## Cost
 
-The vendor bill for the analytical layer at the client's scale, from list prices, and the
+The vendor bill for the analytical layer at the company's scale, from list prices, and the
 same with the share of an engineer each option is assumed to take. Both rest on assumptions
 stated in [`cost/workloads.yml`](../cost/workloads.yml); the platform PoC replaces the
 compute assumption with measured usage. Ingestion services (DMS, Openflow, Lakeflow
@@ -56,7 +56,7 @@ List prices in AWS EU (Ireland), eu-west-1, retrieved 2026-10-19 ([`cost/prices.
 | Databricks SQL Serverless | $21.84 | 4.37 TB |
 | Trino on EC2 (workers only) | $2.37 | 0.47 TB |
 
-**The client's scale**, today and in its growth plan, under the assumptions in [`cost/workloads.yml`](../cost/workloads.yml). The vendor bill for the analytical layer, per month:
+**The company's scale**, today and in its growth plan, under the assumptions in [`cost/workloads.yml`](../cost/workloads.yml). The vendor bill for the analytical layer, per month:
 
 | Option | Today | In 12 months | In 36 months |
 |---|---:|---:|---:|
@@ -79,13 +79,13 @@ List prices in AWS EU (Ireland), eu-west-1, retrieved 2026-10-19 ([`cost/prices.
 | Athena | $2,753 | $2,761 | $2,805 |
 <!-- cost:end -->
 
-Prices are for AWS EU (Ireland), the client's region. Snowflake Standard is not shown: it
+Prices are for AWS EU (Ireland), the company's region. Snowflake Standard is not shown: it
 cannot meet the requirements (masking and row access policies, and Time Travel past one day,
 need Enterprise). Business Critical is shown because PrivateLink to Snowflake needs it; on
 Databricks, PrivateLink is on the Enterprise tier at the same price per DBU. BigQuery is not
 an option: it is a Google Cloud service, and
-[0006](../decisions/0006-open-format-in-the-clients-account.md) keeps the client's data in
-storage the client owns, in its own AWS account.
+[0006](../decisions/0006-open-format-in-the-clients-account.md) keeps the company's data in
+storage the company owns, in its own AWS account.
 
 At this scale **the bill does not decide it**. Every managed option stays far inside the
 $15,000 a month budget at 36 months, and per-scan engines (Athena) cost almost nothing. The
@@ -104,7 +104,7 @@ break-even table above says when paying per hour beats paying per scan.
    meet Q4, and it is not the destination.
 2. **Destination: C or D, decided by a two-week proof of concept** on criteria fixed before
    it starts ([0005](../decisions/0005-databricks-or-snowflake.md)). Both meet the stage-1
-   requirements on paper. The differences that matter for this client can be measured: the
+   requirements on paper. The differences that matter for this company can be measured: the
    bill for its actual workload, ingestion from RDS with re-sent and late files, masking and
    row filters per tenant, erasure through time travel, and the effort to run each.
 3. **B is the control.** It is the cheapest credible option and stays on the table if the

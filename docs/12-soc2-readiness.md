@@ -1,6 +1,6 @@
 # 12. SOC 2 readiness
 
-What SOC 2 actually checks, what this engagement puts in scope, and the controls that
+What SOC 2 actually checks, what this reference architecture puts in scope, and the controls that
 produce the evidence an auditor asks for. Built on
 [7. Security and governance](07-security-and-governance.md); not a repeat of it.
 
@@ -21,7 +21,7 @@ what is typical, because two enterprise prospects are waiting on it.
 
 [0018](../decisions/0018-soc2-scope.md) decides this:
 
-- The analytical platform is **inside** the client's system description from the day it
+- The analytical platform is **inside** the company's system description from the day it
   holds customer data, alongside the product itself.
 - **Security** (the common criteria), **Availability** and **Confidentiality** are in scope.
   **Processing integrity** is out: revenue reporting is read by people, not acted on
@@ -35,7 +35,7 @@ what is typical, because two enterprise prospects are waiting on it.
 - **Vendors are carved out.** AWS and the platform vendor (Databricks or Snowflake) are
   outside the system description; their own SOC 2 Type II reports are obtained and reviewed
   every year, and the complementary user entity controls each report lists — the things the
-  vendor's control only works if the customer also does — are mapped to the client's own
+  vendor's control only works if the customer also does — are mapped to the company's own
   controls below (CC9.2). Stripe is a vendor too, under the same vendor-management control,
   not a system this report's boundary reaches into.
 
@@ -62,10 +62,10 @@ something this platform already does or measures, not added to pad the matrix.
 |---|---|---|---|---|---|---|---|
 | PLAT-01 | CC2.1 | A data-handling standard exists and is followed | every contract column carries a classification; the data model and glossary are published documents ([6. Data model](06-data-model.md)) | the contracts; the published docs | automated: contracts linted in CI | data owner | per change |
 | PLAT-02 | CC3.2 | Risk is identified and reviewed | the risk register, rated and owned, with a trigger to act ([risks.md](risks.md)) | risks.md, with a dated review note | manual: quarterly review | CTO | quarterly |
-| PLAT-03 | CC6.1 | Logical access is by role, not grant | SCIM groups map to roles; no table is granted to a person directly; storage is reached only through the catalog; encryption at rest with the client's own KMS key ([7. Security and governance](07-security-and-governance.md#access)) | Terraform's role and grant export; the KMS key policy | automated: nightly export to the evidence bucket | platform team | continuous; reviewed monthly |
+| PLAT-03 | CC6.1 | Logical access is by role, not grant | SCIM groups map to roles; no table is granted to a person directly; storage is reached only through the catalog; encryption at rest with the company's own KMS key ([7. Security and governance](07-security-and-governance.md#access)) | Terraform's role and grant export; the KMS key policy | automated: nightly export to the evidence bucket | platform team | continuous; reviewed monthly |
 | PLAT-04 | CC6.2 | Provisioning needs the owner's approval | confidential or personal access is requested and approved before the grant is made ([Access lifecycle](07-security-and-governance.md#access-lifecycle)) | the request and approval record from the identity provider | automated: IdP audit log export | data owner | per request |
 | PLAT-05 | CC6.3 | Access is removed, and reviewed | SCIM deprovisioning removes a leaver's roles within a day; every owner re-confirms every grant quarterly | the SCIM deprovisioning log; the review sign-off | automated collection; manual sign-off | data owner | continuous; reviewed quarterly |
-| PLAT-06 | CC6.6 | The network is segmented | CDC reaches RDS over the client's VPC, never the public internet; PrivateLink is priced as an option ([4. Options](04-options.md#cost)) | the VPC routing configuration in Terraform | automated: Terraform state | platform team | per change |
+| PLAT-06 | CC6.6 | The network is segmented | CDC reaches RDS over the company's VPC, never the public internet; PrivateLink is priced as an option ([4. Options](04-options.md#cost)) | the VPC routing configuration in Terraform | automated: Terraform state | platform team | per change |
 | PLAT-07 | CC6.7 | Data is encrypted in transit | TLS is enforced on every platform connection: CDC, the BI tool, the Terraform provider | the TLS configuration in Terraform | automated: Terraform state | platform team | continuous |
 | PLAT-08 | CC6.8 | Dependencies are pinned and scanned | CI pins every dependency (`uv.lock`, pinned Terraform providers) and scans for known vulnerabilities before a merge | the CI scan output | automated: CI job per PR | platform team | per change |
 | PLAT-09 | CC7.1 | Configuration drift is detected | a nightly `terraform plan` against production catches a console change before it is mistaken for intended; Terraform is also scanned for policy violations in CI | the nightly plan output (no changes expected); the policy scan report | automated: scheduled job, CI job | platform team | nightly |

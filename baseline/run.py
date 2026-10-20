@@ -1,4 +1,4 @@
-"""Measure the client's current state: the product and its BI queries on one Postgres.
+"""Measure the company's current state: the product and its BI queries on one Postgres.
 
 A primary and a streaming replica (2 vCPU, 4 GB each) hold the product's tables at the
 brief's scale. pgbench runs the product's request (`app.sql`: a customer's usage page,

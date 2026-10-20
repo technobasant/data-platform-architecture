@@ -97,7 +97,7 @@ feature to ship around.
 
 ## Access
 
-- **People** come from the client's identity provider by SCIM, into groups; groups map to
+- **People** come from the company's identity provider by SCIM, into groups; groups map to
   roles; nobody is granted a table directly.
 - **Roles:** `analyst` (marts, internal), `finance` (plus confidential revenue),
   `customer_success` (plus confidential account names, and `cs_user_contacts`),
@@ -247,7 +247,7 @@ data processing agreement directly rather than an attestation:
 |---|---|---|
 | GDPR Art. 17, erasure | delete by key, expiry inside 30 days, proof query | stored proof per request |
 | GDPR Art. 30, records of processing | contracts with purpose, classification and owner | the contracts |
-| GDPR Art. 32, security of processing | encryption with the client's KMS key; private connectivity; least privilege | Terraform; key policy |
+| GDPR Art. 32, security of processing | encryption with the company's KMS key; private connectivity; least privilege | Terraform; key policy |
 
 ## Lineage
 

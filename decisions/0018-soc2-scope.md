@@ -12,7 +12,7 @@ and the audit window opens in month three. The platform will hold a copy of ever
 data. A SOC 2 report covers the system its description scopes; if customer data flows to a
 platform outside that scope, the report does not cover where the data goes, and a customer's
 security review will find it. The platform runs on vendors (AWS, and Databricks or Snowflake)
-whose own controls the client's auditor cannot test.
+whose own controls the company's auditor cannot test.
 
 ## Decision drivers
 
@@ -27,7 +27,7 @@ whose own controls the client's auditor cannot test.
 | | Covers where customer data goes | Feasible | Evidence effort |
 |---|---|---|---|
 | Leave the platform out of the system description | ✘ | ✔ | none, until a customer asks |
-| Include it, with the vendors' controls tested by the client's auditor (inclusive method) | ✔ | ✘ vendors do not allow it | very high |
+| Include it, with the vendors' controls tested by the company's auditor (inclusive method) | ✔ | ✘ vendors do not allow it | very high |
 | **Include it, vendors carved out: their own SOC 2 Type II reports, plus the complementary controls they require of their customers** | ✔ | ✔ | moderate, mostly automated |
 
 | Trust Services Criteria | In scope | Why |
@@ -40,10 +40,10 @@ whose own controls the client's auditor cannot test.
 
 ## Decision
 
-The analytical platform is inside the client's SOC 2 system description from the day it
+The analytical platform is inside the company's SOC 2 system description from the day it
 holds customer data, under Security, Availability and Confidentiality. AWS and the platform
 vendor are carved out: their SOC 2 Type II reports are obtained and reviewed every year, and
-the complementary user entity controls they list are mapped to the client's own controls. The
+the complementary user entity controls they list are mapped to the company's own controls. The
 control matrix, the evidence each control produces and how it is collected are in
 [12. SOC 2 readiness](../docs/12-soc2-readiness.md); platform objects are in Terraform, and
 access evidence comes from the platform's own tags and lineage, not from a spreadsheet.
@@ -54,8 +54,8 @@ access evidence comes from the platform's own tags and lineage, not from a sprea
   personal roles on it before the window opens ([10. Roadmap](../docs/10-roadmap.md)).
 - Every platform change goes through a reviewed pull request (CC8.1); console changes are
   drift, found by `terraform plan` and reverted.
-- Vendor report exceptions become the client's risks to assess, every year.
-- Organisational controls (HR, training, the risk committee) are the client's, outside the
+- Vendor report exceptions become the company's risks to assess, every year.
+- Organisational controls (HR, training, the risk committee) are the company's, outside the
   platform; the platform supplies evidence for the technical ones.
 
 ## Revisit when

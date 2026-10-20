@@ -42,7 +42,7 @@ def test_only_options_that_can_meet_the_requirements_are_priced(inputs) -> None:
     prices, workloads = inputs
     options = set(tier_costs(prices, workloads, workloads["tiers"]["today"])["monthly_usd"])
     # Snowflake Standard lacks masking, row access policies and Time Travel past a day;
-    # BigQuery would take the data out of the client's AWS account (0006).
+    # BigQuery would take the data out of the company's AWS account (0006).
     assert options == {"Snowflake Enterprise", "Snowflake Business Critical",
                        "Databricks SQL Serverless", "Trino on EC2", "Athena"}  # fmt: skip
 

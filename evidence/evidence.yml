@@ -82,7 +82,7 @@ registry_false_alarms:
 dsl_type1_misattributed:
   value: "15.1%"
   label: "of a year's revenue on the wrong plan with a Type 1 account dimension"
-  method: "5,048 synthetic invoices (seed 7, Oct 2025 \u2013 Sep 2026) attributed by each account's current plan and compared with the plan the generator billed; $152,227 of $1,010,202"
+  method: "5,048 generated invoices (seed 7, Oct 2025 \u2013 Sep 2026) attributed by each account's current plan and compared with the plan the generator billed; $152,227 of $1,010,202"
   repo: data-stack-lab
   file: MEASUREMENTS.md
   check: sibling
@@ -172,7 +172,7 @@ dsl_delta_restore:
 baseline_bi_on_primary:
   value: "40 → 525 ms"
   label: "product p95 request latency, without and with the BI tool's reports on the primary"
-  method: "a lab copy of the client's database (Postgres 17, 2 vCPU and 4 GB, 31.5 million events); the product's request at 12 a second from pgbench, the brief's weekday peak (each request records one event; 350,000 a day average 4 a second); two analysts running the four BI queries in turn; five minutes per scenario after a checkpoint. Requests over 100 ms went from 2.2% to 24.0%; at a stress rate of 100 a second, p95 went from 93 to 794 ms"
+  method: "a lab copy of the company's database (Postgres 17, 2 vCPU and 4 GB, 31.5 million events); the product's request at 12 a second from pgbench, the brief's weekday peak (each request records one event; 350,000 a day average 4 a second); two analysts running the four BI queries in turn; five minutes per scenario after a checkpoint. Requests over 100 ms went from 2.2% to 24.0%; at a stress rate of 100 a second, p95 went from 93 to 794 ms"
   repo: data-platform-architecture
   file: results/baseline-brief-rate.json
   check: {json: results/baseline-brief-rate.json, expr: 'str(round(d["app_alone"]["app"]["p95_ms"])) + " → " + str(round(d["bi_on_primary"]["app"]["p95_ms"])) + " ms"'}
@@ -284,7 +284,7 @@ dpa_erasure_uniform:
 dpa_day_bill:
   value: "0.743 DBU"
   label: "billed for one day's build and reports on the smallest Databricks SQL warehouse: 38 s of work, 11 min 9 s awake, 95% of it the wait for auto-stop"
-  method: "Databricks SQL 2026.39 on Free Edition, a 2X-Small serverless warehouse with the default 10-minute auto-stop, started from stopped at the top of an hour with nothing else on it; the daily build (350,000 events by REPLACE WHERE, three days of the usage mart, the contract check) and the four reports by two analysts; system.billing.usage for that hour against uptime from system.compute.warehouse_events, 4 DBU an hour; $0.52 at list price in the workspace's region, $0.68 in the client's"
+  method: "Databricks SQL 2026.39 on Free Edition, a 2X-Small serverless warehouse with the default 10-minute auto-stop, started from stopped at the top of an hour with nothing else on it; the daily build (350,000 events by REPLACE WHERE, three days of the usage mart, the contract check) and the four reports by two analysts; system.billing.usage for that hour against uptime from system.compute.warehouse_events, 4 DBU an hour; $0.52 at list price in the workspace's region, $0.68 in the company's"
   repo: data-platform-architecture
   file: results/poc-databricks-workload.json
   check: {json: results/poc-databricks-workload.json, expr: 'str(d["bill"]["dbu"]) + " DBU"'}

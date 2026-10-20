@@ -43,10 +43,10 @@ C4Context
 
 ```mermaid
 flowchart LR
-  subgraph aws[Client's AWS account, EU region]
+  subgraph aws[Company's AWS account, EU region]
     rds[(Product Postgres<br/>RDS primary)]
     replica[(RDS replica<br/>retired at stage 1 end)]
-    s3[(S3, client-owned<br/>KMS key, lifecycle rules)]
+    s3[(S3, company-owned<br/>KMS key, lifecycle rules)]
     stripe_files[/Stripe export files<br/>immutable, with a manifest/]
   end
   subgraph platform[Analytical platform]
@@ -75,7 +75,7 @@ flowchart LR
   started exists only as the nightly CSV exports in S3; wave 1 backfills them into `raw` by
   day, reconciled against each export's row count, so Q4 is met for the period they cover
   ([8. Migration](08-migration.md)).
-- **Tables** are in an open format in the client's bucket
+- **Tables** are in an open format in the company's bucket
   ([0006](../decisions/0006-open-format-in-the-clients-account.md)), modelled as in
   [6. Data model](06-data-model.md).
 - **The BI tool** points at the platform's SQL endpoint with its own service identity, and
@@ -114,10 +114,10 @@ except the jobs that build `staging`.
 
 | Part | Where | Notes |
 |---|---|---|
-| Analytical platform | the vendor's service in the client's EU region | one production and one development environment, each in Terraform |
-| Table storage | an S3 bucket in the client's account per environment | KMS key owned by the client; versioning off (the table format keeps versions); lifecycle rules on raw |
-| CDC | Openflow (bring-your-own-cloud in the client's VPC) or AWS DMS | reaches RDS over the VPC, never the internet |
-| Identity | the client's identity provider, by SCIM | people in groups, groups in roles; service principals per job |
+| Analytical platform | the vendor's service in the company's EU region | one production and one development environment, each in Terraform |
+| Table storage | an S3 bucket in the company's account per environment | KMS key owned by the company; versioning off (the table format keeps versions); lifecycle rules on raw |
+| CDC | Openflow (bring-your-own-cloud in the company's VPC) or AWS DMS | reaches RDS over the VPC, never the internet |
+| Identity | the company's identity provider, by SCIM | people in groups, groups in roles; service principals per job |
 | Observability | the platform's job and query history, plus CloudWatch for CDC | freshness and cost alerts to the data team's channel in business hours |
 
 ## How each part fails

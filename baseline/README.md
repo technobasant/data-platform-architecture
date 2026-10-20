@@ -1,14 +1,14 @@
 # The current state, measured
 
-A lab copy of the client's database, used for [2. Current state](../docs/02-current-state.md):
+A lab copy of the company's database, used for [2. Current state](../docs/02-current-state.md):
 a Postgres 17 primary and a streaming read replica, each limited to 2 vCPU and 4 GB, with
 the product's tables at the brief's scale (6,000 accounts, 60,000 users, 90 days of events:
-31.5 million rows, 5 GB with indexes), all seeded so every run builds the same data.
+31.5 million rows, 5 GB with indexes), all generated with a fixed seed so every run builds the same data.
 
 | File | What it is |
 |---|---|
 | [`compose.yml`](compose.yml) | the primary, the replica, and a client container for pgbench |
-| [`schema.sql`](schema.sql), [`load.sql`](load.sql), [`events.sql`](events.sql) | the product's tables and the seeded data; events in arrival order, as the product appends them |
+| [`schema.sql`](schema.sql), [`load.sql`](load.sql), [`events.sql`](events.sql) | the product's tables and the generated data (fixed seed); events in arrival order, as the product appends them |
 | [`app.sql`](app.sql) | one product request: a customer's usage page, an activity update and an event insert |
 | [`analytics.sql`](analytics.sql) | the four queries the BI tool runs |
 | [`run.py`](run.py) | the four scenarios, and `results/baseline.json` |

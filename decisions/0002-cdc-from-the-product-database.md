@@ -95,6 +95,6 @@ product team adopts an outbox or event stream that already carries the same chan
 
 <!-- evidence:start -->
 - **533 of 570** account changes in a year seen by monthly snapshots. A change counts as seen if a snapshot version starts at its exact updated_at; signups excluded. Source: [data-stack-lab/MEASUREMENTS.md](https://github.com/technobasant/data-stack-lab/blob/main/MEASUREMENTS.md)
-- **15.1%** of a year's revenue on the wrong plan with a Type 1 account dimension. 5,048 synthetic invoices (seed 7, Oct 2025 – Sep 2026) attributed by each account's current plan and compared with the plan the generator billed; $152,227 of $1,010,202. Source: [data-stack-lab/MEASUREMENTS.md](https://github.com/technobasant/data-stack-lab/blob/main/MEASUREMENTS.md)
+- **15.1%** of a year's revenue on the wrong plan with a Type 1 account dimension. 5,048 generated invoices (seed 7, Oct 2025 – Sep 2026) attributed by each account's current plan and compared with the plan the generator billed; $152,227 of $1,010,202. Source: [data-stack-lab/MEASUREMENTS.md](https://github.com/technobasant/data-stack-lab/blob/main/MEASUREMENTS.md)
 - **5,048 of 5,048** invoices on the plan they billed, Type 2 dimension from dbt snapshots. As-of join of each invoice to the dim_account version in effect at billing, scored against the generator's truth file; the dimension was built from 13 monthly snapshot loads. Source: [data-stack-lab/MEASUREMENTS.md](https://github.com/technobasant/data-stack-lab/blob/main/MEASUREMENTS.md)
 <!-- evidence:end -->

@@ -179,7 +179,7 @@ def cost_tables() -> str:
         out.append(f"| {engine} | ${b['usd_per_hour']:.2f} | {t['Athena']} TB |")
     out += [
         "",
-        "**The client's scale**, today and in its growth plan, under the assumptions in "
+        "**The company's scale**, today and in its growth plan, under the assumptions in "
         "[`cost/workloads.yml`](../cost/workloads.yml). The vendor bill for the analytical layer, "
         "per month:",
         "",
