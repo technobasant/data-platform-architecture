@@ -119,8 +119,7 @@ Every figure, with its method and source file, is in [EVIDENCE.md](EVIDENCE.md).
 | Databricks against Snowflake | the Databricks half measured ([11](docs/11-proof-of-concept.md)): the dbt project built with one change and gave identical figures; one policy masked every personal column; erasure is final only after `VACUUM` past the table's retention. The Snowflake half waits for a trial |
 | Stage 2 and the assistant | designed; decided when each stage starts |
 
-Data: generated to the scenario's shape and rebuilt identically in CI, so every figure can
-be re-run.
+Data: generated to the scenario's shape from a fixed seed, so every figure can be re-run.
 `python scripts/build.py --check` keeps every decision's evidence, the decision
 tables and the cost tables identical to their sources, and CI checks every link. For a
 figure measured in this repo's own `results/`, `--check` also re-derives it from the JSON
